@@ -1,8 +1,6 @@
 /**
  * Created by 1231 on 2016/7/26.
  */
-
-//A B C D E F G H I J K L M N O P Q R S T U V W X Y Z
 var XML_D = {
     /* 初始化数据和事件 */
     init : {
@@ -16,6 +14,7 @@ var XML_D = {
     }
 };
 
+//A B C D E F G H I J K L M N O P Q R S T U V W X Y Z
 /**获得浏览器的相关信息**/
 XML_D.broweser = {
     //版本信息
@@ -51,6 +50,123 @@ XML_D.broweser = {
         html[html.length]= navigator.userAgent+"<br/>";
         html[html.length]= navigator.appVersion + "<br/>";
         document.getElementById("testid").innerHTML=html.join("");
+    }
+};
+
+/**遮盖层
+ * 使用：
+ * 1. 写HTML文件
+ * 2. 写css文件
+ * 3. 写js文件**/
+XML_D.Cover = function(){
+
+    /*****创建遮罩层*************/
+    //<!-- 遮罩层DIV -->
+    //<div id="overlay" class="hidden"></div>
+    //    <!-- Loading提示 DIV -->
+    //<div id="loadingTip">
+    //    <img src="images/loading.gif" />
+    //    </div>
+    var cover = document.createElement( 'div' );
+    document.body.appendChild( cover );
+    cover.id = "overlay";
+    $(cover).append("<div id='loadingTip'><img src='img/cover.png' /></div>");
+    /*****创建遮罩层*************/
+
+    var total_num = 0;
+    var load_succss = 0;
+    var load_error = 0;
+
+    THREE.DefaultLoadingManager.onProgress = function ( item, loaded, total ) {
+        //console.log( item, loaded, total );
+        total_num = total;
+        load_succss = loaded;
+
+        if(total_num <= (load_succss + load_error)){
+            hideLoading();
+        }else{
+            showLoading();
+        }
+    };
+
+    THREE.DefaultLoadingManager.onError = function ( item) {
+        console.warn( item + "没有找到");
+        load_error++;
+        if(total_num <= (load_succss + load_error)){
+            hideLoading();
+        }else{
+            showLoading();
+        }
+        //console.log("total_num"+total_num)
+        //console.log("load_succss"+load_succss)
+        //console.log("load_error"+load_error)
+
+    };
+
+    showLoading();
+    $(document).ajaxStart(function(){
+        console.log("所有 AJAX 请求已开始");
+    });
+    $(document).ajaxStop(function(){
+        console.log("所有 AJAX 请求已完成");
+    });
+
+    // 浏览器兼容 取得浏览器可视区高度
+    function getWindowInnerHeight() {
+        var winHeight = window.innerHeight
+            || (document.documentElement && document.documentElement.clientHeight)
+            || (document.body && document.body.clientHeight);
+        return winHeight;
+    }
+    // 浏览器兼容 取得浏览器可视区宽度
+    function getWindowInnerWidth() {
+        var winWidth = window.innerWidth
+            || (document.documentElement && document.documentElement.clientWidth)
+            || (document.body && document.body.clientWidth);
+        return winWidth;
+    }
+
+    /**显示遮罩层*/
+    function showOverlay() {
+        // 遮罩层宽高分别为页面内容的宽高
+        $("#overlay").width(getWindowInnerWidth());
+        $("#overlay").height(getWindowInnerHeight());
+        $("#overlay").css({
+            position: "fixed",
+            "display":"block",
+            backgroundColor: "white",
+            zIndex : 5
+        });
+    }
+
+    /**显示Loading提示*/
+    function showLoading() {
+        // 先显示遮罩层
+        showOverlay();
+
+        // Loading提示窗口居中
+        $("#loadingTip").css({
+            position: "fixed",
+            width: "100px",
+            height: "100px",
+            top: "50%",
+            left: "50%",
+            margin: "-50px 0 0 -50px",
+        });
+
+        $("#loadingTip img").css({
+            width: "100px",
+            height: "100px",
+        });
+        $("#loadingTip").show();
+        $(document).scroll(function() {
+            return false;
+        });
+    }
+
+    function hideLoading(){
+        $("#loadingTip").hide();
+        $("#overlay").hide();
     }
 };
 
@@ -189,7 +305,6 @@ XML_D.Event = {
     fullscreen : function(){
         var elem = document.body;
         if(elem.webkitRequestFullScreen){
-            alert(elem.webkitRequestFullScreen);
             elem.webkitRequestFullScreen();
         }else if(elem.mozRequestFullScreen){
             elem.mozRequestFullScreen();
@@ -470,6 +585,9 @@ XML_D.URL = {
 $(function(){
 
     if(Detector.webgl) {
+
+        //设置遮盖层
+        XML_D.Cover();
 
         XML_D.URL.transform_XML_URL();
         //根据不同的设备，加载不同的GUI
