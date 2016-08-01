@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<title>创想3D—全景图浏览</title>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+
+		<!--Jquery以及Jquery插件-->
+		<script type="text/javascript" src="js/JQuery/jquery-1.7.min.js"></script>
+		<!--qrcode二维码插件-->
+		<script type="text/javascript" src="js/JQuery/jquery.qrcode.min.js"></script>
+
+		<!--导入three.js-->
+		<script style="text/javascript" src="js/three/three.min.js"></script>
+		<!-- 判定是否浏览器是否支持WebGl -->
+		<script type="text/javascript" src="js/Detector.js"></script>
+
+		<!-- 分屏 -->
+		<script src="js/effects/StereoEffect.js"></script>
+		<!-- 添加重力感应事件 -->
+		<script src="js/vr/DeviceOrientationControls.js"></script>
+		<script src="js/vr/OrbitControls.js"></script>
+		<!--导入程序-->
+		<script style="text/javascript" src="VR.js"></script>
+
+		<style>
+			body {
+				background-color: #000000;
+				margin: 0px;
+				overflow: hidden;
+			}
+			a {
+				color: #ffffff;
+			}
+
+			.divide{
+				position: absolute;
+				right: 10px;
+				background-color: white;
+				border-radius: 50%;
+				top: 50px;
+				padding: 5px;
+				filter:alpha(opacity=50);
+				-moz-opacity:0.5;
+				opacity:0.5;
+			}
+
+			.fullScreen{
+				position: absolute;
+				right: 10px;
+				background-color: white;
+				border-radius: 50%;
+				top: 10px;
+				padding: 5px;
+				filter:alpha(opacity=50);
+				-moz-opacity:0.5;
+				opacity:0.5;
+			}
+
+			.exit{
+				position: absolute;
+				border-radius: 15%;
+				padding: 5px;
+				background-color: #1b1818;
+				color: white;
+				top: 10px;
+				filter:alpha(opacity=50);
+				-moz-opacity:0.5;
+				opacity:0.5;
+				display: none;
+			}
+		</style>
+
+	</head>
+	<body>
+
+		<div id="container"></div>
+
+		<div class='divide'>
+			<img src='img/VR/camera.png'>
+		</div>
+
+		<div id="fullScreen" class='fullScreen'>
+			<img src='img/VR/fullScreen.png'>
+		</div>
+
+	    <div class="exit">退出VR模式</div>
+
+	</body>
+</html>
