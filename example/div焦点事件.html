@@ -1,0 +1,27 @@
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=GBK" />
+    <title>div 触发失去焦点事件</title>
+</head>
+<body>
+<h1>设置tabindex属性可触发焦点事件</h1>
+<div >
+
+    <div id="birthday__jQSelect0" class="dropdown" tabindex="0">
+        <li>测试一下 </li$amp;>amp;$lt;li>测试一下 </li$amp;>amp;$lt;li>测试一下 </li>
+    </div>
+
+    <script type="text/javascript">
+        document.getElementById('birthday__jQSelect0').onmouseover = function(){
+            document.getElementById('birthday__jQSelect0').focus();
+            return false;
+        }
+        document.getElementById('birthday__jQSelect0').onblur = function(){
+            alert("jjjjjj");
+            return false;
+        }
+    </script>
+    　　<iframe height="100" src="aa.html">
+</iframe>
+</body>
+</html>
