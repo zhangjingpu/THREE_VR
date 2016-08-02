@@ -10,15 +10,19 @@ var XML_D = {
         }
     },
     initDate : {
-        event_tag : false
+        event_tag : false,
+        //鼠标的方向
+        hoverDir : true,
+        //判断是否自动播放
+        isPlay : true
     }
 };
 
 //A B C D E F G H I J K L M N O P Q R S T U V W X Y Z
 /**获得浏览器的相关信息**/
-XML_D.broweser = {
+XML_D.Broweser = {
     //版本信息
-    versions:function(){
+    versions : function(){
         var u = navigator.userAgent, app = navigator.appVersion;
         return {         //移动终端浏览器版本信息
             trident: u.indexOf('Trident') > -1, //IE内核
@@ -35,7 +39,7 @@ XML_D.broweser = {
     }(),
 
     //返回语言
-    language:(navigator.browserLanguage || navigator.language).toLowerCase(),
+    language : (navigator.browserLanguage || navigator.language).toLowerCase(),
 
     //测试使用broweser
     // 页面添加 ：<div id="testid"></div>
@@ -49,7 +53,27 @@ XML_D.broweser = {
         html[html.length]=" 是否iPad: "+this.versions.iPad+"<br/>";
         html[html.length]= navigator.userAgent+"<br/>";
         html[html.length]= navigator.appVersion + "<br/>";
-        document.getElementById("testid").innerHTML=html.join("");
+        document.getElementById("testid").innerHTML = html.join("");
+    },
+
+    /**判断页面是否激活
+     * 1.如果页面最小化，获取打开其他的页面，表明窗口未激活
+     * 2.窗口打开，并显示当前页，窗口激活
+     * return : 窗口激活 true，窗口未激活 false **/
+    isWindowActivation : function(){
+        var hiddenProperty = 'hidden' in document ? 'hidden' :
+            'webkitHidden' in document ? 'webkitHidden' :
+                'mozHidden' in document ? 'mozHidden' :
+                    null;
+        var visibilityChangeEvent = hiddenProperty.replace(/hidden/i, 'visibilitychange');
+        var onVisibilityChange = function(){
+            if (!document[hiddenProperty]) {
+                console.log('页面非激活');
+            }else{
+                console.log('页面激活')
+            }
+        }
+        document.addEventListener(visibilityChangeEvent, onVisibilityChange);
     }
 };
 
@@ -206,8 +230,23 @@ XML_D.Event = {
     onDocumentMouseMove : function ( event ) {
 
         if ( XML_D.Three.isUserInteracting === true ) {
+            XML_D.Event.setHoverDir(event);
+
             XML_D.Three.lon = ( XML_D.Three.onPointerDownPointerX - event.clientX ) * 0.1 + XML_D.Three.onPointerDownLon;
             XML_D.Three.lat = ( event.clientY - XML_D.Three.onPointerDownPointerY ) * 0.1 + XML_D.Three.onPointerDownLat;
+
+            //如果没有自动播放，重行渲染一次
+            if(!XML_D.initDate.isPlay){
+                XML_D.Three.renderScene();
+            }
+        }
+    },
+
+    setHoverDir :function(event){
+        if(XML_D.Three.onPointerDownPointerX - event.clientX > 0){
+            XML_D.initDate.hoverDir = true;
+        }else{
+            XML_D.initDate.hoverDir = false;
         }
     },
 
@@ -257,13 +296,17 @@ XML_D.Event = {
     onDocumentTouchMove : function ( event ) {
         event.preventDefault();
         if ( event.touches.length == 1 ) {
+            XML_D.Event.setHoverDir(event);
             XML_D.Three.isTimerMove = false;
             event.preventDefault();
             XML_D.Three.lon = ( XML_D.Three.onPointerDownPointerX - event.touches[0].pageX ) * 0.1 + XML_D.Three.onPointerDownLon;
             XML_D.Three.lat = ( event.touches[0].pageY - XML_D.Three.onPointerDownPointerY ) * 0.1 + XML_D.Three.onPointerDownLat;
+
+            //如果没有自动播放，重行渲染一次
+            if(!XML_D.initDate.isPlay){
+                XML_D.Three.renderScene();
+            }
         }
-
-
     },
 
     /**手指点击分屏按钮
@@ -328,6 +371,26 @@ XML_D.Event = {
             elem.exitFullscreen();
         }else{
             //浏览器不支持全屏API或已被禁用
+        }
+    }
+};
+
+/**操作**/
+XML_D.GUI = {
+    /**控制画面是否自动播放**/
+    isPlay : function(){
+        $("#isplay").unbind("click",showPlay);
+        $("#isplay").bind("click",showPlay);
+
+        $("#isplay").unbind("touchstart",showPlay);
+        $("#isplay").bind("touchstart",showPlay);
+
+        function showPlay(){
+            XML_D.initDate.isPlay = !XML_D.initDate.isPlay;
+            //如果不是自动播放，重行渲染一次
+            if(XML_D.initDate.isPlay){
+                XML_D.Three.renderScene();
+            }
         }
     }
 };
@@ -427,7 +490,6 @@ XML_D.Three = {
                 XML_D.Three.container.webkitRequestFullscreen();
             }
         }
-
         this.controls = controls;
     },
 
@@ -477,7 +539,9 @@ XML_D.Three = {
     /* 实现多次动态加载 */
     renderScene : function(){
         XML_D.Three.renderer.clear();
-        requestAnimationFrame( XML_D.Three.renderScene );
+        if(XML_D.initDate.isPlay){
+            requestAnimationFrame( XML_D.Three.renderScene );
+        }
         /*
          // distortion
          XML_D.Three.camera.position.copy(  XML_D.Three.camera.target ).negate();
@@ -485,9 +549,13 @@ XML_D.Three = {
 
         if($.isEmptyObject(XML_D.Three.effect)){
 
-
             if ( XML_D.Three.isUserInteracting === false ) {
-                XML_D.Three.lon += 0.1;
+                if(XML_D.initDate.hoverDir){
+                    XML_D.Three.lon += 0.05;
+                }else{
+                    XML_D.Three.lon -= 0.05;
+                }
+
             }
 
             XML_D.Three.lat = Math.max( - 85, Math.min( 85, XML_D.Three.lat ) );
@@ -580,7 +648,7 @@ XML_D.URL = {
             return null;
         }
     },
-}
+};
 
 $(function(){
 
@@ -591,7 +659,7 @@ $(function(){
 
         XML_D.URL.transform_XML_URL();
         //根据不同的设备，加载不同的GUI
-        if (XML_D.broweser.versions.mobile) {
+        if (XML_D.Broweser.versions.mobile) {
 
             $(".divide").each(function(){
                 $(this).unbind("touchstart");
@@ -640,6 +708,8 @@ $(function(){
         $("#fullScreen").bind("touchstart",function(){
             XML_D.Event.fullscreen();
         });
+
+        XML_D.GUI.isPlay();
 
     }else{
         Detector.addGetWebGLMessage("123");
