@@ -6,6 +6,7 @@ var XML_D = {
     init : {
         /**初始化路径*/
         initURL: {
+            //http://www.tuotuohome.com/vr/vr.html
             url: "img/VR/1236.jpg",
         }
     },
@@ -14,7 +15,9 @@ var XML_D = {
         //鼠标的方向
         hoverDir : true,
         //判断是否自动播放
-        isPlay : true
+        isPlay : true,
+        //旋转的速度
+        speed : 0.05
     }
 };
 
@@ -171,16 +174,16 @@ XML_D.Cover = function(){
         // Loading提示窗口居中
         $("#loadingTip").css({
             position: "fixed",
-            width: "100px",
-            height: "100px",
+            width: "200px",
+            height: "200px",
             top: "50%",
             left: "50%",
-            margin: "-50px 0 0 -50px",
+            margin: "-100px 0 0 -100px",
         });
 
         $("#loadingTip img").css({
-            width: "100px",
-            height: "100px",
+            width: "100%",
+            height: "100%",
         });
         $("#loadingTip").show();
         $(document).scroll(function() {
@@ -235,6 +238,11 @@ XML_D.Event = {
             XML_D.Three.lon = ( XML_D.Three.onPointerDownPointerX - event.clientX ) * 0.1 + XML_D.Three.onPointerDownLon;
             XML_D.Three.lat = ( event.clientY - XML_D.Three.onPointerDownPointerY ) * 0.1 + XML_D.Three.onPointerDownLat;
 
+            //动画加速
+            if(XML_D.initDate.speed < 0.5){
+                XML_D.initDate.speed += 0.02;
+            }
+
             //如果没有自动播放，重行渲染一次
             if(!XML_D.initDate.isPlay){
                 XML_D.Three.renderScene();
@@ -257,13 +265,38 @@ XML_D.Event = {
     onDocumentMouseWheel : function ( event ) {
         // WebKit
         if ( event.wheelDeltaY ) {
-            XML_D.Three.camera.fov -= event.wheelDeltaY * 0.05;
+            if(event.wheelDeltaY < 0){
+                if(XML_D.Three.camera.fov < 90) {
+                    XML_D.Three.camera.fov -= event.wheelDeltaY * 0.05;
+                }
+            }else{
+                if(XML_D.Three.camera.fov > 30) {
+                    XML_D.Three.camera.fov -= event.wheelDeltaY * 0.05;
+                }
+            }
             // Opera / Explorer 9
         } else if ( event.wheelDelta ) {
-            XML_D.Three.camera.fov -= event.wheelDelta * 0.05;
+            if(event.wheelDeltaY < 0){
+                if(XML_D.Three.camera.fov < 90) {
+                    XML_D.Three.camera.fov -= event.wheelDelta * 0.05;
+                }
+            }else{
+                if(XML_D.Three.camera.fov > 30) {
+                    XML_D.Three.camera.fov -= event.wheelDelta * 0.05;
+                }
+            }
+
             // Firefox
         } else if ( event.detail ) {
-            XML_D.Three.camera.fov += event.detail * 1.0;
+            if(event.detail < 0){
+                if(XML_D.Three.camera.fov < 90) {
+                    XML_D.Three.camera.fov -= event.detail * 0.05;
+                }
+            }else{
+                if(XML_D.Three.camera.fov > 30) {
+                    XML_D.Three.camera.fov -= event.detail * 0.05;
+                }
+            }
         }
         XML_D.Three.camera.updateProjectionMatrix();
     },
@@ -296,7 +329,8 @@ XML_D.Event = {
     onDocumentTouchMove : function ( event ) {
         event.preventDefault();
         if ( event.touches.length == 1 ) {
-            XML_D.Event.setHoverDir(event);
+            XML_D.Event.setHoverDir(event.touches[0]);
+
             XML_D.Three.isTimerMove = false;
             event.preventDefault();
             XML_D.Three.lon = ( XML_D.Three.onPointerDownPointerX - event.touches[0].pageX ) * 0.1 + XML_D.Three.onPointerDownLon;
@@ -551,11 +585,15 @@ XML_D.Three = {
 
             if ( XML_D.Three.isUserInteracting === false ) {
                 if(XML_D.initDate.hoverDir){
-                    XML_D.Three.lon += 0.05;
+                    XML_D.Three.lon += XML_D.initDate.speed;
                 }else{
-                    XML_D.Three.lon -= 0.05;
+                    XML_D.Three.lon -= XML_D.initDate.speed;
                 }
 
+                //动画减速
+                if(XML_D.initDate.speed > 0.05){
+                    XML_D.initDate.speed -= 0.001;
+                }
             }
 
             XML_D.Three.lat = Math.max( - 85, Math.min( 85, XML_D.Three.lat ) );
@@ -590,6 +628,7 @@ XML_D.Three = {
         document.addEventListener( 'mousedown', XML_D.Event.onDocumentMouseDown, false );
         document.addEventListener( 'mousemove', XML_D.Event.onDocumentMouseMove, false );
         document.addEventListener( 'mouseup', XML_D.Event.onDocumentMouseUp, false );
+
         document.addEventListener( 'mousewheel', XML_D.Event.onDocumentMouseWheel, false );
         document.addEventListener( 'MozMousePixelScroll', XML_D.Event.onDocumentMouseWheel, false);
 
@@ -671,6 +710,11 @@ $(function(){
                 $(this).bind("touchstart",XML_D.Event.onExitTouchStart);
             });
 
+            $("#fullScreen").unbind("touchstart");
+            $("#fullScreen").bind("touchstart",function(){
+                XML_D.Event.fullscreen();
+            });
+
         } else {
             XML_D.QrCode();
 
@@ -682,6 +726,11 @@ $(function(){
             $(".exit").each(function(){
                 $(this).unbind("click");
                 $(this).bind("click",XML_D.Event.onExitTouchStart);
+            });
+
+            $("#fullScreen").unbind("click");
+            $("#fullScreen").bind("click",function(){
+                XML_D.Event.fullscreen();
             });
         }
         //加载threejs
@@ -698,16 +747,6 @@ $(function(){
                 window.location.reload();//刷新当前页面.
             }
         },1000);
-
-        $("#fullScreen").unbind("click");
-        $("#fullScreen").bind("click",function(){
-            XML_D.Event.fullscreen();
-        });
-
-        $("#fullScreen").unbind("touchstart");
-        $("#fullScreen").bind("touchstart",function(){
-            XML_D.Event.fullscreen();
-        });
 
         XML_D.GUI.isPlay();
 
