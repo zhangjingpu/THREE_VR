@@ -228,6 +228,9 @@ XML_D.Event = {
 
         XML_D.Three.onPointerDownLon = XML_D.Three.lon;
         XML_D.Three.onPointerDownLat = XML_D.Three.lat;
+
+        //查找sprite
+        XML_D.SwitchPanorama.findSprite(event);
     },
 
     onDocumentMouseMove : function ( event ) {
@@ -458,6 +461,72 @@ XML_D.QrCode = function(){
     });
 };
 
+/**射线查找**/
+XML_D.Raycaster = {
+    /**给定坐标，得到射线与物体的焦点
+     * event ： 事件反回值值
+     * recursive ：是否遍历子节点 **/
+    getRaycaster : function(event,recursive){
+        /**获得鼠标的位置*/
+        var mouse = new THREE.Vector2();
+        mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
+        mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
+
+        var raycaster = new THREE.Raycaster();
+        raycaster.setFromCamera( mouse, XML_D.Three.camera );
+        return raycaster.intersectObjects( XML_D.Three.scene.children,recursive);
+    }
+};
+
+XML_D.SwitchPanorama = {
+    addSprite : function(){
+        var loader = new THREE.TextureLoader();
+        var map = loader.load("img/front.png");
+        var material = new THREE.SpriteMaterial( { map: map, color: 0xffffff, fog: false ,opacity : 0.5} );
+        var sprite = new THREE.Sprite( material );
+        sprite.scale.set(2,2,2);
+        sprite.position.set(-15,-6,-20);
+        XML_D.Three.scene.add( sprite );
+
+
+        map = loader.load("img/right.png");
+        material = new THREE.SpriteMaterial( { map: map, color: 0xffffff, fog: false ,opacity : 0.5} );
+        sprite = new THREE.Sprite( material );
+        sprite.scale.set(2,2,2);
+        sprite.rotateZ(Math.PI/4);
+        sprite.position.set(27,-6,-23);
+        XML_D.Three.scene.add( sprite );
+
+        map = new THREE.TextureLoader().load( "img/right.png" );
+        material = new THREE.SpriteMaterial( { map: map, color: 0xffffff, fog: false ,opacity : 0.5} );
+        sprite = new THREE.Sprite( material );
+        sprite.scale.set(5,5,5);
+        sprite.rotateZ(Math.PI/4);
+        sprite.position.set(5,-27,-70);
+        sprite.lookAt(new THREE.Vector3(-100,-100,-100));
+        XML_D.Three.scene.add( sprite );
+    },
+
+    /**查找精灵
+     * event : 事件 **/
+    findSprite : function(event){
+        var intersects = XML_D.Raycaster.getRaycaster(event,false);
+        if(intersects.length > 0 && intersects[0].object.constructor == THREE.Sprite){
+            var loader = new THREE.TextureLoader();
+            var texture = loader.load("img/VR/2294472375_24a3b8ef46_o.jpg", function () {
+                XML_D.Three.renderScene();
+            });
+            var material = new THREE.MeshBasicMaterial( {
+                map: texture
+            });
+
+            console.log( intersects[1].object.material.map);
+            //intersects[1].object.material.map = texture;
+            XML_D.Three.mesh.material.map = texture;
+        }
+    }
+};
+
 //threejs的相关操作
 XML_D.Three = {
     renderer : {},
@@ -544,13 +613,15 @@ XML_D.Three = {
         }
         camera.target = new THREE.Vector3( 0, 0, 0 );
         this.camera = camera;
+
     },
     scene : {},
     initScene : function () {
         var scene = new THREE.Scene();
 
-        ////辅助原点箭头
+        //辅助原点箭头
         //var axes = new THREE.AxisHelper(2000);
+        //axes.position.set(-250,-250,-250);
         //scene.add(axes);
 
         //scene.fog = new THREE.Fog( 0xffffff, 500, 10000 );
@@ -558,15 +629,15 @@ XML_D.Three = {
         this.scene = scene;
     },
 
+    mesh : {},
     initObject:   function () {
         var geometry = new THREE.SphereGeometry( 500, 60, 40 );
         geometry.scale( - 1, 1, 1 );
-
         var material = new THREE.MeshBasicMaterial( {
             map: new THREE.TextureLoader().load( XML_D.init.initURL.url )
         });
-
         var mesh = new THREE.Mesh( geometry, material );
+        this.mesh = mesh;
         this.scene.add( mesh );
     },
 
@@ -735,6 +806,8 @@ $(function(){
         }
         //加载threejs
         XML_D.Three.threeStart();
+        //添加精灵
+        XML_D.SwitchPanorama.addSprite();
 
         var width = XML_D.Three.container.children[0].width;
         window.setInterval(function(){
