@@ -448,7 +448,7 @@ XML_D.QrCode = function(){
     /**设置二维码**/
 
     //生成的二维码宽高要相等
-    var side = 100;
+    var side = 120;
     $('#qr').qrcode({
         width :side,
         height : side,
