@@ -740,18 +740,24 @@ XML_D.URL = {
     /**转换参数的到的xml文件访问路径**/
     transform_XML_URL : function(){
         var id = this.GetQueryString("id");
+        var name = this.GetQueryString("name");
 
         console.log(id);
+        console.log(name);
 
         if(id){
             XML_D.init.initURL.url = "http://www.tuotuohome.com/CloudProduct/source/jpg/" + id;
+        }
+
+        if(name){
+            $("title").html(name);
         }
     },
     /**获取地址栏中对应的参数
      * name ： 参数名称**/
     GetQueryString : function(name){
         var reg = new RegExp("(^|&)"+ name +"=([^&]*)(&|$)");
-        var r = window.location.search.substr(1).match(reg);
+        var r = decodeURIComponent(window.location.search).substr(1).match(reg);
         if(r != null){
             return  unescape(r[2]);
         }else{
