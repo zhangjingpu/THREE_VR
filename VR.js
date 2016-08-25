@@ -211,8 +211,8 @@ XML_D.Event = {
     onDocumentMouseDown : function ( event ) {
         event.preventDefault();
 
+        //控制退出vr视图的观看
         if(XML_D.initDate.event_tag) {
-
             $(".exit").show();
             var w = $(window).width() / 2 - $(".exit").width() / 2;
             $(".exit").css({'left': w});
@@ -223,14 +223,15 @@ XML_D.Event = {
 
         XML_D.Three.isUserInteracting = true;
 
+        //记录鼠标按下时鼠标的位置
         XML_D.Three.onPointerDownPointerX = event.clientX;
         XML_D.Three.onPointerDownPointerY = event.clientY;
 
         XML_D.Three.onPointerDownLon = XML_D.Three.lon;
         XML_D.Three.onPointerDownLat = XML_D.Three.lat;
 
-        //查找sprite
-        XML_D.SwitchPanorama.findSprite(event);
+        ////查找sprite
+        //XML_D.SwitchPanorama.findSprite(event);
     },
 
     onDocumentMouseMove : function ( event ) {
@@ -240,10 +241,11 @@ XML_D.Event = {
 
             XML_D.Three.lon = ( XML_D.Three.onPointerDownPointerX - event.clientX ) * 0.1 + XML_D.Three.onPointerDownLon;
             XML_D.Three.lat = ( event.clientY - XML_D.Three.onPointerDownPointerY ) * 0.1 + XML_D.Three.onPointerDownLat;
+            console.log(XML_D.Three.lon)
 
             //动画加速
             if(XML_D.initDate.speed < 0.5){
-                XML_D.initDate.speed += 0.02;
+                XML_D.initDate.speed += 0.01;
             }
 
             //如果没有自动播放，重行渲染一次
@@ -253,6 +255,7 @@ XML_D.Event = {
         }
     },
 
+    /**设置旋转的方向**/
     setHoverDir :function(event){
         if(XML_D.Three.onPointerDownPointerX - event.clientX > 0){
             XML_D.initDate.hoverDir = true;
@@ -465,14 +468,16 @@ XML_D.QrCode = function(){
 XML_D.Raycaster = {
     /**给定坐标，得到射线与物体的焦点
      * event ： 事件反回值值
-     * recursive ：是否遍历子节点 **/
-    getRaycaster : function(event,recursive){
+     * recursive ：是否遍历子节点
+     * visible : 是否检出影藏的物体**/
+    getRaycaster : function(event,recursive,visible){
         /**获得鼠标的位置*/
         var mouse = new THREE.Vector2();
         mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
         mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
 
-        var raycaster = new THREE.Raycaster();
+        var raycaster = new THREE.MyRaycaster();
+        raycaster.visible = visible;
         raycaster.setFromCamera( mouse, XML_D.Three.camera );
         return raycaster.intersectObjects( XML_D.Three.scene.children,recursive);
     }
@@ -480,6 +485,32 @@ XML_D.Raycaster = {
 
 XML_D.SwitchPanorama = {
     addSprite : function(){
+        //var loader = new THREE.TextureLoader();
+        //var map = loader.load("img/front.png");
+        //var material = new THREE.SpriteMaterial( { map: map, color: 0xffffff, fog: false ,opacity : 0.5} );
+        //var sprite = new THREE.Sprite( material );
+        //sprite.scale.set(2,2,2);
+        //sprite.position.set(-15,-6,-20);
+        //XML_D.Three.scene.add( sprite );
+        //
+        //
+        //map = loader.load("img/right.png");
+        //material = new THREE.SpriteMaterial( { map: map, color: 0xffffff, fog: false ,opacity : 0.5} );
+        //sprite = new THREE.Sprite( material );
+        //sprite.scale.set(2,2,2);
+        //sprite.rotateZ(Math.PI/4);
+        //sprite.position.set(27,-6,-23);
+        //XML_D.Three.scene.add( sprite );
+        //
+        //map = new THREE.TextureLoader().load( "img/right.png" );
+        //material = new THREE.SpriteMaterial( { map: map, color: 0xffffff, fog: false ,opacity : 0.5} );
+        //sprite = new THREE.Sprite( material );
+        //sprite.scale.set(5,5,5);
+        //sprite.rotateZ(Math.PI/4);
+        //sprite.position.set(5,-27,-70);
+        //sprite.lookAt(new THREE.Vector3(-100,-100,-100));
+        //XML_D.Three.scene.add( sprite );
+
         var loader = new THREE.TextureLoader();
         var map = loader.load("img/front.png");
         var material = new THREE.SpriteMaterial( { map: map, color: 0xffffff, fog: false ,opacity : 0.5} );
@@ -488,42 +519,27 @@ XML_D.SwitchPanorama = {
         sprite.position.set(-15,-6,-20);
         XML_D.Three.scene.add( sprite );
 
-
-        map = loader.load("img/right.png");
-        material = new THREE.SpriteMaterial( { map: map, color: 0xffffff, fog: false ,opacity : 0.5} );
-        sprite = new THREE.Sprite( material );
-        sprite.scale.set(2,2,2);
-        sprite.rotateZ(Math.PI/4);
-        sprite.position.set(27,-6,-23);
-        XML_D.Three.scene.add( sprite );
-
-        map = new THREE.TextureLoader().load( "img/right.png" );
-        material = new THREE.SpriteMaterial( { map: map, color: 0xffffff, fog: false ,opacity : 0.5} );
-        sprite = new THREE.Sprite( material );
-        sprite.scale.set(5,5,5);
-        sprite.rotateZ(Math.PI/4);
-        sprite.position.set(5,-27,-70);
-        sprite.lookAt(new THREE.Vector3(-100,-100,-100));
-        XML_D.Three.scene.add( sprite );
     },
 
     /**查找精灵
      * event : 事件 **/
     findSprite : function(event){
-        var intersects = XML_D.Raycaster.getRaycaster(event,false);
-        if(intersects.length > 0 && intersects[0].object.constructor == THREE.Sprite){
-            var loader = new THREE.TextureLoader();
-            var texture = loader.load("img/VR/2294472375_24a3b8ef46_o.jpg", function () {
-                XML_D.Three.renderScene();
-            });
-            var material = new THREE.MeshBasicMaterial( {
-                map: texture
-            });
-
-            console.log( intersects[1].object.material.map);
-            //intersects[1].object.material.map = texture;
-            XML_D.Three.mesh.material.map = texture;
-        }
+        var intersects = XML_D.Raycaster.getRaycaster(event,false,true);
+        console.log(intersects);
+        console.log(event);
+        //if(intersects.length > 0 && intersects[0].object.constructor == THREE.Sprite){
+        //    var loader = new THREE.TextureLoader();
+        //    var texture = loader.load("img/VR/2294472375_24a3b8ef46_o.jpg", function () {
+        //        XML_D.Three.renderScene();
+        //    });
+        //    var material = new THREE.MeshBasicMaterial( {
+        //        map: texture
+        //    });
+        //
+        //    console.log( intersects[1].object.material.map);
+        //    //intersects[1].object.material.map = texture;
+        //    XML_D.Three.mesh.material.map = texture;
+        //}
     }
 };
 
@@ -532,9 +548,13 @@ XML_D.Three = {
     renderer : {},
     container : {},
 
+    //标记鼠标移动时，是否进行操作
     isUserInteracting : false,
+
+    //记录鼠标按下时鼠标的位置
     onMouseDownMouseX : 0,
     onMouseDownMouseY : 0,
+
     onMouseDownLon : 0,
     onMouseDownLat : 0,
     lon : 0,
@@ -639,6 +659,17 @@ XML_D.Three = {
         var mesh = new THREE.Mesh( geometry, material );
         this.mesh = mesh;
         this.scene.add( mesh );
+
+        var geometry_1 = new THREE.SphereGeometry( 400, 60, 40 );
+        geometry_1.scale( - 1, 1, 1 );
+        var material1 = new THREE.MeshBasicMaterial( {
+            color: 0xffffff,
+            opacity: 0,
+            transparent: true,
+        });
+        var mesh1 = new THREE.Mesh( geometry_1, material1 );
+        mesh1.visible = false;
+        this.scene.add( mesh1 );
     },
 
     /* 实现多次动态加载 */
@@ -663,7 +694,7 @@ XML_D.Three = {
 
                 //动画减速
                 if(XML_D.initDate.speed > 0.05){
-                    XML_D.initDate.speed -= 0.001;
+                    XML_D.initDate.speed -= 0.005;
                 }
             }
 
@@ -812,8 +843,8 @@ $(function(){
         }
         //加载threejs
         XML_D.Three.threeStart();
-        //添加精灵
-        XML_D.SwitchPanorama.addSprite();
+        ////添加精灵
+        //XML_D.SwitchPanorama.addSprite();
 
         var width = XML_D.Three.container.children[0].width;
         window.setInterval(function(){
