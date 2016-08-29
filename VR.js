@@ -230,7 +230,7 @@ XML_D.Event = {
         XML_D.Three.onPointerDownLon = XML_D.Three.lon;
         XML_D.Three.onPointerDownLat = XML_D.Three.lat;
 
-        ////查找sprite
+        //查找sprite
         //XML_D.SwitchPanorama.findSprite(event);
     },
 
@@ -485,38 +485,14 @@ XML_D.Raycaster = {
 
 XML_D.SwitchPanorama = {
     addSprite : function(){
-        //var loader = new THREE.TextureLoader();
-        //var map = loader.load("img/front.png");
-        //var material = new THREE.SpriteMaterial( { map: map, color: 0xffffff, fog: false ,opacity : 0.5} );
-        //var sprite = new THREE.Sprite( material );
-        //sprite.scale.set(2,2,2);
-        //sprite.position.set(-15,-6,-20);
-        //XML_D.Three.scene.add( sprite );
-        //
-        //
-        //map = loader.load("img/right.png");
-        //material = new THREE.SpriteMaterial( { map: map, color: 0xffffff, fog: false ,opacity : 0.5} );
-        //sprite = new THREE.Sprite( material );
-        //sprite.scale.set(2,2,2);
-        //sprite.rotateZ(Math.PI/4);
-        //sprite.position.set(27,-6,-23);
-        //XML_D.Three.scene.add( sprite );
-        //
-        //map = new THREE.TextureLoader().load( "img/right.png" );
-        //material = new THREE.SpriteMaterial( { map: map, color: 0xffffff, fog: false ,opacity : 0.5} );
-        //sprite = new THREE.Sprite( material );
-        //sprite.scale.set(5,5,5);
-        //sprite.rotateZ(Math.PI/4);
-        //sprite.position.set(5,-27,-70);
-        //sprite.lookAt(new THREE.Vector3(-100,-100,-100));
-        //XML_D.Three.scene.add( sprite );
 
         var loader = new THREE.TextureLoader();
         var map = loader.load("img/front.png");
         var material = new THREE.SpriteMaterial( { map: map, color: 0xffffff, fog: false ,opacity : 0.5} );
         var sprite = new THREE.Sprite( material );
-        sprite.scale.set(2,2,2);
-        sprite.position.set(-15,-6,-20);
+        sprite.scale.set(10,10,10);
+        //sprite.position.set(-15,-6,-20);
+        sprite.position.set(-208.26909733320136,-10.95262701925466,-340.5277395366886);
         XML_D.Three.scene.add( sprite );
 
     },
@@ -525,21 +501,19 @@ XML_D.SwitchPanorama = {
      * event : 事件 **/
     findSprite : function(event){
         var intersects = XML_D.Raycaster.getRaycaster(event,false,true);
-        console.log(intersects);
-        console.log(event);
-        //if(intersects.length > 0 && intersects[0].object.constructor == THREE.Sprite){
-        //    var loader = new THREE.TextureLoader();
-        //    var texture = loader.load("img/VR/2294472375_24a3b8ef46_o.jpg", function () {
-        //        XML_D.Three.renderScene();
-        //    });
-        //    var material = new THREE.MeshBasicMaterial( {
-        //        map: texture
-        //    });
-        //
-        //    console.log( intersects[1].object.material.map);
-        //    //intersects[1].object.material.map = texture;
-        //    XML_D.Three.mesh.material.map = texture;
-        //}
+        if(intersects.length > 0 && intersects[0].object.constructor == THREE.Sprite){
+            var loader = new THREE.TextureLoader();
+            var texture = loader.load("img/VR/2294472375_24a3b8ef46_o.jpg", function () {
+                XML_D.Three.renderScene();
+            });
+            var material = new THREE.MeshBasicMaterial( {
+                map: texture
+            });
+
+            console.log( intersects[1].object.material.map);
+            //intersects[1].object.material.map = texture;
+            XML_D.Three.mesh.material.map = texture;
+        }
     }
 };
 
@@ -659,17 +633,6 @@ XML_D.Three = {
         var mesh = new THREE.Mesh( geometry, material );
         this.mesh = mesh;
         this.scene.add( mesh );
-
-        var geometry_1 = new THREE.SphereGeometry( 400, 60, 40 );
-        geometry_1.scale( - 1, 1, 1 );
-        var material1 = new THREE.MeshBasicMaterial( {
-            color: 0xffffff,
-            opacity: 0,
-            transparent: true,
-        });
-        var mesh1 = new THREE.Mesh( geometry_1, material1 );
-        mesh1.visible = false;
-        this.scene.add( mesh1 );
     },
 
     /* 实现多次动态加载 */
@@ -843,8 +806,8 @@ $(function(){
         }
         //加载threejs
         XML_D.Three.threeStart();
-        ////添加精灵
-        //XML_D.SwitchPanorama.addSprite();
+        //添加精灵
+        XML_D.SwitchPanorama.addSprite();
 
         var width = XML_D.Three.container.children[0].width;
         window.setInterval(function(){
