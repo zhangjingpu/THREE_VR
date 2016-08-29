@@ -861,6 +861,7 @@ $(function(){
         XML_D.GUI.isPlay();
 
     }else{
+        XML_D.QrCode();
         Detector.addGetWebGLMessage("123");
         throw "你的浏览器不支持webGL，建议使用谷歌浏览器！";
     }
