@@ -20,123 +20,6 @@ var XML_D = {
 
 //A B C D E F G H I J K L M N O P Q R S T U V W X Y Z
 
-/**遮盖层
- * 使用：
- * 1. 写HTML文件
- * 2. 写css文件
- * 3. 写js文件**/
-XML_D.Cover = function(){
-
-    /*****创建遮罩层*************/
-    //<!-- 遮罩层DIV -->
-    //<div id="overlay" class="hidden"></div>
-    //    <!-- Loading提示 DIV -->
-    //<div id="loadingTip">
-    //    <img src="images/loading.gif" />
-    //    </div>
-    var cover = document.createElement( 'div' );
-    document.body.appendChild( cover );
-    cover.id = "overlay";
-    $(cover).append("<div id='loadingTip'><img src='img/cover.png' /></div>");
-    /*****创建遮罩层*************/
-
-    var total_num = 0;
-    var load_succss = 0;
-    var load_error = 0;
-
-    THREE.DefaultLoadingManager.onProgress = function ( item, loaded, total ) {
-        //console.log( item, loaded, total );
-        total_num = total;
-        load_succss = loaded;
-
-        if(total_num <= (load_succss + load_error)){
-            hideLoading();
-        }else{
-            showLoading();
-        }
-    };
-
-    THREE.DefaultLoadingManager.onError = function ( item) {
-        console.warn( item + "没有找到");
-        load_error++;
-        if(total_num <= (load_succss + load_error)){
-            hideLoading();
-        }else{
-            showLoading();
-        }
-        //console.log("total_num"+total_num)
-        //console.log("load_succss"+load_succss)
-        //console.log("load_error"+load_error)
-
-    };
-
-    showLoading();
-    $(document).ajaxStart(function(){
-        console.log("所有 AJAX 请求已开始");
-    });
-    $(document).ajaxStop(function(){
-        console.log("所有 AJAX 请求已完成");
-    });
-
-    // 浏览器兼容 取得浏览器可视区高度
-    function getWindowInnerHeight() {
-        var winHeight = window.innerHeight
-            || (document.documentElement && document.documentElement.clientHeight)
-            || (document.body && document.body.clientHeight);
-        return winHeight;
-    }
-    // 浏览器兼容 取得浏览器可视区宽度
-    function getWindowInnerWidth() {
-        var winWidth = window.innerWidth
-            || (document.documentElement && document.documentElement.clientWidth)
-            || (document.body && document.body.clientWidth);
-        return winWidth;
-    }
-
-    /**显示遮罩层*/
-    function showOverlay() {
-        // 遮罩层宽高分别为页面内容的宽高
-        $("#overlay").width(getWindowInnerWidth());
-        $("#overlay").height(getWindowInnerHeight());
-        $("#overlay").css({
-            position: "fixed",
-            "display":"block",
-            backgroundColor: "white",
-            zIndex : 5
-        });
-    }
-
-    /**显示Loading提示*/
-    function showLoading() {
-        // 先显示遮罩层
-        showOverlay();
-
-        // Loading提示窗口居中
-        $("#loadingTip").css({
-            position: "fixed",
-            width: "200px",
-            height: "200px",
-            top: "50%",
-            left: "50%",
-            margin: "-100px 0 0 -100px",
-        });
-
-        $("#loadingTip img").css({
-            width: "100%",
-            height: "100%",
-        });
-        $("#loadingTip").show();
-        $(document).scroll(function() {
-            return false;
-        });
-    }
-
-    function hideLoading(){
-        $("#loadingTip").hide();
-        $("#overlay").hide();
-    }
-};
-
 //事件的函数
 XML_D.Event = {
     onWindowResize : function(){
@@ -253,6 +136,19 @@ XML_D.Event = {
         XML_D.Three.camera.updateProjectionMatrix();
         XML_D.Three.renderScene();
     },
+
+    disposeEvent:function(){
+        /**添加鼠标事件**/
+        document.removeEventListener( 'mousedown', XML_D.Event.onDocumentMouseDown, false );
+        document.removeEventListener( 'mousemove', XML_D.Event.onDocumentMouseMove, false );
+        document.removeEventListener( 'mouseup', XML_D.Event.onDocumentMouseUp, false );
+
+        document.removeEventListener( 'mousewheel', XML_D.Event.onDocumentMouseWheel, false );
+        document.removeEventListener( 'MozMousePixelScroll', XML_D.Event.onDocumentMouseWheel, false);
+
+        //当用户重置窗口大小时添加事件监听
+        window.removeEventListener( 'resize', XML_D.Event.onWindowResize, false );
+    }
 };
 
 /**射线查找**/
@@ -278,17 +174,19 @@ XML_D.Raycaster = {
      * recursive ：是否遍历子节点
      * visible : 是否检出影藏的物体**/
     getRaycaster_1 : function(event,recursive,visible){
-        /**获得鼠标的位置*/
-        var mouse = new THREE.Vector2();
-        var offLeft = XML_D.Three.container.getElementsByTagName("canvas")[0].offsetLeft;
-        var offTop = XML_D.Three.container.getElementsByTagName("canvas")[0].offsetTop;
-        mouse.x = ( (event.clientX - offLeft) / (window.innerWidth * 0.8)) * 2 - 1;
-        mouse.y = - ( (event.clientY - offTop) / (window.innerHeight * 0.8) ) * 2 + 1;
+        if($("canvas").length>0){
+            /**获得鼠标的位置*/
+            var mouse = new THREE.Vector2();
+            var offLeft = XML_D.Three.container.getElementsByTagName("canvas")[0].offsetLeft;
+            var offTop = XML_D.Three.container.getElementsByTagName("canvas")[0].offsetTop;
+            mouse.x = ( (event.clientX - offLeft) / (window.innerWidth * 0.8)) * 2 - 1;
+            mouse.y = - ( (event.clientY - offTop) / (window.innerHeight * 0.8) ) * 2 + 1;
 
-        var raycaster = new THREE.MyRaycaster();
-        raycaster.visible = visible;
-        raycaster.setFromCamera( mouse, XML_D.Three.camera );
-        return raycaster.intersectObjects( XML_D.Three.scene.children,recursive);
+            var raycaster = new THREE.MyRaycaster();
+            raycaster.visible = visible;
+            raycaster.setFromCamera( mouse, XML_D.Three.camera );
+            return raycaster.intersectObjects( XML_D.Three.scene.children,recursive);
+        }
     }
 };
 
@@ -474,8 +372,6 @@ $(function(){
         $("#modal-overlay").css("visibility","visible");
 
         if(Detector.webgl) {
-            //设置遮盖层
-            XML_D.Cover();
 
             //加载threejs
             XML_D.Three.threeStart();
@@ -487,7 +383,17 @@ $(function(){
 
     $(".modal-data").find("a").unbind("click");
     $(".modal-data").find("a").bind("click",function(){
-        console.log(XML_D.data.position);
+        //把添加的事件删除
+        XML_D.Event.disposeEvent();
+        //删除canvas标签
+        $("#container").find("canvas").remove();
+        //隐藏model
+        var e1 = document.getElementById('modal-overlay');
+        e1.style.visibility =  (e1.style.visibility == "visible"  ) ? "hidden" : "visible";
+
+        $(".x").val(XML_D.data.position.x)
+        $(".y").val(XML_D.data.position.y)
+        $(".z").val(XML_D.data.position.z)
     });
 
 });
