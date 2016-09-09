@@ -8164,17 +8164,11 @@ THREE.Layers.prototype = {
 		object.raycast( raycaster, intersects );
 
 		if ( recursive === true ) {
-
 			var children = object.children;
-
 			for ( var i = 0, l = children.length; i < l; i ++ ) {
-
 				intersectObject( children[ i ], raycaster, intersects, true );
-
 			}
-
 		}
-
 	}
 
 	//

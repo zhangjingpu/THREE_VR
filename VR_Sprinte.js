@@ -7,7 +7,7 @@ var XML_D = {
         /**初始化路径*/
         initURL: {
             //http://www.tuotuohome.com/vr/vr.html
-            url: "img/VR/1236.jpg",
+            url: "img/VR/20160728190439.jpg",
         }
     },
     data :{

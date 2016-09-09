@@ -8,7 +8,56 @@ var XML_D = {
         initURL: {
             //http://www.tuotuohome.com/vr/vr.html
             url: "img/VR/1236.jpg",
-        }
+        },
+        sceneData:[
+            {
+                node : 1,
+                url : "img/VR/1236.jpg",
+                Sprite : [
+                    {
+                        type : 1,
+                        position : {
+                            x : -228.9029476858641,
+                            y : -8.106279697751026,
+                            z : -327.2611354941035
+                        },
+                        nextNode : 2
+                    },
+                    {
+                        type : 1,
+                        position : {
+                            x : 313.7179951985635,
+                            y : -51.90707352597928,
+                            z : -241.51446181080783
+                        },
+                        nextNode : 3
+                    }
+                ]
+            },
+            {
+                node : 2,
+                url : "img/VR/20160728190439.jpg",
+                Sprite : [
+                    {
+                        type : 1,
+                        position : {
+                        x : 347.05610015126706,
+                        y : -16.49687447192115,
+                        z : 197.3065137311522
+                    },
+                        nextNode : 1
+                    },
+                    {
+                        type : 2,
+                        position : {
+                            x : -152.45997812978527,
+                            y : 96.80322111104248,
+                            z : -356.49152979020215
+                        }
+                    }
+                ]
+            }
+        ]
     },
     initDate : {
         event_tag : false,
@@ -231,7 +280,7 @@ XML_D.Event = {
         XML_D.Three.onPointerDownLat = XML_D.Three.lat;
 
         //查找sprite
-        //XML_D.SwitchPanorama.findSprite(event);
+        XML_D.SwitchPanorama.findSprite(event);
     },
 
     onDocumentMouseMove : function ( event ) {
@@ -241,7 +290,6 @@ XML_D.Event = {
 
             XML_D.Three.lon = ( XML_D.Three.onPointerDownPointerX - event.clientX ) * 0.1 + XML_D.Three.onPointerDownLon;
             XML_D.Three.lat = ( event.clientY - XML_D.Three.onPointerDownPointerY ) * 0.1 + XML_D.Three.onPointerDownLat;
-            console.log(XML_D.Three.lon)
 
             //动画加速
             if(XML_D.initDate.speed < 0.5){
@@ -484,16 +532,22 @@ XML_D.Raycaster = {
 };
 
 XML_D.SwitchPanorama = {
-    addSprite : function(){
-
+    addSprite : function(Sprites){
         var loader = new THREE.TextureLoader();
-        var map = loader.load("img/front.png");
-        var material = new THREE.SpriteMaterial( { map: map, color: 0xffffff, fog: false ,opacity : 0.5} );
-        var sprite = new THREE.Sprite( material );
-        sprite.scale.set(10,10,10);
-        //sprite.position.set(-15,-6,-20);
-        sprite.position.set(-208.26909733320136,-10.95262701925466,-340.5277395366886);
-        XML_D.Three.scene.add( sprite );
+        for(var i = 0;i < Sprites.length;i++){
+            var map = loader.load("img/front.png");
+            var Sprite_material = new THREE.SpriteMaterial( {map: map, color: 0xffffff, fog: false , opacity : 0.5});
+            var sprite = new THREE.Sprite( Sprite_material );
+
+            //设置当前热点的目标
+            sprite.nextNode = Sprites[i].nextNode;
+            //设置当前热点的类型
+            sprite.type = Sprites[i].type;
+
+            sprite.scale.set(20,20,20);
+            sprite.position.copy(Sprites[i].position);
+            XML_D.Three.scene.add( sprite );
+        }
 
     },
 
@@ -502,17 +556,36 @@ XML_D.SwitchPanorama = {
     findSprite : function(event){
         var intersects = XML_D.Raycaster.getRaycaster(event,false,true);
         if(intersects.length > 0 && intersects[0].object.constructor == THREE.Sprite){
-            var loader = new THREE.TextureLoader();
-            var texture = loader.load("img/VR/2294472375_24a3b8ef46_o.jpg", function () {
-                XML_D.Three.renderScene();
-            });
-            var material = new THREE.MeshBasicMaterial( {
-                map: texture
-            });
+            var scenes = XML_D.init.sceneData;
+            //下一个全景图的id
+            var nextNode = intersects[0].object.nextNode;
+            var type = intersects[0].object.type;
+            console.log(type);
+            if(type == 1){
+                for(var i in scenes){
+                    if(scenes[i].node == nextNode){
+                        var loader = new THREE.TextureLoader();
+                        var texture = loader.load(scenes[i].url, function () {
+                            XML_D.Three.renderScene();
+                        });
+                        XML_D.Three.mesh.material.map = texture;
 
-            console.log( intersects[1].object.material.map);
-            //intersects[1].object.material.map = texture;
-            XML_D.Three.mesh.material.map = texture;
+                        /******删除场景中所有的热点*****/
+                        for(var j = 0; j <  XML_D.Three.scene.children.length; j++){
+                            if(XML_D.Three.scene.children[j].constructor == THREE.Sprite){
+                                XML_D.Three.scene.remove(XML_D.Three.scene.children[j]);
+                                j-- ;
+                            }
+                        }
+
+                        /******************添加热点******************/
+                        this.addSprite(scenes[i].Sprite);
+                    }
+                }
+            }else{
+                window.open("http://www.itthome.com/3DCloudDesign/3DF/furniture.html?id=K0-00001&type=1");
+            }
+
         }
     }
 };
@@ -628,11 +701,17 @@ XML_D.Three = {
         var geometry = new THREE.SphereGeometry( 500, 60, 40 );
         geometry.scale( - 1, 1, 1 );
         var material = new THREE.MeshBasicMaterial( {
-            map: new THREE.TextureLoader().load( XML_D.init.initURL.url )
+            map: new THREE.TextureLoader().load( XML_D.init.sceneData[0].url )
         });
         var mesh = new THREE.Mesh( geometry, material );
         this.mesh = mesh;
         this.scene.add( mesh );
+
+        /***************添加热点*************************/
+        //获得存放热点的数组
+        var Sprites = XML_D.init.sceneData[0].Sprite;
+        XML_D.SwitchPanorama.addSprite(Sprites);
+        /***************添加热点*************************/
     },
 
     /* 实现多次动态加载 */
@@ -807,8 +886,6 @@ $(function(){
         }
         //加载threejs
         XML_D.Three.threeStart();
-        //添加精灵
-        XML_D.SwitchPanorama.addSprite();
 
         var width = XML_D.Three.container.children[0].width;
         window.setInterval(function(){
