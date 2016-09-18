@@ -5,16 +5,17 @@
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
 
-		<!--Jquery以及Jquery插件-->
+		<!--Jquery以及Jquery插件
+			qrcode : 二维码插件-->
 		<script type="text/javascript" src="js/JQuery/jquery-1.7.min.js"></script>
-		<!--qrcode二维码插件-->
-		<script type="text/javascript" src="js/JQuery/jquery.qrcode.min.js"></script>
+		<script type="text/javascript" src="js/JQuery/utf.js"></script>
+		<script type="text/javascript" src="js/JQuery/jquery.qrcode.js"></script>
 
-		<!--导入three.js-->
+		<!--导入three.js
+			Detector : 判定是否浏览器是否支持WebGl
+			MyRaycaster ：射线-->
 		<script style="text/javascript" src="js/three/three.js"></script>
-		<!-- 判定是否浏览器是否支持WebGl -->
 		<script type="text/javascript" src="js/Detector.js"></script>
-
 		<script type="text/javascript" src="js/MyRaycaster.js"></script>
 
 		<!-- 分屏 -->
@@ -35,30 +36,6 @@
 				color: #ffffff;
 			}
 
-			.divide{
-				position: absolute;
-				right: 10px;
-				background-color: white;
-				border-radius: 50%;
-				top: 50px;
-				padding: 5px;
-				filter:alpha(opacity=50);
-				-moz-opacity:0.5;
-				opacity:0.5;
-			}
-
-			.fullScreen{
-				position: absolute;
-				right: 10px;
-				background-color: white;
-				border-radius: 50%;
-				top: 10px;
-				padding: 5px;
-				filter:alpha(opacity=50);
-				-moz-opacity:0.5;
-				opacity:0.5;
-			}
-
 			.exit{
 				position: absolute;
 				border-radius: 15%;
@@ -72,36 +49,118 @@
 				display: none;
 			}
 
-			#isplay{
+			.Small_box svg{
+				width: 130px;
+				height:130px;
+				position: absolute; left: -1px; top: -1px;
+			}
+			.Small_box svg path{
+				stroke:"rgb(255,255,255)";
+				stroke-width:"0";
+				stroke-opacity:"0.3";
+				fill:"rgb(127,183,228)";
+				pointer-events: visiblePainted; cursor: pointer; transform: scale(1, 1);
+			}
+
+			/*********************** 菜单栏开始 ******************************/
+			.menu{
 				position: absolute;
 				right: 10px;
-				background-color: white;
-				border-radius: 50%;
-				top: 90px;
-				padding: 5px;
-				filter:alpha(opacity=50);
-				-moz-opacity:0.5;
-				opacity:0.5;
+				bottom: 147px;
 			}
-		</style>
+			.menuitem{
+				padding: 6px;
+			}
+			/*********************** 菜单栏开始 ******************************/
 
+			/*********************** 导航图开始 ******************************/
+			.navigation_map{
+				position: absolute;
+				width: 308px;
+				height: 408px;
+				box-shadow: rgba(0, 0, 0, 0.498039) 5px 5px 5px 0px;
+				border: 1px solid rgb(255, 255, 255);
+				border-radius: 5px;
+				background-color: rgba(230, 230, 230, 0.8);
+				right: 1px;
+			}
+			.map{
+				width: 300px;
+				height: 400px;
+				position: absolute;
+				background-image: url("img/min.png");
+				background-size: 300px 400px;
+				transform: translate(4px, 4px) rotate(0deg);
+				cursor: pointer;
+				overflow: hidden;
+			}
+			.map_icon{
+				position: absolute;
+				cursor: pointer;
+				width: 38px;
+				height: 38px;
+				transform: translate(-38px, 0px);
+				background-image: url("img/ui.png");
+				background-position: -17px -34px;
+			}
+			.navigation_map .map .map_Sprite{
+				position: absolute;
+				width: 30px;
+				height: 38px;
+				background-image: url("img/hs.png");
+				background-size: 74px 40px;
+				background-position: 0px 0px;
+				cursor: default;
+			}
+			/*********************** 导航图结束 ******************************/
+		</style>
 	</head>
 	<body>
-
 		<div id="container"></div>
 
-		<div class='divide'>
-			<img src='img/VR/camera.png'>
+		<div class="menu">
+			<div class='divide menuitem'>
+				<img src='img/menu/camera.png'>
+			</div>
+			<div id="fullScreen" class='fullScreen menuitem'>
+				<img src='img/menu/fullScreen.png'>
+			</div>
+			<div id="isplay" class="menuitem">
+				<img src='img/menu/play.png'>
+			</div>
 		</div>
 
-		<div id="fullScreen" class='fullScreen'>
-			<img src='img/VR/fullScreen.png'>
-		</div>
+		<div class="exit">退出VR模式</div>
 
-		<div id="isplay">
-			<img src='img/play.png'>
-		</div>
+	
+		<!--&lt;!&ndash;缩略图&ndash;&gt;-->
+		<!--<div class="Small">-->
+			<!--<img src="img/hs.png">-->
+		<!--</div>-->
+		<!--<div class="Small_Par">-->
+			<!--<div class="Small">-->
+				<!--<div class="Small_box">-->
+					<!--<svg>-->
+						<!--&lt;!&ndash;<path  fill-opacity="0.5" d="M 64.5,64.5 L 103.48690649322049,13.74548175690284 A 64,64 0 0 1 128.18806533386496,70.81112779377416 Z"></path>&ndash;&gt;-->
+						<!--<path  fill-opacity="0.5" d="M 64.5,64.5 L 103.48690649322049,13.74548175690284 A 64,64 0 0 1 128.18806533386496,70.81112779377416 Z"></path>-->
+					<!--</svg>-->
+				<!--</div>-->
+				<!--<div class="Small_con" style=" transform: translateZ(1px) translate(216px, 80px) translate(0px, 19px) rotate(0deg) translate(0px, -19px); "></div>-->
+				<!--<div class="Small_con" style="transform: translateZ(1px) translate(55px, 91px) translate(0px, 19px) rotate(0deg) translate(0px, -19px);"></div>-->
+				<!--<div class="Small_con_2"></div>-->
+				<!--<div class="Small_con" style=" transform: translateZ(1px) translate(139px, 244px) translate(0px, 19px) rotate(0deg) translate(0px, -19px);"></div>-->
+				<!--<div class="Small_con" style=" transform: translateZ(1px) translate(44px, 258px) translate(0px, 19px) rotate(0deg) translate(0px, -19px);"></div>-->
+				<!--<div class="Small_con" style=" transform: translateZ(1px) translate(169px, 176px) translate(0px, 19px) rotate(0deg) translate(0px, -19px);"></div>-->
+			<!--</div>-->
+			<!--<div class="Small_2"></div>-->
+		<!--</div>-->
 
-	    <div class="exit">退出VR模式</div>
+		<!--导航图-->
+		<div class="navigation_map">
+			<!--放置导航图-->
+			<div class="map"></div>
+			<!--收放导航图的图标-->
+			<div class="map_icon"></div>
+		</div>
 	</body>
 </html>

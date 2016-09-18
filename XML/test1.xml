@@ -1,0 +1,46 @@
+<?xml version="1.0"?>
+<VR>
+  <!--配置户型的所有全景图（唯一）-->
+  <panoramas>
+    <!--配置全景图的路径，一个户型中可以有多个场景
+        node ：全景图的编号（唯一）
+        url ：全景图的路径 （相对路径）-->
+    <panorama node="1" url="img/VR/1236.jpg">
+      <!--全景图中的热点，一个场景中可以有多个热点-->
+      <sprites>
+        <!--配置每个热点的对应信息
+            type：热点的类型 1 表示场景切换 2 表示查看柜体
+            pos ：热点在三维场景中的位置坐标
+            img_url : 热点的图片路径
+            nextNode：表示热点链接的下一个场景（type= 1时，包含这个属性）
+            url : 对应柜体展示的路径（type= 2 时，包含这个属性）-->
+        <sprite type="1" pos="-228.9029476858641,-8.106279697751026,-327.2611354941035" nextNode="2" img_url="img/sprite/jiantou.png"/>
+        <sprite type="1" pos="313.7179951985635,-51.90707352597928,-241.51446181080783" nextNode="3" img_url="img/sprite/jiantou.png"/>
+      </sprites>
+    </panorama>
+    <panorama node="2" url="img/VR/20160728190439.jpg">
+      <sprites>
+        <sprite type="1" pos="347.05610015126706,-16.49687447192115,197.3065137311522" nextNode="1" img_url="img/sprite/jiantou.png"/>
+        <sprite type="2" pos="-152.45997812978527,96.80322111104248,-356.49152979020215" url="http://www.itthome.com/3DCloudDesign/3DF/furniture.html?id=K0-00001&amp;type=1" img_url="img/sprite/furniture.jpg"/>
+      </sprites>
+    </panorama>
+  </panoramas>
+  <!--配置户型图（唯一）-->
+  <map url="map/min.png">
+    <!--配置户型图上的热点，可以配置多个热点-->
+    <sprites>
+      <!--配置单个热点
+          translate ：热点的相对位移
+          nextNode：表示热点链接的下一个场景 -->
+      <sprite translate="53px, 89px" nextNode="1"/>
+      <sprite translate="210px, 80px" nextNode="2"/>
+      <sprite translate="170px, 174px" nextNode="3"/>
+    </sprites>
+  </map>
+</VR>
+
+
+<!--1.先做图片上传
+    2.用户登录
+    3.坐标输入
+    4.生成xml文件功能-->

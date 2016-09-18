@@ -2,6 +2,11 @@
  * Created by 1231 on 2016/7/26.
  */
 var XML_D = {
+    /**放置场景中的数据**/
+    data : {
+        /**放置vr场景文件的数据**/
+        vr_xml : {},
+    },
     /* 初始化数据和事件 */
     init : {
         /**初始化路径*/
@@ -9,55 +14,67 @@ var XML_D = {
             //http://www.tuotuohome.com/vr/vr.html
             url: "img/VR/1236.jpg",
         },
-        sceneData:[
-            {
-                node : 1,
-                url : "img/VR/1236.jpg",
-                Sprite : [
-                    {
-                        type : 1,
-                        position : {
-                            x : -228.9029476858641,
-                            y : -8.106279697751026,
-                            z : -327.2611354941035
-                        },
-                        nextNode : 2
-                    },
-                    {
-                        type : 1,
-                        position : {
-                            x : 313.7179951985635,
-                            y : -51.90707352597928,
-                            z : -241.51446181080783
-                        },
-                        nextNode : 3
-                    }
-                ]
-            },
-            {
-                node : 2,
-                url : "img/VR/20160728190439.jpg",
-                Sprite : [
-                    {
-                        type : 1,
-                        position : {
-                        x : 347.05610015126706,
-                        y : -16.49687447192115,
-                        z : 197.3065137311522
-                    },
-                        nextNode : 1
-                    },
-                    {
-                        type : 2,
-                        position : {
-                            x : -152.45997812978527,
-                            y : 96.80322111104248,
-                            z : -356.49152979020215
-                        }
-                    }
-                ]
-            }
-        ]
+        //sceneData:[
+        //    {
+        //        node : 1,
+        //        url : "img/VR/1236.jpg",
+        //        Sprite : [
+        //            {
+        //                type : 1,
+        //                position : {
+        //                    x : -228.9029476858641,
+        //                    y : -8.106279697751026,
+        //                    z : -327.2611354941035
+        //                },
+        //                nextNode : 2
+        //            },
+        //            {
+        //                type : 1,
+        //                position : {
+        //                    x : 313.7179951985635,
+        //                    y : -51.90707352597928,
+        //                    z : -241.51446181080783
+        //                },
+        //                nextNode : 3
+        //            }
+        //        ]
+        //    },
+        //    {
+        //        node : 2,
+        //        url : "img/VR/20160728190439.jpg",
+        //        Sprite : [
+        //            {
+        //                type : 1,
+        //                position : {
+        //                x : 347.05610015126706,
+        //                y : -16.49687447192115,
+        //                z : 197.3065137311522
+        //            },
+        //                nextNode : 1
+        //            },
+        //            {
+        //                type : 2,
+        //                position : {
+        //                    x : -152.45997812978527,
+        //                    y : 96.80322111104248,
+        //                    z : -356.49152979020215
+        //                }
+        //            }
+        //        ]
+        //    }
+        //],
+        //sprite_icon :[
+        //    {
+        //        translate : "53px, 89px"
+        //    },
+        //
+        //    {
+        //        translate : "210px, 80px"
+        //    },
+        //    {
+        //        translate : "170px, 174px"
+        //    }
+        //]
     },
     initDate : {
         event_tag : false,
@@ -71,6 +88,24 @@ var XML_D = {
 };
 
 //A B C D E F G H I J K L M N O P Q R S T U V W X Y Z
+
+/**ajax请求的函数**/
+XML_D.Ajax ={
+    request : function(url,callback1,callback2){
+        $.ajax({
+            url: url,
+            success: function (data) {
+                callback1(data);
+                callback2();
+                console.log("加载xml场景文件成功！");
+            },
+            error : function(){
+                console.error("你访问的场景文件路径失败！！");
+            }
+        });
+    }
+};
+
 /**获得浏览器的相关信息**/
 XML_D.Broweser =  {
     //版本信息
@@ -280,7 +315,7 @@ XML_D.Event = {
         XML_D.Three.onPointerDownLat = XML_D.Three.lat;
 
         //查找sprite
-        XML_D.SwitchPanorama.findSprite(event);
+        XML_D.SwitchPanorama.findSprite(event,2);
     },
 
     onDocumentMouseMove : function ( event ) {
@@ -300,6 +335,9 @@ XML_D.Event = {
             if(!XML_D.initDate.isPlay){
                 XML_D.Three.renderScene();
             }
+        }else{
+            //查找sprite
+            XML_D.SwitchPanorama.findSprite(event,1);
         }
     },
 
@@ -480,6 +518,52 @@ XML_D.GUI = {
                 XML_D.Three.renderScene();
             }
         }
+    },
+
+    /**给页面添加导航图**/
+    NavigationMap : function(){
+
+        /**创建地图外部的div
+         * 添加到body中**/
+        var data = {
+            width : $(".navigation_map").width() + 4
+        };
+        $(".navigation_map").find(".map_icon").unbind("click",f1);
+        $(".navigation_map").find(".map_icon").bind("click",data,f1);
+        function f1(){
+            $(".navigation_map").css({
+                transform:"translate(" + data.width + "px, -1px)",
+                transition:"transform 2s linear 0s"
+            });
+            $(".navigation_map").find(".map_icon").unbind("click",f1);
+            $(".navigation_map").find(".map_icon").bind("click",data,f2);
+        }
+        function f2(){
+            $(".navigation_map").css({
+                transform:"translate(0px, -1px)",
+                transition:"transform 2s linear 0s"
+            });
+
+            $(".navigation_map").find(".map_icon").unbind("click",f2);
+            $(".navigation_map").find(".map_icon").bind("click",data,f1);
+        }
+
+        /*********** 添加热点 *******************/
+        var Sprite_icons = XML_D.data.vr_xml.map.sprites;
+        for(var i in Sprite_icons){
+            //创建热点，并添加到地图上
+            var map_Sprite = $("<div class='map_Sprite' nextNode='"+Sprite_icons[i].nextNode+"'></div>");
+            map_Sprite.css({
+                transform: "translate("+ Sprite_icons[i].translate +") rotateX(10deg)",
+            });
+            $(".navigation_map .map").append(map_Sprite);
+
+            //给热点添加点击事件
+            map_Sprite.bind("click",function(){
+                XML_D.SwitchPanorama.changeScene($(this).attr("nextNode"));
+            });
+        }
+
     }
 };
 
@@ -501,9 +585,13 @@ XML_D.QrCode = function(){
     //生成的二维码宽高要相等
     var side = 120;
     $('#qr').qrcode({
-        width :side,
-        height : side,
-        text : window.location.href
+        render : "canvas",    //设置渲染方式，有table和canvas，使用canvas方式渲染性能相对来说比较好
+        text : window.location.href,    //这是修改了官文的js文件，此时生成的二维码支持中文和LOGO,扫描二维码后显示的内容,可以直接填一个网址，扫描二维码后自动跳向该链接
+        width : side,               //二维码的宽度
+        height : side,              //二维码的高度
+        background : "#ffffff",       //二维码的后景色
+        foreground : "#000000",        //二维码的前景色
+        src: 'img/qrcode/o_photo.jpg'             //二维码中间的图片
     });
 
     $(qr).append("<br/><span/>扫一扫 把我拿走</span>").css({
@@ -531,11 +619,31 @@ XML_D.Raycaster = {
     }
 };
 
+/**操作字符窜**/
+XML_D.String = {
+    /**
+     *  把给定的字符窜,切割成数组(默认用逗号分隔)
+     *
+     *  str: 字符串
+     *  sep: 分隔符 */
+    splitToArray : function(str,sep){
+        var arr = new Array(); //定义一数组
+        if(sep){
+            arr = str.split(sep); //字符分割
+        }else{
+            arr = str.split(","); //字符分割
+        }
+        return arr;
+    }
+};
+
 XML_D.SwitchPanorama = {
+    /**添加热点
+     * Sprites:热点集合**/
     addSprite : function(Sprites){
         var loader = new THREE.TextureLoader();
         for(var i = 0;i < Sprites.length;i++){
-            var map = loader.load("img/front.png");
+            var map = loader.load(Sprites[i].img_url);
             var Sprite_material = new THREE.SpriteMaterial( {map: map, color: 0xffffff, fog: false , opacity : 0.5});
             var sprite = new THREE.Sprite( Sprite_material );
 
@@ -543,49 +651,76 @@ XML_D.SwitchPanorama = {
             sprite.nextNode = Sprites[i].nextNode;
             //设置当前热点的类型
             sprite.type = Sprites[i].type;
-
-            sprite.scale.set(20,20,20);
-            sprite.position.copy(Sprites[i].position);
+            //设置热点的位置
+            var arr = XML_D.String.splitToArray(Sprites[i].pos,",");
+            sprite.position.set(arr[0],arr[1],arr[2]);
+            sprite.scale.set(30,30,30);
             XML_D.Three.scene.add( sprite );
         }
-
     },
 
     /**查找精灵
-     * event : 事件 **/
-    findSprite : function(event){
+     * event : 事件
+     * type : 动作的类型，1 对图标的操作 2 跳转全景图**/
+    findSprite : function(event,type){
         var intersects = XML_D.Raycaster.getRaycaster(event,false,true);
         if(intersects.length > 0 && intersects[0].object.constructor == THREE.Sprite){
-            var scenes = XML_D.init.sceneData;
-            //下一个全景图的id
-            var nextNode = intersects[0].object.nextNode;
-            var type = intersects[0].object.type;
-            console.log(type);
             if(type == 1){
-                for(var i in scenes){
-                    if(scenes[i].node == nextNode){
-                        var loader = new THREE.TextureLoader();
-                        var texture = loader.load(scenes[i].url, function () {
-                            XML_D.Three.renderScene();
-                        });
-                        XML_D.Three.mesh.material.map = texture;
+                var timer1;
+                if(intersects[0].object.scale.x == 30) {
+                    intersects[0].object.scale.x = 45;
+                    intersects[0].object.scale.y = 45;
+                    intersects[0].object.scale.z = 45;
 
-                        /******删除场景中所有的热点*****/
-                        for(var j = 0; j <  XML_D.Three.scene.children.length; j++){
-                            if(XML_D.Three.scene.children[j].constructor == THREE.Sprite){
-                                XML_D.Three.scene.remove(XML_D.Three.scene.children[j]);
-                                j-- ;
-                            }
-                        }
-
-                        /******************添加热点******************/
-                        this.addSprite(scenes[i].Sprite);
-                    }
+                    timer1 = window.setTimeout(function () {
+                        intersects[0].object.scale.x = 30;
+                        intersects[0].object.scale.y = 30;
+                        intersects[0].object.scale.z = 30;
+                    }, 1000);
+                }else{
+                    window.clearInterval(timer1);
                 }
             }else{
-                window.open("http://www.itthome.com/3DCloudDesign/3DF/furniture.html?id=K0-00001&type=1");
+                //下一个全景图的id
+                var nextNode = intersects[0].object.nextNode;
+                var type = intersects[0].object.type;
+                if(type == 1){
+                   this.changeScene(nextNode);
+                }else{
+                    XML_D.Three.isUserInteracting = false;
+                    window.open("http://www.itthome.com/3DCloudDesign/3DF/furniture.html?id=K0-00001&type=1");
+                }
             }
+        }
+    },
 
+    /**变换当前的全景
+     * id ：下一个场景的id**/
+    changeScene : function(nextNode){
+        /**1.遍历所有的场景，获得当前要跳转的的场景
+         * 2.完成场景的跳转
+         * 3.删除场景中所有的热点
+         * 4.添加新的热点  **/
+        var panoramas = XML_D.data.vr_xml.panoramas;
+        for(var i in panoramas){
+            if(panoramas[i].node == nextNode){
+                var loader = new THREE.TextureLoader();
+                loader.load(panoramas[i].url, function (texture) {
+                    XML_D.Three.mesh.material.map = texture;
+                    XML_D.Three.renderScene();
+                });
+
+                /******删除场景中所有的热点*****/
+                for(var j = 0; j <  XML_D.Three.scene.children.length; j++){
+                    if(XML_D.Three.scene.children[j].constructor == THREE.Sprite){
+                        XML_D.Three.scene.remove(XML_D.Three.scene.children[j]);
+                        j-- ;
+                    }
+                }
+
+                /******************添加热点******************/
+                this.addSprite(panoramas[i].sprites);
+            }
         }
     }
 };
@@ -701,7 +836,7 @@ XML_D.Three = {
         var geometry = new THREE.SphereGeometry( 500, 60, 40 );
         geometry.scale( - 1, 1, 1 );
         var material = new THREE.MeshBasicMaterial( {
-            map: new THREE.TextureLoader().load( XML_D.init.sceneData[0].url )
+            map: new THREE.TextureLoader().load( XML_D.data.vr_xml.panoramas[0].url )
         });
         var mesh = new THREE.Mesh( geometry, material );
         this.mesh = mesh;
@@ -709,7 +844,7 @@ XML_D.Three = {
 
         /***************添加热点*************************/
         //获得存放热点的数组
-        var Sprites = XML_D.init.sceneData[0].Sprite;
+        var Sprites = XML_D.data.vr_xml.panoramas[0].sprites;
         XML_D.SwitchPanorama.addSprite(Sprites);
         /***************添加热点*************************/
     },
@@ -840,6 +975,64 @@ XML_D.URL = {
     },
 };
 
+XML_D.XML = {
+    /**把XML文件数据转换为json数据对象
+     * 解析组合柜体的文件信息 */
+    transformXMLToJson : function(xmlhttp){
+
+        //在读取的数据文件中读取xml结构对象
+        var xmlDoc = xmlhttp.responseXML || xmlhttp;
+        //读取xml根目录vr
+        var vr_xml_data = XML_D.data.vr_xml;
+        var xml_VR = xmlDoc.getElementsByTagName("VR")[0];
+
+        /**********读取XML文件的所有户型的全景图******************/
+        var xml_panoramas = xml_VR.getElementsByTagName("panorama");
+        vr_xml_data.panoramas = [];
+        //遍历每一个全景图，并设置
+        for(var i = 0; i < xml_panoramas.length;i++){
+            var panorama = {};
+            panorama.node = xml_panoramas[i].attributes['node'].value;
+            panorama.url = xml_panoramas[i].attributes['url'].value;
+
+            //获得全景图中的热点
+            var xml_sprites = xml_panoramas[i].getElementsByTagName("sprite");
+            panorama.sprites = [];
+            /*遍历全景中所有的热点，并设置热点的属性*/
+            for(var j = 0;j < xml_sprites.length;j++){
+                var sprite = {};
+
+                sprite.type = xml_sprites[j].attributes['type'].value;
+                sprite.pos = xml_sprites[j].attributes['pos'].value;
+                if(xml_sprites[j].attributes['nextNode']){
+                    sprite.nextNode = xml_sprites[j].attributes['nextNode'].value;
+                }
+                if(xml_sprites[j].attributes['url']){
+                    sprite.nextNode = xml_sprites[j].attributes['url'].value;
+                }
+                sprite.img_url = xml_sprites[j].attributes['img_url'].value;
+
+                panorama.sprites.push(sprite);
+            }
+            vr_xml_data.panoramas.push(panorama);
+        }
+
+        /***********************设置场景的户型图**************************/
+        var xml_map = xml_VR.getElementsByTagName("map")[0];
+        vr_xml_data.map = {};
+        vr_xml_data.map.url = xml_map.attributes['url'].value;
+
+        var xml_sprites = xml_map.getElementsByTagName("sprite");
+        vr_xml_data.map.sprites = [];
+        for(var j = 0;j < xml_sprites.length;j++){
+            var sprite = {};
+            sprite.translate = xml_sprites[j].attributes['translate'].value;
+            sprite.nextNode = xml_sprites[j].attributes['nextNode'].value;
+            vr_xml_data.map.sprites.push(sprite);
+        }
+    }
+};
+
 $(function(){
 
     if(Detector.webgl) {
@@ -848,58 +1041,61 @@ $(function(){
         XML_D.Cover();
 
         XML_D.URL.transform_XML_URL();
-        //根据不同的设备，加载不同的GUI
-        if (XML_D.Broweser.versions.mobile) {
 
-            $(".divide").each(function(){
-                $(this).unbind("touchstart");
-                $(this).bind("touchstart",XML_D.Event.onDivideTouchStart);
-            });
+        XML_D.Ajax.request("XML/test1.xml",XML_D.XML.transformXMLToJson,start);
 
-            $(".exit").each(function(){
-                $(this).unbind("touchstart");
-                $(this).bind("touchstart",XML_D.Event.onExitTouchStart);
-            });
+        function start(){
+            //根据不同的设备，加载不同的GUI
+            if (XML_D.Broweser.versions.mobile) {
 
-            $("#fullScreen").unbind("touchstart");
-            $("#fullScreen").bind("touchstart",function(){
-                XML_D.Event.fullscreen();
-            });
+                $(".divide").each(function(){
+                    $(this).unbind("touchstart");
+                    $(this).bind("touchstart",XML_D.Event.onDivideTouchStart);
+                });
+                $(".exit").each(function(){
+                    $(this).unbind("touchstart");
+                    $(this).bind("touchstart",XML_D.Event.onExitTouchStart);
+                });
+                $("#fullScreen").unbind("touchstart");
+                $("#fullScreen").bind("touchstart",function(){
+                    XML_D.Event.fullscreen();
+                });
+            } else {
+                XML_D.QrCode();
 
-        } else {
-            XML_D.QrCode();
+                $(".divide").each(function(){
+                    $(this).unbind("click");
+                    $(this).bind("click",XML_D.Event.onDivideTouchStart);
+                });
+                $(".exit").each(function(){
+                    $(this).unbind("click");
+                    $(this).bind("click",XML_D.Event.onExitTouchStart);
+                });
+                $("#fullScreen").unbind("click");
+                $("#fullScreen").bind("click",function(){
+                    XML_D.Event.fullscreen();
+                });
 
-            $(".divide").each(function(){
-                $(this).unbind("click");
-                $(this).bind("click",XML_D.Event.onDivideTouchStart);
-            });
-
-            $(".exit").each(function(){
-                $(this).unbind("click");
-                $(this).bind("click",XML_D.Event.onExitTouchStart);
-            });
-
-            $("#fullScreen").unbind("click");
-            $("#fullScreen").bind("click",function(){
-                XML_D.Event.fullscreen();
-            });
-        }
-        //加载threejs
-        XML_D.Three.threeStart();
-
-        var width = XML_D.Three.container.children[0].width;
-        window.setInterval(function(){
-            if(width != XML_D.Three.container.children[0].width){
-                if($.isEmptyObject(XML_D.Three.effect)){
-                    localStorage.setItem("key","1")
-                }else{
-                    localStorage.setItem("key","0")
-                }
-                window.location.reload();//刷新当前页面.
+                XML_D.GUI.NavigationMap();
             }
-        },1000);
+            //加载threejs
+            XML_D.Three.threeStart();
 
-        XML_D.GUI.isPlay();
+            /**判断屏幕的宽度发生变化后，重行加载画面**/
+            var width = XML_D.Three.container.children[0].width;
+            window.setInterval(function(){
+                if(width != XML_D.Three.container.children[0].width){
+                    if($.isEmptyObject(XML_D.Three.effect)){
+                        localStorage.setItem("key","1")
+                    }else{
+                        localStorage.setItem("key","0")
+                    }
+                    window.location.reload();//刷新当前页面.
+                }
+            },1000);
+
+            XML_D.GUI.isPlay();
+        }
 
     }else{
         XML_D.QrCode();
