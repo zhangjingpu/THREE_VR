@@ -21,7 +21,7 @@
     <panorama node="2" url="img/VR/20160728190439.jpg">
       <sprites>
         <sprite type="1" pos="347.05610015126706,-16.49687447192115,197.3065137311522" nextNode="1" img_url="img/sprite/jiantou.png"/>
-        <sprite type="2" pos="-152.45997812978527,96.80322111104248,-356.49152979020215" url="http://www.itthome.com/3DCloudDesign/3DF/furniture.html?id=K0-00001&amp;type=1" img_url="img/sprite/furniture.jpg"/>
+        <sprite type="2" pos="-152.45997812978527,96.80322111104248,-356.49152979020215" url="http://www.itthome.com/3DCloudDesign/3DF/furniture.html?id=K0-00001&amp;type=1" img_url="img/sprite/热点.png"/>
       </sprites>
     </panorama>
   </panoramas>

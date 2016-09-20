@@ -528,20 +528,18 @@ XML_D.GUI = {
         var data = {
             width : $(".navigation_map").width() + 4
         };
-        $(".navigation_map").find(".map_icon").unbind("click",f1);
-        $(".navigation_map").find(".map_icon").bind("click",data,f1);
+        $(".navigation_map").find(".map_icon").unbind("click",f2);
+        $(".navigation_map").find(".map_icon").bind("click",data,f2);
         function f1(){
             $(".navigation_map").css({
-                transform:"translate(" + data.width + "px, -1px)",
-                transition:"transform 2s linear 0s"
+                transform:"translate(" + data.width + "px, -1px)"
             });
             $(".navigation_map").find(".map_icon").unbind("click",f1);
             $(".navigation_map").find(".map_icon").bind("click",data,f2);
         }
         function f2(){
             $(".navigation_map").css({
-                transform:"translate(0px, -1px)",
-                transition:"transform 2s linear 0s"
+                transform:"translate(0px, -1px)"
             });
 
             $(".navigation_map").find(".map_icon").unbind("click",f2);
@@ -577,7 +575,11 @@ XML_D.QrCode = function(){
     $(qr).css({
         "position":"absolute",
         "left": "52px",
-        "top": "45px"
+        "top": "45px",
+        background: "white",
+        padding: "10px",
+        boxShadow: "rgba(249, 244, 244, 0.498039) 0px 0px 5px 5px",
+        backgroundColor: "rgba(251, 248, 248, 0.8)"
     });
 
     /**设置二维码**/
@@ -591,10 +593,10 @@ XML_D.QrCode = function(){
         height : side,              //二维码的高度
         background : "#ffffff",       //二维码的后景色
         foreground : "#000000",        //二维码的前景色
-        src: 'img/qrcode/o_photo.jpg'             //二维码中间的图片
+        src: 'img/qrcode/logo.png'             //二维码中间的图片
     });
 
-    $(qr).append("<br/><span/>扫一扫 把我拿走</span>").css({
+    $(qr).append("<br/><span>扫一扫 把我拿走</span>").css({
         "position":"absolute",
         "text-align":"center"
     });
@@ -637,6 +639,7 @@ XML_D.String = {
     }
 };
 
+/**变换全景图的操作**/
 XML_D.SwitchPanorama = {
     /**添加热点
      * Sprites:热点集合**/
@@ -661,7 +664,9 @@ XML_D.SwitchPanorama = {
 
     /**查找精灵
      * event : 事件
-     * type : 动作的类型，1 对图标的操作 2 跳转全景图**/
+     * type : 动作的类型，
+     *      1 对图标的操作(放大图标)
+     *      2 跳转全景图或查看柜体**/
     findSprite : function(event,type){
         var intersects = XML_D.Raycaster.getRaycaster(event,false,true);
         if(intersects.length > 0 && intersects[0].object.constructor == THREE.Sprite){
@@ -681,14 +686,14 @@ XML_D.SwitchPanorama = {
                     window.clearInterval(timer1);
                 }
             }else{
-                //下一个全景图的id
+                //下一个全景图的id或者是柜体的路径
                 var nextNode = intersects[0].object.nextNode;
-                var type = intersects[0].object.type;
-                if(type == 1){
+                var type1 = intersects[0].object.type;
+                if(type1 == 1){
                    this.changeScene(nextNode);
                 }else{
                     XML_D.Three.isUserInteracting = false;
-                    window.open("http://www.itthome.com/3DCloudDesign/3DF/furniture.html?id=K0-00001&type=1");
+                    window.open(nextNode);
                 }
             }
         }
