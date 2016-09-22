@@ -14,67 +14,6 @@ var XML_D = {
             //http://www.tuotuohome.com/vr/vr.html
             url: "img/VR/1236.jpg",
         },
-        //sceneData:[
-        //    {
-        //        node : 1,
-        //        url : "img/VR/1236.jpg",
-        //        Sprite : [
-        //            {
-        //                type : 1,
-        //                position : {
-        //                    x : -228.9029476858641,
-        //                    y : -8.106279697751026,
-        //                    z : -327.2611354941035
-        //                },
-        //                nextNode : 2
-        //            },
-        //            {
-        //                type : 1,
-        //                position : {
-        //                    x : 313.7179951985635,
-        //                    y : -51.90707352597928,
-        //                    z : -241.51446181080783
-        //                },
-        //                nextNode : 3
-        //            }
-        //        ]
-        //    },
-        //    {
-        //        node : 2,
-        //        url : "img/VR/20160728190439.jpg",
-        //        Sprite : [
-        //            {
-        //                type : 1,
-        //                position : {
-        //                x : 347.05610015126706,
-        //                y : -16.49687447192115,
-        //                z : 197.3065137311522
-        //            },
-        //                nextNode : 1
-        //            },
-        //            {
-        //                type : 2,
-        //                position : {
-        //                    x : -152.45997812978527,
-        //                    y : 96.80322111104248,
-        //                    z : -356.49152979020215
-        //                }
-        //            }
-        //        ]
-        //    }
-        //],
-        //sprite_icon :[
-        //    {
-        //        translate : "53px, 89px"
-        //    },
-        //
-        //    {
-        //        translate : "210px, 80px"
-        //    },
-        //    {
-        //        translate : "170px, 174px"
-        //    }
-        //]
     },
     initDate : {
         event_tag : false,
@@ -315,7 +254,7 @@ XML_D.Event = {
         XML_D.Three.onPointerDownLat = XML_D.Three.lat;
 
         //查找sprite
-        XML_D.SwitchPanorama.findSprite(event,2);
+        XML_D.SwitchPanorama.findSprite(event);
     },
 
     onDocumentMouseMove : function ( event ) {
@@ -335,9 +274,6 @@ XML_D.Event = {
             if(!XML_D.initDate.isPlay){
                 XML_D.Three.renderScene();
             }
-        }else{
-            //查找sprite
-            XML_D.SwitchPanorama.findSprite(event,1);
         }
     },
 
@@ -658,44 +594,33 @@ XML_D.SwitchPanorama = {
             var arr = XML_D.String.splitToArray(Sprites[i].pos,",");
             sprite.position.set(arr[0],arr[1],arr[2]);
             sprite.scale.set(30,30,30);
+
+            te(sprite);
+            function te(sprite_1){
+                window.setInterval(function(){
+                    sprite_1.visible = !sprite_1.visible;
+                },1000);
+            }
+
             XML_D.Three.scene.add( sprite );
         }
     },
 
     /**查找精灵
-     * event : 事件
-     * type : 动作的类型，
-     *      1 对图标的操作(放大图标)
-     *      2 跳转全景图或查看柜体**/
-    findSprite : function(event,type){
+     * event : 事件**/
+    findSprite : function(event){
         var intersects = XML_D.Raycaster.getRaycaster(event,false,true);
         if(intersects.length > 0 && intersects[0].object.constructor == THREE.Sprite){
-            if(type == 1){
-                var timer1;
-                if(intersects[0].object.scale.x == 30) {
-                    intersects[0].object.scale.x = 45;
-                    intersects[0].object.scale.y = 45;
-                    intersects[0].object.scale.z = 45;
-
-                    timer1 = window.setTimeout(function () {
-                        intersects[0].object.scale.x = 30;
-                        intersects[0].object.scale.y = 30;
-                        intersects[0].object.scale.z = 30;
-                    }, 1000);
-                }else{
-                    window.clearInterval(timer1);
-                }
+            //下一个全景图的id或者是柜体的路径
+            var nextNode = intersects[0].object.nextNode;
+            var type1 = intersects[0].object.type;
+            if(type1 == 1){
+               this.changeScene(nextNode);
             }else{
-                //下一个全景图的id或者是柜体的路径
-                var nextNode = intersects[0].object.nextNode;
-                var type1 = intersects[0].object.type;
-                if(type1 == 1){
-                   this.changeScene(nextNode);
-                }else{
-                    XML_D.Three.isUserInteracting = false;
-                    window.open(nextNode);
-                }
+                XML_D.Three.isUserInteracting = false;
+                window.open(nextNode);
             }
+
         }
     },
 

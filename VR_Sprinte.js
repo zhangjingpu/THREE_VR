@@ -7,7 +7,7 @@ var XML_D = {
         /**初始化路径*/
         initURL: {
             //http://www.tuotuohome.com/vr/vr.html
-            url: "img/VR/20160728190439.jpg",
+            url: "img/VR/1236.jpg",
         }
     },
     data :{
@@ -280,10 +280,10 @@ XML_D.Three = {
 
 
         var loader = new THREE.TextureLoader();
-        var map = loader.load("img/front.png");
+        var map = loader.load("img/sprite/right.png");
         var material = new THREE.SpriteMaterial( { map: map, color: 0xffffff, fog: false ,opacity : 0.5} );
         var sprite = new THREE.Sprite( material );
-        sprite.scale.set(10,10,10);
+        sprite.scale.set(30,30,30);
         sprite.position.set(-208.26909733320136,-10.95262701925466,-340.5277395366886);
         XML_D.Three.scene.add( sprite );
     },
