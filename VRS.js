@@ -13,6 +13,8 @@ var XML_D = {
         initURL: {
             //http://www.tuotuohome.com/vr/vr.html
             url: "img/VR/1236.jpg",
+
+            xmlurl : "XML/test2.xml",
         },
     },
     initDate : {
@@ -256,7 +258,6 @@ XML_D.Event = {
         //查找sprite
         XML_D.SwitchPanorama.findSprite(event);
     },
-
     onDocumentMouseMove : function ( event ) {
 
         if ( XML_D.Three.isUserInteracting === true ) {
@@ -276,7 +277,6 @@ XML_D.Event = {
             }
         }
     },
-
     /**设置旋转的方向**/
     setHoverDir :function(event){
         if(XML_D.Three.onPointerDownPointerX - event.clientX > 0){
@@ -285,11 +285,9 @@ XML_D.Event = {
             XML_D.initDate.hoverDir = false;
         }
     },
-
     onDocumentMouseUp : function ( event ) {
         XML_D.Three.isUserInteracting = false;
     },
-
     onDocumentMouseWheel : function ( event ) {
         // WebKit
         if ( event.wheelDeltaY ) {
@@ -352,8 +350,8 @@ XML_D.Event = {
             XML_D.Three.onPointerDownLon = XML_D.Three.lon;
             XML_D.Three.onPointerDownLat = XML_D.Three.lat;
         }
-    },
 
+    },
     onDocumentTouchMove : function ( event ) {
         event.preventDefault();
         if ( event.touches.length == 1 ) {
@@ -369,6 +367,11 @@ XML_D.Event = {
                 XML_D.Three.renderScene();
             }
         }
+    },
+
+    onDocumentTouchEnd : function( event ){
+        //查找sprite
+        XML_D.SwitchPanorama.findSprite(event);
     },
 
     /**手指点击分屏按钮
@@ -389,7 +392,6 @@ XML_D.Event = {
         },3000);
         XML_D.initDate.event_tag = true;
     },
-
     /**手指点击退出分屏按钮
      * 1.销毁分屏时的控制器
      * 2.取消分屏
@@ -405,7 +407,6 @@ XML_D.Event = {
 
         XML_D.Three.renderScene();
     },
-
     /** 全屏 **/
     fullscreen : function(){
         var elem = document.body;
@@ -419,7 +420,6 @@ XML_D.Event = {
             //浏览器不支持全屏API或已被禁用
         }
     },
-
     /** 退出全屏 **/
     exitFullscreen :function(){
         var elem=document;
@@ -459,45 +459,82 @@ XML_D.GUI = {
     /**给页面添加导航图**/
     NavigationMap : function(){
 
-        /**创建地图外部的div
-         * 添加到body中**/
-        var data = {
-            width : $(".navigation_map").width() + 4
-        };
-        $(".navigation_map").find(".map_icon").unbind("click",f2);
-        $(".navigation_map").find(".map_icon").bind("click",data,f2);
-        function f1(){
-            $(".navigation_map").css({
-                transform:"translate(" + data.width + "px, -1px)"
+        //判断户型图是否存在
+        if(XML_D.data.vr_xml.map){
+            //设置地图
+            $(".navigation_map .map").css({
+                backgroundImage : "url("+ XML_D.data.vr_xml.map.url+")"
             });
-            $(".navigation_map").find(".map_icon").unbind("click",f1);
-            $(".navigation_map").find(".map_icon").bind("click",data,f2);
+
+            /**创建地图外部的div
+             * 添加到body中**/
+            var data = {
+                width : $(".navigation_map").width() + 4
+            };
+            //添加点击事件
+            if(XML_D.Broweser.versions.mobile){
+                $(".navigation_map").find(".map_icon").unbind("touchstart",f2);
+                $(".navigation_map").find(".map_icon").bind("touchstart",data,f2);
+                function f1(){
+                    $(".navigation_map").css({
+                        transform:"translate(" + data.width + "px, -1px)"
+                    });
+                    $(".navigation_map").find(".map_icon").unbind("touchstart",f1);
+                    $(".navigation_map").find(".map_icon").bind("touchstart",data,f2);
+                }
+                function f2(){
+                    $(".navigation_map").css({
+                        transform:"translate(0px, -1px)"
+                    });
+
+                    $(".navigation_map").find(".map_icon").unbind("touchstart",f2);
+                    $(".navigation_map").find(".map_icon").bind("touchstart",data,f1);
+                }
+            }else{
+                $(".navigation_map").find(".map_icon").unbind("click",f2);
+                $(".navigation_map").find(".map_icon").bind("click",data,f2);
+                function f1(){
+                    $(".navigation_map").css({
+                        transform:"translate(" + data.width + "px, -1px)"
+                    });
+                    $(".navigation_map").find(".map_icon").unbind("click",f1);
+                    $(".navigation_map").find(".map_icon").bind("click",data,f2);
+                }
+                function f2(){
+                    $(".navigation_map").css({
+                        transform:"translate(0px, -1px)"
+                    });
+
+                    $(".navigation_map").find(".map_icon").unbind("click",f2);
+                    $(".navigation_map").find(".map_icon").bind("click",data,f1);
+                }
+            }
+
+            /*********** 添加热点 *******************/
+            var Sprite_icons = XML_D.data.vr_xml.map.sprites;
+            for(var i in Sprite_icons){
+                //创建热点，并添加到地图上
+                var map_Sprite = $("<div class='map_Sprite' nextNode='"+Sprite_icons[i].nextNode+"'></div>");
+                map_Sprite.css({
+                    transform: "translate("+ Sprite_icons[i].translate +") rotateX(10deg)",
+                });
+                $(".navigation_map .map").append(map_Sprite);
+
+                if(XML_D.Broweser.versions.mobile){
+                    //给热点添加点击事件
+                    map_Sprite.bind("touchstart",function(){
+                        XML_D.SwitchPanorama.changeScene($(this).attr("nextNode"));
+                    });
+                }else{
+                    //给热点添加点击事件
+                    map_Sprite.bind("click",function(){
+                        XML_D.SwitchPanorama.changeScene($(this).attr("nextNode"));
+                    });
+                }
+            }
+        }else{
+            $(".navigation_map").hide();
         }
-        function f2(){
-            $(".navigation_map").css({
-                transform:"translate(0px, -1px)"
-            });
-
-            $(".navigation_map").find(".map_icon").unbind("click",f2);
-            $(".navigation_map").find(".map_icon").bind("click",data,f1);
-        }
-
-        /*********** 添加热点 *******************/
-        var Sprite_icons = XML_D.data.vr_xml.map.sprites;
-        for(var i in Sprite_icons){
-            //创建热点，并添加到地图上
-            var map_Sprite = $("<div class='map_Sprite' nextNode='"+Sprite_icons[i].nextNode+"'></div>");
-            map_Sprite.css({
-                transform: "translate("+ Sprite_icons[i].translate +") rotateX(10deg)",
-            });
-            $(".navigation_map .map").append(map_Sprite);
-
-            //给热点添加点击事件
-            map_Sprite.bind("click",function(){
-                XML_D.SwitchPanorama.changeScene($(this).attr("nextNode"));
-            });
-        }
-
     }
 };
 
@@ -541,14 +578,18 @@ XML_D.QrCode = function(){
 /**射线查找**/
 XML_D.Raycaster = {
     /**给定坐标，得到射线与物体的焦点
-     * event ： 事件反回值值
+     * event ： 事件反回值
      * recursive ：是否遍历子节点
      * visible : 是否检出影藏的物体**/
     getRaycaster : function(event,recursive,visible){
-        /**获得鼠标的位置*/
+        /**获得鼠标的位置
+         * clientX : 获得屏幕位置坐标x
+         * clientY : 获得屏幕位置坐标y */
         var mouse = new THREE.Vector2();
-        mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
-        mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
+        var clientX = event.clientX || event.changedTouches[0].clientX;
+        var clientY = event.clientY || event.changedTouches[0].clientY;
+        mouse.x = ( clientX / window.innerWidth ) * 2 - 1;
+        mouse.y = - ( clientY / window.innerHeight ) * 2 + 1;
 
         var raycaster = new THREE.MyRaycaster();
         raycaster.visible = visible;
@@ -599,7 +640,7 @@ XML_D.SwitchPanorama = {
             function te(sprite_1){
                 window.setInterval(function(){
                     sprite_1.visible = !sprite_1.visible;
-                },1000);
+                },500);
             }
 
             XML_D.Three.scene.add( sprite );
@@ -843,6 +884,7 @@ XML_D.Three = {
 
         document.addEventListener( 'touchstart', XML_D.Event.onDocumentTouchStart, false );
         document.addEventListener( 'touchmove', XML_D.Event.onDocumentTouchMove, false );
+        document.addEventListener( 'touchend', XML_D.Event.onDocumentTouchEnd, false );
 
         //当用户重置窗口大小时添加事件监听
         window.addEventListener( 'resize', XML_D.Event.onWindowResize, false );
@@ -879,8 +921,10 @@ XML_D.URL = {
     transform_XML_URL : function(){
         var id = this.GetQueryString("id");
         var name = this.GetQueryString("name");
+        var xml_name = this.GetQueryString("xml_name");
 
         console.log(id);
+        console.log(name);
         console.log(name);
 
         if(id){
@@ -891,6 +935,11 @@ XML_D.URL = {
         if(name){
             $("title").html(name);
         }
+
+        if(xml_name){
+            XML_D.init.initURL.xmlurl = "obj/Debug/PanXml/" + xml_name;
+        }
+
     },
     /**获取地址栏中对应的参数
      * name ： 参数名称**/
@@ -948,17 +997,20 @@ XML_D.XML = {
         }
 
         /***********************设置场景的户型图**************************/
-        var xml_map = xml_VR.getElementsByTagName("map")[0];
-        vr_xml_data.map = {};
-        vr_xml_data.map.url = xml_map.attributes['url'].value;
+        //判断是否有户型图
+        if(xml_VR.getElementsByTagName("map")[0]){
+            var xml_map = xml_VR.getElementsByTagName("map")[0];
+            vr_xml_data.map = {};
+            vr_xml_data.map.url = xml_map.attributes['url'].value;
 
-        var xml_sprites = xml_map.getElementsByTagName("sprite");
-        vr_xml_data.map.sprites = [];
-        for(var j = 0;j < xml_sprites.length;j++){
-            var sprite = {};
-            sprite.translate = xml_sprites[j].attributes['translate'].value;
-            sprite.nextNode = xml_sprites[j].attributes['nextNode'].value;
-            vr_xml_data.map.sprites.push(sprite);
+            var xml_sprites = xml_map.getElementsByTagName("sprite");
+            vr_xml_data.map.sprites = [];
+            for(var j = 0;j < xml_sprites.length;j++){
+                var sprite = {};
+                sprite.translate = xml_sprites[j].attributes['translate'].value;
+                sprite.nextNode = xml_sprites[j].attributes['nextNode'].value;
+                vr_xml_data.map.sprites.push(sprite);
+            }
         }
     }
 };
@@ -970,9 +1022,11 @@ $(function(){
         //设置遮盖层
         XML_D.Cover();
 
+        //接收参数
         XML_D.URL.transform_XML_URL();
 
-        XML_D.Ajax.request("XML/test1.xml",XML_D.XML.transformXMLToJson,start);
+        //请求xml文件
+        XML_D.Ajax.request(XML_D.init.initURL.xmlurl,XML_D.XML.transformXMLToJson,start);
 
         function start(){
             //根据不同的设备，加载不同的GUI
@@ -1004,10 +1058,12 @@ $(function(){
                 $("#fullScreen").unbind("click");
                 $("#fullScreen").bind("click",function(){
                     XML_D.Event.fullscreen();
-                });
-
-                XML_D.GUI.NavigationMap();
+                })
             }
+
+            //设置页面的导航图
+            XML_D.GUI.NavigationMap();
+
             //加载threejs
             XML_D.Three.threeStart();
 
@@ -1025,7 +1081,7 @@ $(function(){
             },1000);
 
             XML_D.GUI.isPlay();
-        }
+        };
 
     }else{
         XML_D.QrCode();

@@ -7,7 +7,7 @@ var XML_D = {
         /**初始化路径*/
         initURL: {
             //http://www.tuotuohome.com/vr/vr.html
-            url: "img/VR/1236.jpg",
+            url: "img/VR/2016-9-28shufang.jpg",
         }
     },
     data :{
@@ -280,10 +280,10 @@ XML_D.Three = {
 
 
         var loader = new THREE.TextureLoader();
-        var map = loader.load("img/sprite/right.png");
+        var map = loader.load("img/sprite/forward.png");
         var material = new THREE.SpriteMaterial( { map: map, color: 0xffffff, fog: false ,opacity : 0.5} );
         var sprite = new THREE.Sprite( material );
-        sprite.scale.set(30,30,30);
+        sprite.scale.set(40,40,40);
         sprite.position.set(-208.26909733320136,-10.95262701925466,-340.5277395366886);
         XML_D.Three.scene.add( sprite );
     },
@@ -341,6 +341,12 @@ XML_D.URL = {
         var id = this.GetQueryString("id");
         var name = this.GetQueryString("name");
 
+        var roomid = this.GetQueryString("roomid");
+        var panid = this.GetQueryString("panid");
+
+        console.log(panid);
+        console.log(roomid);
+
         console.log(id);
         console.log(name);
 
@@ -366,6 +372,8 @@ XML_D.URL = {
 };
 
 $(function(){
+
+    XML_D.URL.transform_XML_URL();
     //显示模态框
     $(".modal-dialog").unbind("click");
     $(".modal-dialog").bind("click",function(){
