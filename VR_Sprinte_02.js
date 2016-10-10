@@ -17,9 +17,11 @@ var XML_D = {
 
         //保存最新操作的热点
         current_sprite : {
-            url : "img/sprite/forward.png",
+            img_url : "img/sprite/forward.png",
             position : new THREE.Vector3(),
-            nextNode : 1
+            type : 1,
+            nextNode : 1,
+            url : null
         },
 
         //当前选中的精灵
@@ -167,46 +169,58 @@ XML_D.GUI = {
         $("#save").unbind("click",this.save);
         $("#save").bind("click",this.save);
 
-        //给热点图标添加事件
+        //点击热点图标事件
         $("#sprite").unbind("click",this.sprite);
         $("#sprite").bind("click",this.sprite);
 
-        //给热点图标添加事件
-        $("#add_sprite").unbind("click",this.add_sprite);
-        $("#add_sprite").bind("click",this.add_sprite);
+        //选择热点的类型
+        $("#sprite_menu").find("a").unbind("click",this.sprite_type);
+        $("#sprite_menu").find("a").bind("click",this.sprite_type);
 
-        //给热点图标添加事件
-        $("#close").unbind("click",this.close);
-        $("#close").bind("click",this.close);
+        //跳转到选择热点的界面
+        $("#setSprite").unbind("click",this.setSprite);
+        $("#setSprite").bind("click",this.setSprite);
 
-        //点击热点
-        $("#sprites_contex div").unbind("click",this.sprite_01);
-        $("#sprites_contex div").bind("click",this.sprite_01);
+        /**点击添加按钮，根据不同的文字显示不同的div
+         * 包括选择场景和添加柜体**/
+        $(".add_sprite").unbind("click",this.add_sprite);
+        $(".add_sprite").bind("click",this.add_sprite);
 
-        //点击设置热点中的下一步
-        $("#sprites_contex .next").unbind("click",this.next);
-        $("#sprites_contex .next").bind("click",this.next);
+        /********************** 选择切换 ***************************************/
+
+        /**选中热点，改变当前选中热点的颜色，并保存当前热点**/
+        $(".select_sprite div").unbind("click",this.sprite_01);
+        $(".select_sprite div").bind("click",this.sprite_01);
+
+        /** 选择热点样式中的下一步 **/
+        $(".select_sprite .next").unbind("click",this.next);
+        $(".select_sprite .next").bind("click",this.next);
 
         //点击设置热点中的的关闭按钮
-        $("#sprites_contex_02 .close").unbind("click",this.close_02);
-        $("#sprites_contex_02 .close").bind("click",this.close_02);
+        $(".sprites_contex_02 .close").unbind("click",this.close_02);
+        $(".sprites_contex_02 .close").bind("click",this.close_02);
 
         //点击选择场景中的下一步
-        $("#sprites_contex_02 .next").unbind("click",this.next_02);
-        $("#sprites_contex_02 .next").bind("click",this.next_02);
+        $(".sprites_contex_02 .next").unbind("click",this.next_02);
+        $(".sprites_contex_02 .next").bind("click",this.next_02);
 
         //点击选择场景中的单个场景
         $("#sprites_contex_02 div").unbind("click",this.selectScene);
         $("#sprites_contex_02 div").bind("click",this.selectScene);
 
         //跳转到选择热点的界面
-        $("#setSprite").unbind("click",this.setSprite);
-        $("#setSprite").bind("click",this.setSprite);
-
-        //跳转到选择热点的界面
         $("#setScene").unbind("click",this.setScene);
         $("#setScene").bind("click",this.setScene);
 
+
+        $("input").keyup(function(){
+            if(this.name.indexOf("name") > -1){
+                XML_D.data.current_sprite.name = this.value;
+            }
+            if(this.name.indexOf("url") > -1){
+                XML_D.data.current_sprite.url = this.value;
+            }
+        });
     },
     /**保存热点数据**/
     save : function() {
@@ -241,7 +255,6 @@ XML_D.GUI = {
             }
         });
     },
-
     sprite : function(){
         if($("#sprite_menu").is(":visible")){
             $("#sprite_menu").hide("slow");
@@ -249,62 +262,77 @@ XML_D.GUI = {
             $("#sprite_menu").show("slow");
         }
     },
-
     add_sprite : function(){
-        $(this).parent().parent().parent().hide("show");
-        $("#setSprite").css({backgroundColor : "#1b1818"});
-        $("#setScene").css({backgroundColor : "#4d90fe"});
-        $("#sprites").show();
-        $("#sprites_contex").show();
-        $("#sprites_contex_02").hide();
+        $(".setSprite").css({backgroundColor : "#1b1818"});
+        $(".select_sprite").show();
+        $(".sprites_contex_02").hide();
+
+        if($(this).siblings().html().indexOf("全景") >-1 ){
+            $("#setScene").css({backgroundColor : "#4d90fe"});
+            $("#chang_scene").show();
+        }else{
+            $("#setLink").css({backgroundColor : "#4d90fe"});
+            $("#furniture").show();
+        }
+
     },
-
-    close : function(){
-
-    },
-
     close_02 : function(){
         $(this).parent().parent().hide();
     },
-
     sprite_01 : function(){
         $(this).children("img").css({backgroundColor : "#e6a0a0"});
         $(this).siblings().find("img").css({backgroundColor : "#1b1818"});
-        XML_D.data.current_sprite.url = $(this).find("img")[0].alt;
+        XML_D.data.current_sprite.img_url = $(this).find("img")[0].alt;
     },
-
     next : function(){
-        $(this).parent().parent().find("#setSprite").css({backgroundColor : "#4d90fe"});
-        $(this).parent().parent().find("#setScene").css({backgroundColor : "#1b1818"});
-        $("#sprites_contex_02").show();
+        $(this).parent().parent().find(".setSprite").css({backgroundColor : "#4d90fe"});
+        $(this).parent().parent().find(".next").css({backgroundColor : "#1b1818"});
+        $(this).parent().siblings(".sprites_contex_02").show();
         $(this).parent().hide();
     },
-
     next_02 : function(){
         $(this).parent().parent().hide();
 
         XML_D.Sprite.add();
     },
-
     selectScene : function(){
         $(this).css({border:"1px solid #5a7fba"});
         $(this).siblings().css({border:"0px"});
         XML_D.data.current_sprite.nextNode = $(this).attr("id");
     },
-
     setSprite : function(){
         $("#setSprite").css({backgroundColor : "#1b1818"});
-        $("#setScene").css({backgroundColor : "#4d90fe"});
+        $("#setSprite").siblings().css({backgroundColor : "#4d90fe"});
+
         $("#sprites_contex").show();
         $("#sprites_contex_02").hide();
     },
-
     setScene : function(){
         $("#setSprite").css({backgroundColor : "#4d90fe"});
         $("#setScene").css({backgroundColor : "#1b1818"});
         $("#sprites_contex").hide();
         $("#sprites_contex_02").show();
-    }
+    },
+    sprite_type : function(){
+        $(this).css({backgroundColor : "#b97316"});
+        $(this).siblings("a").css({backgroundColor : "#1b1818"});
+
+        if(this.text == "全景切换"){
+            $("#sprite_chang").show();
+            $("#link").hide();
+            $("#setLink").hide();
+            $("#setScene").show();
+
+            XML_D.data.current_sprite.type = 1;
+        }else if(this.text == "超链接"){
+            $("#link").show();
+            $("#sprite_chang").hide();
+            $("#setScene").hide();
+            $("#setLink").show();
+
+            XML_D.data.current_sprite.type = 2;
+        }
+    },
 };
 
 /**射线查找**/
@@ -491,7 +519,7 @@ XML_D.Three = {
     initEvent : function(){
 
         /**添加鼠标事件**/
-        document.addEventListener( 'mousedown', XML_D.Event.onDocumentMouseDown, false );
+        this.container.addEventListener( 'mousedown', XML_D.Event.onDocumentMouseDown, false );
         document.addEventListener( 'mousemove', XML_D.Event.onDocumentMouseMove, false );
         document.addEventListener( 'mouseup', XML_D.Event.onDocumentMouseUp, false );
 

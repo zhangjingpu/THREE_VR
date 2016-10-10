@@ -34,7 +34,13 @@
                 right: 10px;
                 top: 68px;
             }
+            #close{
+                position: absolute;
+                right: 10px;
+                top: 10px;
+            }
 
+            /********* 选择热点类型框 *******/
             #sprite_menu{
                 position: absolute;
                 top: 136px;
@@ -50,32 +56,66 @@
                 width: 323px;
                 display: none;
             }
+            #sprite_menu a{
+                display: inline-block;
+                border: 1px solid #FFFFFF;
+                color: white;
+                margin: 10px;
+                padding: 10px 20px 10px 20px;
+                text-decoration: blink;
+            }
+            #sprite_menu h3{
+                padding: 10px;
+            }
 
-            #sprite_menu li{
+            /******** 显示跳转场景热点 *******/
+            #sprite_chang {
+                position: absolute;
+                top: 283px;
+                right: 10px;
+                background-color: #252525;
+                color: white;
+                padding: 10px;
+                border-radius: 5px;
+                filter: alpha(opacity:90);
+                opacity: 0.9;
+                -moz-opacity: 0.9;
+                -khtml-opacity: 0.9;
+                width: 323px;
+                display: none;
+                -khtml-opacity: 0.9;
+            }
+            #sprite_chang li{
                 margin-bottom: 5px;
                 list-style-type: none;
             }
 
-            #sprite_menu_first h3{
-                float: left;
-                margin-top: 10px;
-            }
-
-            #close{
+            /******** 显示查看柜体热点 *******/
+            #link {
                 position: absolute;
+                top: 283px;
                 right: 10px;
-                top: 10px;
+                background-color: #252525;
+                color: white;
+                padding: 10px;
+                border-radius: 5px;
+                filter: alpha(opacity:90);
+                opacity: 0.9;
+                -moz-opacity: 0.9;
+                -khtml-opacity: 0.9;
+                width: 323px;
+                display: none;
+                -khtml-opacity: 0.9;
             }
-
-            #add_sprite{
-                float: right;
+            #link li{
+                margin-bottom: 5px;
+                list-style-type: none;
             }
 
             .li_01{
                 background-color: #787878;
                 padding: 5px;
             }
-
             .li_01 img{
                 float: left;
                 width: 54px;
@@ -89,8 +129,16 @@
                 margin-top: 8px;
             }
 
+            .sprite_menu_first h3{
+                float: left;
+                margin-top: 10px;
+            }
+            .add_sprite{
+                float: right;
+            }
+
             /**************选择热点框***********/
-            #sprites{
+            #chang_scene{
                 display: none;
                 position: fixed;
                 width: 600px;
@@ -100,12 +148,30 @@
                 margin: 0;
                 color: white;
             }
-            #sprites h3{
+            #chang_scene h3{
                 float: left;
                 padding: 14px;
                 border-radius: 5px 5px 0 0;
                 cursor: pointer;
             }
+
+            #furniture{
+                display: none;
+                position: fixed;
+                width: 600px;
+                height: 400px;
+                top: 29%;
+                left: 32%;
+                margin: 0;
+                color: white;
+            }
+            #furniture h3{
+                float: left;
+                padding: 14px;
+                border-radius: 5px 5px 0 0;
+                cursor: pointer;
+            }
+
             #sprites_contex{
                 background-color: #1b1818;
                 border-radius: 0 5px 5px 5px;
@@ -132,6 +198,7 @@
                 border: 1px solid #FFFFFF;
                 padding: 5px;
             }
+
             #setSprite{
                 background-color: #1b1818;
             }
@@ -182,9 +249,99 @@
                 background-image: url("img/GUI/close.png");
                 background-repeat: no-repeat;
             }
+
+            #sprites_contex_04{
+                background-color: #1b1818;
+                border-radius: 0 5px 5px 5px;
+                padding: 20px;
+            }
+            #sprites_contex_04 div{
+                float: left;
+                margin-right: 20px;
+                margin-top: 10px;
+                cursor: pointer;
+            }
+            #sprites_contex_04 .next{
+                clear: both;
+                background-image: url("img/GUI/next.png");
+                background-repeat: no-repeat;
+                width: 130px;
+                height: 40px;
+                margin-top: 30px;
+                float: right;
+            }
+            #sprites_contex_04 div img{
+                width: 80px;
+                height: 80px;
+                border: 1px solid #FFFFFF;
+                padding: 5px;
+            }
+
+            #setSprite_02{
+                background-color: #1b1818;
+            }
+            #setLink{
+                background-color: #4d90fe;
+            }
+
+            #sprites_contex_05{
+                background-color: #1b1818;
+                border-radius: 0 5px 5px 5px;
+                padding: 20px;
+                height: 300px;
+            }
+            #sprites_contex_05 img{
+                width: 48px;
+                height: 48px;
+                float: left;
+            }
+            #sprites_contex_05 div{
+                background-color: #454545;
+                width: 176px;
+                height: 48px;
+                float: left;
+                margin-right: 10px;
+                margin-bottom: 10px;
+            }
+            #sprites_contex_05 span{
+                float: left;
+                padding: 14px;
+            }
+            #sprites_contex_05 .next{
+                position: absolute;
+                bottom: 35px;
+                right: 19px;
+                width: 116px;
+                clear: both;
+                height: 40px;
+                background-image: url("img/GUI/next.png");
+                background-repeat: no-repeat;
+            }
+            #sprites_contex_05 .close{
+                position: relative;
+                top: 107px;
+                left: 306px;
+                width: 119px;
+                clear: both;
+                height: 100px;
+                background-image: url("img/GUI/close.png");
+                background-repeat: no-repeat;
+            }
+
+            #sprites_contex_05 input{
+                height: 25px;
+                background-color: black;
+                color: white;
+            }
+            .push{
+                padding-top: 25px;
+                text-align: center;
+                line-height: 61px;
+            }
         </style>
 	</head>
 	<body>
+        <!--屏幕左上方的小图标-->
         <div id="container"></div>
         <div id="save">
             <img src='img/GUI/save.png'>
@@ -192,16 +349,23 @@
         <div id="sprite">
             <img src='img/GUI/sprite.png'>
         </div>
-
         <div id="close">
             <img src='img/GUI/close.png'>
         </div>
 
-        <div id="sprite_menu">
+        <!--选择热点类型-->
+        <article id="sprite_menu">
+            <h3>热点设置</h3>
+            <a href="javaScript:void(0)">全景切换</a>
+            <a href="javaScript:void(0)">超链接</a>
+        </article>
+
+        <!--热点切换-->
+        <div id="sprite_chang">
             <ul>
-                <li id="sprite_menu_first">
-                    <h3>切换热点</h3>
-                    <div id="add_sprite">
+                <li class="sprite_menu_first">
+                    <h3>全景切换热点</h3>
+                    <div class="add_sprite">
                         <img src="img/GUI/add.png">
                     </div>
                 </li>
@@ -216,15 +380,37 @@
                     <img src="img/sprite/forward.png">
                 </li>
             </ul>
-
         </div>
 
-        <div id="sprites">
+        <!--超链接-->
+        <article id="link">
+            <ul>
+                <li class="sprite_menu_first">
+                    <h3>超链接切换热点</h3>
+                    <div class="add_sprite">
+                        <img src="img/GUI/add.png">
+                    </div>
+                </li>
+                <li class="li_01">
+                    <img src="img/GUI/suo.png">
+                    <p>2294472375_24a3b8ef46_o</p>
+                    <img src="img/sprite/forward.png">
+                </li>
+                <li class="li_01">
+                    <img src="img/GUI/suo.png">
+                    <p>2294472375_24a3b8ef46_o</p>
+                    <img src="img/sprite/forward.png">
+                </li>
+            </ul>
+        </article>
+
+
+        <div id="chang_scene">
             <div>
-                <h3 id="setSprite">设置热点图标</h3>
-                <h3 id="setScene">选择场景</h3>
+                <h3 id="setSprite" class="setSprite">设置热点样式</h3>
+                <h3 id="setScene" class="next">选择场景</h3>
             </div>
-            <div id="sprites_contex">
+            <div id="sprites_contex" class="select_sprite">
                 <div>
                     <img src="img/sprite/forward.png" alt="img/sprite/forward.png"/></br>
                     <span>向前</span>
@@ -260,8 +446,65 @@
 
                 <article class="next"></article>
             </div>
+            <div id="sprites_contex_02" class="sprites_contex_02">
+                <article class="next"></article>
+                <article class="close"></article>
+            </div>
+            <div id="sprites_contex_03">
+                <article class="next"></article>
+                <article class="close"></article>
+            </div>
+        </div>
+        <div id="furniture">
+            <div>
+                <h3 id="setSprite_02" class="setSprite">设置热点样式</h3>
+                <h3 id="setLink" class="next">超链接地址</h3>
+            </div>
+            <div id="sprites_contex_04" class="select_sprite">
+                <div>
+                    <img src="img/sprite/forward.png" alt="img/sprite/forward.png"/></br>
+                    <span>向前</span>
+                </div>
+                <div>
+                    <img src="img/sprite/forward_left.png" alt="img/sprite/forward_left.png"/></br>
+                    <span>向前</span>
+                </div>
+                <div>
+                    <img src="img/sprite/forward_right.png" alt="img/sprite/forward_right.png"/></br>
+                    <span>向前</span>
+                </div>
+                <div>
+                    <img src="img/sprite/left.png" alt="img/sprite/left.png"/></br>
+                    <span>向前</span>
+                </div>
+                <div>
+                    <img src="img/sprite/right.png" alt="img/sprite/right.png"/></br>
+                    <span>向前</span>
+                </div>
+                <div>
+                    <img src="img/sprite/left.png" alt="img/sprite/left.png"/></br>
+                    <span>向前</span>
+                </div>
+                <div>
+                    <img src="img/sprite/sprite_01.png" alt="img/sprite/sprite_01.png"/></br>
+                    <span>向前</span>
+                </div>
+                <div>
+                    <img src="img/sprite/sprite_02.png" alt="img/sprite/sprite_02.png"/></br>
+                    <span>向前</span>
+                </div>
 
-            <div id="sprites_contex_02">
+                <article class="next"></article>
+            </div>
+            <div id="sprites_contex_05" class="sprites_contex_02">
+                <article class="push">
+                    请填入热点名称  <input type="text" value="热点一" name="name"/><br>
+                    请填入热点类型  <input type="text" value="www.baidu.com" name="url"/>
+                </article>
+                <article class="next"></article>
+                <article class="close"></article>
+            </div>
+            <div id="sprites_contex_06">
                 <article class="next"></article>
                 <article class="close"></article>
             </div>
