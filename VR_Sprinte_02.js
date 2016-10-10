@@ -229,8 +229,12 @@ XML_D.GUI = {
             dataType: "text",
             data: { dwd: JSON.stringify(XML_D.data.current_panorama) },
             url: "Views/AddSprites.ashx",
-            success: function (data) {
-                console.log(JSON.parse(data));
+            success: function (data) { 
+                if (data) {
+                    alert("添加成功");
+                } else {  
+                    alert("添加失败");
+                }
             },
             error : function(){
                 console.error("你访问的场景文件路径失败！！");

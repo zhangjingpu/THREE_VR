@@ -16,6 +16,7 @@
             url : 对应柜体展示的路径（type= 2 时，包含这个属性）-->
         <sprite type="1" pos="-285.7397448715704,-29.392684292767772,277.53946340019417" nextNode="4" img_url="img/sprite/forward.png"/>
         <sprite type="1" pos="-310.39564006937553,-113.60817217010955,224.73158992712663" nextNode="3" img_url="img/sprite/forward_right.png"/>
+        <sprite type="2" pos="-390.9257313655525,35.76029194619428,74.09076971814397" url="http://www.itthome.com/3DCloudDesign/3DF/furniture.html?id=Z-Y-X-J-00386&amp;type=2" img_url="img/sprite/sprite_01.png"/>
       </sprites>
     </panorama>
     <panorama node="2" url="img/VR/2016-9-23woshi-qj.jpg">
@@ -33,21 +34,22 @@
     <panorama node="4" url="img/VR/2016-9-28shufang.jpg">
       <sprites>
         <sprite type="1" pos="62.60188880743695,-70.47215737000465,-387.9481581300638" nextNode="3" img_url="img/sprite/forward.png"/>
+        <sprite type="2" pos="-398.612421202302,21.506822902993818,10.353005994208925" img_url="img/sprite/sprite_01.png" url="http://www.itthome.com/3DCloudDesign/3DF/furniture.html?id=Z-A-7-00713&amp;type=1"/>
       </sprites>
     </panorama>
   </panoramas>
   <!--配置户型图（唯一）-->
-  <!--<map url="img/map/three-bedroom_01.png">-->
-    <!--&lt;!&ndash;配置户型图上的热点，可以配置多个热点&ndash;&gt;-->
-    <!--<sprites>-->
-      <!--&lt;!&ndash;配置单个热点-->
-          <!--translate ：热点的相对位移-->
-          <!--nextNode：表示热点链接的下一个场景 &ndash;&gt;-->
-      <!--<sprite translate="80px, 120px" nextNode="2"/>-->
-      <!--<sprite translate="190px, 120px" nextNode="1"/>-->
-      <!--<sprite translate="120px, 190px" nextNode="3"/>-->
-      <!--<sprite translate="100px, 250px" nextNode="4"/>-->
-    <!--</sprites>-->
-  <!--</map>-->
+  <map url="img/map/three-bedroom_01.png">
+    <!--配置户型图上的热点，可以配置多个热点-->
+    <sprites>
+      <!--配置单个热点
+          translate ：热点的相对位移
+          nextNode：表示热点链接的下一个场景 -->
+      <sprite translate="80px, 120px" nextNode="2"/>
+      <sprite translate="190px, 120px" nextNode="1"/>
+      <sprite translate="120px, 190px" nextNode="3"/>
+      <sprite translate="100px, 250px" nextNode="4"/>
+    </sprites>
+  </map>
 </VR>
 
