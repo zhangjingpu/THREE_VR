@@ -1,0 +1,246 @@
+/*********** 基础css ************/
+*{
+    margin: 0;
+    padding: 0;
+}
+body{
+    overflow: hidden;
+}
+
+.bg_01{
+    color: white;
+    background-color: rgb(11, 135, 185);
+}
+.bg_02{
+    color: #32a6d4;
+}
+
+.bg_03{
+    color: black;
+    background-color: #ececec;
+}
+.bg_04{
+    color: white;
+    background-color: rgb(67, 68, 75);
+}
+
+/**完成按钮切换
+  * bg_05 ：未激活
+  * bg_06 ：激活*/
+.bg_05{
+    background: url("../img/GUI/finish.png") no-repeat;
+}
+.bg_06{
+    background: url("../img/GUI/finish_02.png") no-repeat;
+    cursor: pointer;
+}
+
+/*********** 功能按钮 ************/
+.function_button{
+    position: absolute;
+    right: 50px;
+    top: 25px;
+}
+.function_button div{
+    margin-top: 10px;
+    cursor: pointer;
+}
+#save{
+    margin-bottom: 40px;
+}
+
+/********* 侧边栏，公共属性设置 *******/
+.item{
+    position: absolute;
+    top: 102px;
+    right: 140px;
+    color: white;
+    transform: translate(503px, 0);
+    transition: transform 1s linear 0s;
+}
+.item article{
+    margin-top: 10px;
+    background-color: rgba(44,44,44,0.9);
+    border-radius: 5px;
+    padding: 10px;
+}
+.item h3 img{
+    padding-right: 10px;
+}
+
+/********* 全景图热点 ****************/
+.manage_sprite{
+    width: 344px;
+}
+.manage_sprite h3{
+    padding: 5px 13px 10px 10px;
+}
+.manage_sprite a{
+    display: inline-block;
+    border: 1px solid #2da4d6;
+    margin: 13px 0 10px 10px;
+    padding: 10px 20px 10px 20px;
+    text-decoration: blink;
+    text-align: center;
+}
+.manage_sprite article li{
+    list-style-type: none;
+    overflow: hidden;
+    background-color: #787878;
+    margin: 11px;
+}
+.manage_sprite article li img{
+    float: left;
+    width: 45px;
+    height: 45px;
+}
+.manage_sprite article li p{
+    float: left;
+    color: #95C8F1;
+    margin-left: 10px;
+    margin-right: 10px;
+    margin-top: 8px;
+}
+.manage_sprite .li_cover{
+    position: absolute;
+    height: 0;
+    width: 302px;
+    background-color: rgba(0,174,247,0.9);
+    text-align: center;
+    line-height: 45px;
+    overflow: hidden;
+    cursor: pointer;
+}
+.manage_sprite li:hover div{
+    height: 45px;
+}
+.manage_sprite .add_sprite{
+    width: 262px;
+    color: #0b87b9;
+}
+
+.chang_scene{
+    position: absolute;
+    width: 986px;
+    height: 537px;
+    top: 50%;
+    left: 50%;
+    margin: -267px 0 0 -493px;
+    background-color: white;
+    color: white;
+    display: none;
+    z-index: 20;
+}
+.chang_scene section{
+    background-color: #43444b;
+    padding: 22px;
+}
+.chang_scene section .close{
+    float: right;
+}
+.chang_scene article{
+    margin: 10px 20px 20px 20px;
+    height: 41px;
+}
+.chang_scene .sprite_type a{
+    width: 472px;
+    height: 41px;
+    line-height: 41px;
+    text-align: center;
+    text-decoration: blink;
+    display: block;
+    float: left;
+}
+.chang_scene .select_sprite div{
+    float: left;
+    font-size: 14px;
+    color: black;
+}
+.chang_scene .select_sprite div img{
+    width: 87px;
+    height: 87px;
+    border: 1px solid #e1e1e1;
+    margin-right: 10px;
+    background-color: #c8c8cd;
+    cursor: pointer;
+}
+.chang_scene .select_sprite div span{
+    display: block;
+    text-align: center;
+    width: 87px;
+}
+.chang_scene .select_sprite a{
+    width: 103px;
+    height: 41px;
+    clear: both;
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    background:url("../img/GUI/next.png") no-repeat;
+}
+
+.chang_scene .select_scene{
+    padding: 0 20px 20px 20px;
+    display: none;
+}
+.chang_scene .select_scene div{
+    float: left;
+    color: black;
+    width: 204px;
+    height: 38px;
+    background-color: #ececec;
+    border: 1px solid #e1e1e1;
+    margin-right: 20px;
+    cursor: pointer;
+    margin-bottom: 20px;
+}
+.chang_scene .select_scene div span{
+    position: relative;
+    bottom: 12px;
+    left: 10px;
+}
+.chang_scene .finish{
+    width: 103px;
+    position: absolute;
+    bottom: 0;
+    right: 0;
+}
+
+#furniture .push{
+    color: black;
+    text-align: center;
+}
+
+/*************** 导航图开始 *************/
+.navigation_map{
+    background-color: rgba(44, 44, 44, 0.9);
+    padding: 10px 22px 15px 22px;
+    border-radius: 5px;
+    top: 112px;
+}
+.navigation_map a{
+    display: inline-block;
+    border: 1px solid #5a8bcf;
+    color: #5b8bce;
+    padding: 10px 39px 10px 41px;
+    text-decoration: blink;
+}
+.map{
+    width: 300px;
+    height: 400px;
+    cursor: pointer;
+    margin: 10px 0 10px 0;
+    background-size: 300px 400px;
+}
+.navigation_map .map .map_Sprite{
+    position: absolute;
+    width: 30px;
+    height: 38px;
+    background-size: 72px 40px;
+    background: url("../img/hs.png") 0 0;
+}
+
+/*********** 导航图结束 ****************/
+#map_chang_scen .map_scene{
+    display: block;
+}

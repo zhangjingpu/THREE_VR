@@ -1,0 +1,50 @@
+.middle .middle_right .select{
+    overflow: hidden;
+    padding: 10px;
+    background-image: url("../img/site/bg.png");
+    height: 19px;
+}
+.middle .middle_right .select a{
+    float: right;
+    color: #f49f36;
+    padding-right: 24px;
+}
+.middle .middle_right h3{
+    float: left;
+    color: #555555;
+}
+.middle .middle_right .select_2{
+    padding: 17px 10px 17px 10px;
+    background-color: white;
+    overflow: hidden;
+    border: 1px solid #e0dede;
+}
+.middle .middle_right .select_2 div{
+    float: left;
+    padding-right: 32px;
+}
+.middle .middle_head{
+    margin-top: 10px;
+    padding: 10px 10px 10px 10px;
+    background-image: url("../img/site/bg.png");
+    overflow: hidden;
+}
+.middle .middle_head .right{
+    float: right;
+    margin-right: 24px;
+}
+.middle .middle_right table{
+    text-align: center;
+    width: 100%;
+    background-color: white;
+    border-collapse: collapse;
+}
+.middle .middle_right table td,th{
+    border-left: 1px solid #f7f7f7;
+    border-right: 1px solid #f7f7f7;
+    padding-bottom: 10px;
+    padding-top: 10px;
+}
+.tr_2{
+    background-color: #f9f9f9;
+}
