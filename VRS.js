@@ -6,6 +6,12 @@ var XML_D = {
     data : {
         /**放置vr场景文件的数据**/
         vr_xml : {},
+        /**当前户型的数据**/
+        current_vr : {
+            panorama : {
+                node : null
+            }
+        }
     },
     /* 初始化数据和事件 */
     init : {
@@ -804,10 +810,24 @@ XML_D.Three = {
 
     mesh : {},
     initObject:   function () {
+
+        //设置当前进入房间
+        var current_panorama = null;
+        if(XML_D.data.current_vr.panorama.node){
+            for(var item in XML_D.data.vr_xml.panoramas){
+                if(XML_D.data.vr_xml.panoramas[item].node == XML_D.data.current_vr.panorama.node){
+                    current_panorama = XML_D.data.vr_xml.panoramas[item];
+                }
+            }
+        }
+        if(current_panorama == null && XML_D.data.vr_xml.panoramas.length > 0){
+            current_panorama = XML_D.data.vr_xml.panoramas[0];
+        }
+
         var geometry = new THREE.SphereGeometry( 500, 60, 40 );
         geometry.scale( - 1, 1, 1 );
         var material = new THREE.MeshBasicMaterial( {
-            map: new THREE.TextureLoader().load( XML_D.data.vr_xml.panoramas[0].url )
+            map: new THREE.TextureLoader().load( current_panorama.url )
         });
         var mesh = new THREE.Mesh( geometry, material );
         this.mesh = mesh;
@@ -815,7 +835,7 @@ XML_D.Three = {
 
         /***************添加热点*************************/
         //获得存放热点的数组
-        var Sprites = XML_D.data.vr_xml.panoramas[0].sprites;
+        var Sprites = current_panorama.sprites;
         XML_D.SwitchPanorama.addSprite(Sprites);
         /***************添加热点*************************/
     },
@@ -919,23 +939,26 @@ XML_D.Three = {
 XML_D.URL = {
     /**转换参数的到的xml文件访问路径**/
     transform_XML_URL : function(){
+        //全景图的名称
         var id = this.GetQueryString("id");
+        //titel名称
         var name = this.GetQueryString("name");
+        //xml名称
         var xml_name = this.GetQueryString("xml_name");
 
-        console.log(id);
-        console.log(name);
-        console.log(name);
+        //房间号
+        var RoomId = this.GetQueryString("RoomId");
+        if(RoomId){
+            XML_D.data.current_vr.panorama.node = RoomId;
+        }
 
         if(id){
             //XML_D.init.initURL.url = "http://www.tuotuohome.com/CloudProduct/source/jpg/" + id;
             XML_D.init.initURL.url = "img/VR/" + id;
         }
-
         if(name){
             $("title").html(name);
         }
-
         if(xml_name){
             XML_D.init.initURL.xmlurl = "obj/Debug/PanXml/" + xml_name;
         }
