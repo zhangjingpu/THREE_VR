@@ -12,502 +12,191 @@
 		<script style="text/javascript" src="js/three/three.js"></script>
 		<!-- 判定是否浏览器是否支持WebGl -->
 		<script type="text/javascript" src="js/Detector.js"></script>
-
 		<script type="text/javascript" src="js/MyRaycaster.js"></script>
-
 		<!--导入程序-->
 		<script style="text/javascript" src="VR_Sprinte_02.js"></script>
 
-        <style>
-            *{
-                margin: 0px;
-                overflow: hidden;
-                padding: 0px;
-            }
-            #save{
-                position: absolute;
-                right: 147px;
-                top: 10px;
-            }
-            #sprite{
-                position: absolute;
-                right: 10px;
-                top: 68px;
-            }
-            #close{
-                position: absolute;
-                right: 10px;
-                top: 10px;
-            }
-
-            /********* 选择热点类型框 *******/
-            #sprite_menu{
-                position: absolute;
-                top: 136px;
-                right: 10px;
-                background-color: #252525;
-                color: white;
-                padding: 10px;
-                border-radius: 5px;
-                filter: alpha(opacity:90);
-                opacity: 0.9;
-                -moz-opacity: 0.9;
-                -khtml-opacity: 0.9;
-                width: 323px;
-                display: none;
-            }
-            #sprite_menu a{
-                display: inline-block;
-                border: 1px solid #FFFFFF;
-                color: white;
-                margin: 10px;
-                padding: 10px 20px 10px 20px;
-                text-decoration: blink;
-            }
-            #sprite_menu h3{
-                padding: 10px;
-            }
-
-            /******** 显示跳转场景热点 *******/
-            #sprite_chang {
-                position: absolute;
-                top: 283px;
-                right: 10px;
-                background-color: #252525;
-                color: white;
-                padding: 10px;
-                border-radius: 5px;
-                filter: alpha(opacity:90);
-                opacity: 0.9;
-                -moz-opacity: 0.9;
-                -khtml-opacity: 0.9;
-                width: 323px;
-                display: none;
-                -khtml-opacity: 0.9;
-            }
-            #sprite_chang li{
-                margin-bottom: 5px;
-                list-style-type: none;
-            }
-
-            /******** 显示查看柜体热点 *******/
-            #link {
-                position: absolute;
-                top: 283px;
-                right: 10px;
-                background-color: #252525;
-                color: white;
-                padding: 10px;
-                border-radius: 5px;
-                filter: alpha(opacity:90);
-                opacity: 0.9;
-                -moz-opacity: 0.9;
-                -khtml-opacity: 0.9;
-                width: 323px;
-                display: none;
-                -khtml-opacity: 0.9;
-            }
-            #link li{
-                margin-bottom: 5px;
-                list-style-type: none;
-            }
-
-            .li_01{
-                background-color: #787878;
-                padding: 5px;
-            }
-            .li_01 img{
-                float: left;
-                width: 54px;
-                height: 54px;
-            }
-            .li_01 p{
-                float: left;
-                color: #95C8F1;
-                margin-left: 10px;
-                margin-right: 10px;
-                margin-top: 8px;
-            }
-
-            .sprite_menu_first h3{
-                float: left;
-                margin-top: 10px;
-            }
-            .add_sprite{
-                float: right;
-            }
-
-            /**************选择热点框***********/
-            #chang_scene{
-                display: none;
-                position: fixed;
-                width: 600px;
-                height: 400px;
-                top: 29%;
-                left: 32%;
-                margin: 0;
-                color: white;
-            }
-            #chang_scene h3{
-                float: left;
-                padding: 14px;
-                border-radius: 5px 5px 0 0;
-                cursor: pointer;
-            }
-
-            #furniture{
-                display: none;
-                position: fixed;
-                width: 600px;
-                height: 400px;
-                top: 29%;
-                left: 32%;
-                margin: 0;
-                color: white;
-            }
-            #furniture h3{
-                float: left;
-                padding: 14px;
-                border-radius: 5px 5px 0 0;
-                cursor: pointer;
-            }
-
-            #sprites_contex{
-                background-color: #1b1818;
-                border-radius: 0 5px 5px 5px;
-                padding: 20px;
-            }
-            #sprites_contex div{
-                float: left;
-                margin-right: 20px;
-                margin-top: 10px;
-                cursor: pointer;
-            }
-            #sprites_contex .next{
-                clear: both;
-                background-image: url("img/GUI/next.png");
-                background-repeat: no-repeat;
-                width: 130px;
-                height: 40px;
-                margin-top: 30px;
-                float: right;
-            }
-            #sprites_contex div img{
-                width: 80px;
-                height: 80px;
-                border: 1px solid #FFFFFF;
-                padding: 5px;
-            }
-
-            #setSprite{
-                background-color: #1b1818;
-            }
-            #setScene{
-                background-color: #4d90fe;
-            }
-
-            #sprites_contex_02{
-                background-color: #1b1818;
-                border-radius: 0 5px 5px 5px;
-                padding: 20px;
-                height: 300px;
-            }
-            #sprites_contex_02 img{
-                width: 48px;
-                height: 48px;
-                float: left;
-            }
-            #sprites_contex_02 div{
-                background-color: #454545;
-                width: 176px;
-                height: 48px;
-                float: left;
-                margin-right: 10px;
-                margin-bottom: 10px;
-            }
-            #sprites_contex_02 span{
-                float: left;
-                padding: 14px;
-            }
-            #sprites_contex_02 .next{
-                position: relative;
-                top: 206px;
-                left: 437px;
-                width: 116px;
-                clear: both;
-                height: 100px;
-                background-image: url("img/GUI/next.png");
-                background-repeat: no-repeat;
-            }
-            #sprites_contex_02 .close{
-                position: relative;
-                top: 107px;
-                left: 306px;
-                width: 119px;
-                clear: both;
-                height: 100px;
-                background-image: url("img/GUI/close.png");
-                background-repeat: no-repeat;
-            }
-
-            #sprites_contex_04{
-                background-color: #1b1818;
-                border-radius: 0 5px 5px 5px;
-                padding: 20px;
-            }
-            #sprites_contex_04 div{
-                float: left;
-                margin-right: 20px;
-                margin-top: 10px;
-                cursor: pointer;
-            }
-            #sprites_contex_04 .next{
-                clear: both;
-                background-image: url("img/GUI/next.png");
-                background-repeat: no-repeat;
-                width: 130px;
-                height: 40px;
-                margin-top: 30px;
-                float: right;
-            }
-            #sprites_contex_04 div img{
-                width: 80px;
-                height: 80px;
-                border: 1px solid #FFFFFF;
-                padding: 5px;
-            }
-
-            #setSprite_02{
-                background-color: #1b1818;
-            }
-            #setLink{
-                background-color: #4d90fe;
-            }
-
-            #sprites_contex_05{
-                background-color: #1b1818;
-                border-radius: 0 5px 5px 5px;
-                padding: 20px;
-                height: 300px;
-            }
-            #sprites_contex_05 img{
-                width: 48px;
-                height: 48px;
-                float: left;
-            }
-            #sprites_contex_05 div{
-                background-color: #454545;
-                width: 176px;
-                height: 48px;
-                float: left;
-                margin-right: 10px;
-                margin-bottom: 10px;
-            }
-            #sprites_contex_05 span{
-                float: left;
-                padding: 14px;
-            }
-            #sprites_contex_05 .next{
-                position: absolute;
-                bottom: 35px;
-                right: 19px;
-                width: 116px;
-                clear: both;
-                height: 40px;
-                background-image: url("img/GUI/next.png");
-                background-repeat: no-repeat;
-            }
-            #sprites_contex_05 .close{
-                position: relative;
-                top: 107px;
-                left: 306px;
-                width: 119px;
-                clear: both;
-                height: 100px;
-                background-image: url("img/GUI/close.png");
-                background-repeat: no-repeat;
-            }
-
-            #sprites_contex_05 input{
-                height: 25px;
-                background-color: black;
-                color: white;
-            }
-            .push{
-                padding-top: 25px;
-                text-align: center;
-                line-height: 61px;
-            }
-        </style>
+        <link type="text/css" rel="stylesheet" href="css/VR_Sprinte_02.css"/>
 	</head>
 	<body>
-        <!--屏幕左上方的小图标-->
+        <!--************* 容器 ********************************-->
         <div id="container"></div>
-        <div id="save">
-            <img src='img/GUI/save.png'>
-        </div>
-        <div id="sprite">
-            <img src='img/GUI/sprite.png'>
-        </div>
-        <div id="close">
-            <img src='img/GUI/close.png'>
-        </div>
 
-        <!--选择热点类型-->
-        <article id="sprite_menu">
-            <h3>热点设置</h3>
-            <a href="javaScript:void(0)">全景切换</a>
-            <a href="javaScript:void(0)">超链接</a>
-        </article>
-
-        <!--热点切换-->
-        <div id="sprite_chang">
-            <ul>
-                <li class="sprite_menu_first">
-                    <h3>全景切换热点</h3>
-                    <div class="add_sprite">
-                        <img src="img/GUI/add.png">
-                    </div>
-                </li>
-                <li class="li_01">
-                    <img src="img/GUI/suo.png">
-                    <p>2294472375_24a3b8ef46_o</p>
-                    <img src="img/sprite/forward.png">
-                </li>
-                <li class="li_01">
-                    <img src="img/GUI/suo.png">
-                    <p>2294472375_24a3b8ef46_o</p>
-                    <img src="img/sprite/forward.png">
-                </li>
-            </ul>
-        </div>
-
-        <!--超链接-->
-        <article id="link">
-            <ul>
-                <li class="sprite_menu_first">
-                    <h3>超链接切换热点</h3>
-                    <div class="add_sprite">
-                        <img src="img/GUI/add.png">
-                    </div>
-                </li>
-                <li class="li_01">
-                    <img src="img/GUI/suo.png">
-                    <p>2294472375_24a3b8ef46_o</p>
-                    <img src="img/sprite/forward.png">
-                </li>
-                <li class="li_01">
-                    <img src="img/GUI/suo.png">
-                    <p>2294472375_24a3b8ef46_o</p>
-                    <img src="img/sprite/forward.png">
-                </li>
-            </ul>
-        </article>
-
-
-        <div id="chang_scene">
-            <div>
-                <h3 id="setSprite" class="setSprite">设置热点样式</h3>
-                <h3 id="setScene" class="next">选择场景</h3>
+        <!--************* 功能按钮 ****************************-->
+        <aside class="function_button">
+            <div id="save">
+                <img src='img/GUI/save.png'>
             </div>
-            <div id="sprites_contex" class="select_sprite">
+            <div id="sprite">
+                <img src='img/GUI/sprite_02.png'>
+            </div>
+            <div id="map">
+                <img src='img/GUI/map_02.png'>
+            </div>
+        </aside>
+
+        <!--************* 全景图热点 **************************-->
+        <article id="manage_sprite" class="item manage_sprite" >
+            <article>
+                <h3><img src="img/GUI/icon_01.png"/>热点设置</h3>
+                <a href="javaScript:void(0)" class="manage_sprite_a bg_01">全景切换</a>
+                <a href="javaScript:void(0)" class="manage_sprite_a bg_02">超链接</a>
+            </article>
+            <!--热点切换-->
+            <article id="sprite_chang">
+                <h3><img src="img/GUI/icon_01.png"/>全景切换热点</h3>
+                <ul>
+                    <li class="li_01">
+                        <div class="li_cover">删除</div>
+                        <img src="img/GUI/suo.png">
+                        <p>2294472375_24a3b</p>
+                    </li>
+                    <li>
+                        <div class="li_cover">删除</div>
+                        <img src="img/GUI/suo.png">
+                        <p>2294472375_24a3b</p>
+                    </li>
+                </ul>
+                <a href="javascript:void(0)" class="add_sprite">添加热点</a>
+            </article>
+            <!--超链接-->
+            <article id="link">
+                <h3><img src="img/GUI/icon_01.png"/>超链接切换热点</h3>
+                <ul>
+                    <li>
+                        <div class="li_cover">删除</div>
+                        <img src="img/GUI/suo.png">
+                        <p>2294472375_24a3b8ef46_o</p>
+                    </li>
+                    <li>
+                        <div class="li_cover">删除</div>
+                        <img src="img/GUI/suo.png">
+                        <p>2294472375_24a3b8ef46_o</p>
+                    </li>
+                </ul>
+                <a href="javascript:void(0)" class="add_sprite">添加热点</a>
+            </article>
+        </article>
+
+        <article id="chang_scene" class="chang_scene">
+            <section>
+                <img src="img/GUI/icon_02.png"/>
+                添加全景切换图标
+                <img src="img/GUI/icon_03.png" class="close"/>
+            </section>
+            <article class="sprite_type">
+                <a href="javascript:void(0)" id="setSprite" class="setSprite bg_04">设置热点样式</a>
+                <a href="javascript:void(0)" id="setScene" class="next bg_03">选择场景</a>
+            </article>
+            <article id="sprites_contex" class="select_sprite">
                 <div>
                     <img src="img/sprite/forward.png" alt="img/sprite/forward.png"/></br>
                     <span>向前</span>
                 </div>
                 <div>
                     <img src="img/sprite/forward_left.png" alt="img/sprite/forward_left.png"/></br>
-                    <span>向前</span>
+                    <span>左前</span>
                 </div>
                 <div>
                     <img src="img/sprite/forward_right.png" alt="img/sprite/forward_right.png"/></br>
-                    <span>向前</span>
+                    <span>右前</span>
                 </div>
                 <div>
                     <img src="img/sprite/left.png" alt="img/sprite/left.png"/></br>
-                    <span>向前</span>
+                    <span>向左</span>
                 </div>
                 <div>
                     <img src="img/sprite/right.png" alt="img/sprite/right.png"/></br>
-                    <span>向前</span>
-                </div>
-                <div>
-                    <img src="img/sprite/left.png" alt="img/sprite/left.png"/></br>
-                    <span>向前</span>
+                    <span>热点1</span>
                 </div>
                 <div>
                     <img src="img/sprite/sprite_01.png" alt="img/sprite/sprite_01.png"/></br>
-                    <span>向前</span>
+                    <span>热点2</span>
                 </div>
                 <div>
                     <img src="img/sprite/sprite_02.png" alt="img/sprite/sprite_02.png"/></br>
-                    <span>向前</span>
+                    <span>热点3</span>
                 </div>
+                <a href="javascript:void(0)" class="next"></a>
+            </article>
+            <article id="sprites_contex_02" class="select_scene">
+                <article class="finish bg_05"></article>
+            </article>
+        </article>
 
-                <article class="next"></article>
-            </div>
-            <div id="sprites_contex_02" class="sprites_contex_02">
-                <article class="next"></article>
-                <article class="close"></article>
-            </div>
-            <div id="sprites_contex_03">
-                <article class="next"></article>
-                <article class="close"></article>
-            </div>
-        </div>
-        <div id="furniture">
-            <div>
-                <h3 id="setSprite_02" class="setSprite">设置热点样式</h3>
-                <h3 id="setLink" class="next">超链接地址</h3>
-            </div>
-            <div id="sprites_contex_04" class="select_sprite">
+        <article id="furniture" class="chang_scene">
+            <section>
+                <img src="img/GUI/icon_02.png"/>
+                添加超链接图标
+                <img src="img/GUI/icon_03.png" class="close"/>
+            </section>
+            <article class="sprite_type">
+                <a href="javascript:void(0)" class="setSprite bg_04">设置热点样式</a>
+                <a href="javascript:void(0)" class="setLink bg_03">超链接地址</a>
+            </article>
+            <article id="sprites_contex_04" class="select_sprite">
                 <div>
                     <img src="img/sprite/forward.png" alt="img/sprite/forward.png"/></br>
                     <span>向前</span>
                 </div>
                 <div>
                     <img src="img/sprite/forward_left.png" alt="img/sprite/forward_left.png"/></br>
-                    <span>向前</span>
+                    <span>左前</span>
                 </div>
                 <div>
                     <img src="img/sprite/forward_right.png" alt="img/sprite/forward_right.png"/></br>
-                    <span>向前</span>
+                    <span>右前</span>
                 </div>
                 <div>
                     <img src="img/sprite/left.png" alt="img/sprite/left.png"/></br>
-                    <span>向前</span>
+                    <span>向左</span>
                 </div>
                 <div>
                     <img src="img/sprite/right.png" alt="img/sprite/right.png"/></br>
-                    <span>向前</span>
-                </div>
-                <div>
-                    <img src="img/sprite/left.png" alt="img/sprite/left.png"/></br>
-                    <span>向前</span>
+                    <span>热点1</span>
                 </div>
                 <div>
                     <img src="img/sprite/sprite_01.png" alt="img/sprite/sprite_01.png"/></br>
-                    <span>向前</span>
+                    <span>热点2</span>
                 </div>
                 <div>
                     <img src="img/sprite/sprite_02.png" alt="img/sprite/sprite_02.png"/></br>
-                    <span>向前</span>
+                    <span>热点3</span>
                 </div>
-
-                <article class="next"></article>
-            </div>
-            <div id="sprites_contex_05" class="sprites_contex_02">
+                <a href="javascript:void(0)" class="next"></a>
+            </article>
+            <article id="sprites_contex_05" class="select_furniture">
                 <article class="push">
                     请填入热点名称  <input type="text" value="热点一" name="name"/><br>
-                    请填入热点类型  <input type="text" value="www.baidu.com" name="url"/>
+                    请填入链接地址  <input type="text" value="www.baidu.com" name="url"/>
                 </article>
-                <article class="next"></article>
-                <article class="close"></article>
-            </div>
-            <div id="sprites_contex_06">
-                <article class="next"></article>
-                <article class="close"></article>
-            </div>
-        </div>
+                <article class="finish bg_06"></article>
+            </article>
+        </article>
+
+        <!--************* 导航图 *****************************-->
+        <article class="item navigation_map">
+            <h3><img src="img/GUI/icon_04.png"/>沙盘设置</h3>
+            <!--放置导航图-->
+            <div class="map"></div>
+            <a href="javascript:void(0)">添加全景</a>
+            <a href="javascript:void(0)">删除热点</a>
+        </article>
+
+        <article id="map_chang_scen" class="chang_scene">
+            <section>
+                <img src="img/GUI/icon_02.png"/>
+                添加沙盘中场景
+                <img src="img/GUI/icon_03.png" class="close"/>
+            </section>
+            <article class="select_scene map_scene">
+                <!--<div nextNode="1">-->
+                    <!--<img src="img/GUI/tupian.png"/>-->
+                    <!--<span>房间一</span>-->
+                <!--</div>-->
+                <article class="finish bg_05"></article>
+            </article>
+        </article>
+
 	</body>
 </html>
