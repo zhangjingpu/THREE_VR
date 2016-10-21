@@ -524,7 +524,7 @@ XML_D.GUI = {
     /**超链接、全景切换 -> 添加热点 -> 设置热点样式 -> 选中热点 **/
     sprite_01 : function(){
         $(this).children("img").css({border: "2px solid #ff961a"});
-        $(this).siblings().find("img").css({border: "0px"});
+        $(this).siblings().find("img").css({border: "2px solid #e1e1e1"});
         XML_D.data.current_VR.panorama.sprite.img_url = $(this).find("img")[0].alt;
     },
     /**超链接、全景切换 -> 删除热点 **/

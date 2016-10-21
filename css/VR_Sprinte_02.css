@@ -159,7 +159,7 @@ body{
 .chang_scene .select_sprite div img{
     width: 87px;
     height: 87px;
-    border: 1px solid #e1e1e1;
+    border: 2px solid #e1e1e1;
     margin-right: 10px;
     background-color: #c8c8cd;
     cursor: pointer;
