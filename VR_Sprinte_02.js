@@ -162,12 +162,19 @@ XML_D.Cover = function(){
 //事件的函数
 XML_D.Event = {
     onWindowResize : function(){
-
+        /**刷新全景**/
         XML_D.Three.camera.aspect = window.innerWidth / window.innerHeight;
         XML_D.Three.camera.updateProjectionMatrix();
+        XML_D.Three.renderer.setSize(window.innerWidth, window.innerHeight);
+        XML_D.Three.renderScene();
 
-        XML_D.Three.renderer.setSize( window.innerWidth, window.innerHeight);
-
+        /**设置遮罩层的大小**/
+        if($("#overlay").length > 0){
+            $("#overlay").css({
+                width : window.innerWidth,
+                height: window.innerHeight
+            });
+        }
     },
 
     onDocumentMouseDown : function ( event ) {
@@ -294,35 +301,50 @@ XML_D.Event = {
 
 /**操作**/
 XML_D.GUI = {
+    /**初始化GUI**/
     initGUI : function(){
-      this.initSpriteGUI();
-    },
-    initSpriteGUI : function(){
+        /**初始化GUI的数据
+         * 1.全景图数据
+         * 2.全景图中热点的数据*/
+        this.initGUIData();
 
-        var data = XML_D.data.VR.panoramas;
+        /**初始化GUI的事件*/
+        this.initEvent();
+    },
+
+    /**初始化GUI数据**/
+    initGUIData : function(){
+        /********************** 加载全景图 *******************************/
+        var panoramas = XML_D.data.VR.panoramas;
+        //当前进入房间
+        var current_panorama = null;
         /**显示所有房间全景**/
-        for(var item in data){
+        for(var item in panoramas){
             var divNode = document.createElement("div");
-            divNode.setAttribute("data-t",data[item].node);
+            divNode.setAttribute("data-t",panoramas[item].node);
 
             var imgNode = document.createElement("img");
             imgNode.src = "img/GUI/tupian.png";
             $(divNode).append(imgNode);
 
             var SpanNode = document.createElement("span");
-            SpanNode.innerHTML = data[item].name;
+            SpanNode.innerHTML = panoramas[item].name;
             $(divNode).append(SpanNode);
 
             $("#map_chang_scen .select_scene").prepend(divNode);
 
-            if(XML_D.data.current_VR.panorama.node == data[item].node){
-                XML_D.data.current_VR.panorama.url = data[item].url;
+            if(XML_D.data.current_VR.panorama.node == panoramas[item].node){
+                //设置当前房间
+                current_panorama = panoramas[item];
             }else{
                 var divNode_02 = $(divNode).clone();
                 $("#sprites_contex_02").prepend(divNode_02);
             }
         };
+    },
 
+    /**初始化GUI事件**/
+    initEvent : function(){
         /********************** 页面中的功能项 ******************************************/
         /**保存现在添加的所有热点
          * 1.从场景中筛选出所有的热点
@@ -346,6 +368,10 @@ XML_D.GUI = {
         $(".manage_sprite").find(".manage_sprite_a").bind("click",this.manage_sprite_a);
 
         /********************** 超链接、全景切换 ************************************/
+        /**超链接、全景切换 -> 删除热点 **/
+        $("#manage_sprite").off("click",".li_cover",this.delete_sprite);
+        $("#manage_sprite").on("click",".li_cover",this.delete_sprite);
+
         /**超链接、全景切换 -> 添加热点 **/
         $(".add_sprite").unbind("click",this.add_sprite);
         $(".add_sprite").bind("click",this.add_sprite);
@@ -387,16 +413,6 @@ XML_D.GUI = {
         /**超链接 -> 添加热点 -> 超链接地址 **/
         $("#furniture .setLink").unbind("click",this.setLink);
         $("#furniture .setLink").bind("click",this.setLink);
-
-        /**超链接 -> 添加热点 -> 超链接地址 -> 输入框 **/
-        $("#furniture input").keyup(function(){
-            if(this.name.indexOf("name") > -1){
-                XML_D.data.current_sprite.name = this.value;
-            }
-            if(this.name.indexOf("url") > -1){
-                XML_D.data.current_sprite.url = this.value;
-            }
-        });
 
         /**超链接 -> 添加热点 -> 选择场景 -> 点击完成**/
         $(".chang_scene .select_furniture .finish").unbind("click",this.furniture_finish);
@@ -511,6 +527,15 @@ XML_D.GUI = {
         $(this).siblings().find("img").css({border: "0px"});
         XML_D.data.current_VR.panorama.sprite.img_url = $(this).find("img")[0].alt;
     },
+    /**超链接、全景切换 -> 删除热点 **/
+    delete_sprite : function(){
+        //删除全景中的精灵
+        var object = XML_D.Three.scene.getObjectById(parseInt($(this).siblings("img").attr("data-id")));
+        XML_D.Three.scene.remove(object);
+        XML_D.Three.renderScene();
+        //删除GUI中的精灵
+        $(this).parent().remove();
+    },
 
     /********************** 全景切换 ********************************************/
     /**全景切换 -> 添加热点 -> 设置热点样式 -> 下一步 **/
@@ -549,11 +574,16 @@ XML_D.GUI = {
     },
     /**全景切换 -> 添加热点 -> 选择场景 -> 点击完成**/
     chang_scene_finish : function(){
+        //关闭当前组件，删除遮罩层
         $(this).parent().parent().hide();
-        //删除遮罩层
         $("#overlay").remove();
-        XML_D.Sprite.add();
 
+        //添加热点到全景图、GUI热点列表
+        var sprite = XML_D.Sprite.add();
+        var liNode = XML_D.HTML.create_sprite_list(sprite.name,sprite.id);
+        $("#sprite_chang ul").append(liNode);
+
+        //删除完成事件，设置按钮未激活状态
         $("#chang_scene .select_scene .finish").unbind("click",XML_D.GUI.chang_scene_finish);
         $(this).removeClass("bg_06").addClass("bg_05");
     },
@@ -572,23 +602,32 @@ XML_D.GUI = {
         $(this).parent().siblings(".select_furniture").show();
         $(this).parent().hide();
     },
-    /**超链接 -> 添加热点 -> 超链接地址 **/
     /**超链接 -> 添加热点 -> 选择场景 -> 点击完成**/
     furniture_finish : function(){
+        //数据存放到当前操作节点
         $(this).siblings(".push").find("input").each(function(){
             if(this.name.indexOf("name") > -1){
                 XML_D.data.current_VR.panorama.sprite.name = this.value;
             }
             if(this.name.indexOf("url") > -1){
-                XML_D.data.current_VR.panorama.sprite.url = this.value;
+                if(this.value.indexOf("http://") == 0){
+                    XML_D.data.current_VR.panorama.sprite.url = this.value;
+                }else{
+                    XML_D.data.current_VR.panorama.sprite.url = "http://" + this.value;
+                    console.log(XML_D.data.current_VR.panorama.sprite.url);
+                }
             }
         });
-        $(this).parent().parent().hide();
-        //删除遮罩层
-        $("#overlay").remove();
-        XML_D.Sprite.add();
-    },
 
+        //关闭当前窗口，删除遮罩层
+        $(this).parent().parent().hide();
+        $("#overlay").remove();
+
+        //添加热点到全景、热点列表中
+        var sprite = XML_D.Sprite.add();
+        var liNode = XML_D.HTML.create_sprite_list(sprite.name,sprite.id);
+        $("#link ul").append(liNode);
+    },
 
     setLink : function(){
         $(this).removeClass("bg_03").addClass("bg_04");
@@ -796,6 +835,29 @@ XML_D.GUI = {
         }
     },
 };
+/**js动态创建页面的节点**/
+XML_D.HTML = {
+    /**创建热点列表项
+     * name:热点的名称
+     * id : THREE.Sprite中的id **/
+    create_sprite_list : function(name,id){
+        var liNode = $("<li></li>");
+
+        var divNode = $("<div class='li_cover'></div>");
+        divNode.append("删除");
+        liNode.append(divNode);
+
+        var imgNode = $("<img src='img/GUI/suo.png'/>");
+        imgNode.attr("data-id",id);
+        liNode.append(imgNode);
+
+        var pNode = $("<p></p>");
+        pNode.append(name);
+        liNode.append(pNode);
+
+        return liNode;
+    }
+};
 
 /**射线查找**/
 XML_D.Raycaster = {
@@ -853,15 +915,16 @@ XML_D.Raycaster = {
     },
 };
 
+/**对精灵的相关操作**/
 XML_D.Sprite = {
-    /**添加热点
+    /**添加热点(场景、GUI)
      * Sprites:热点集合**/
     addSprite : function(Sprites){
         for(var i = 0;i < Sprites.length;i++){
 
             var sprite = this.create(Sprites[i].img_url);
 
-            /************************* 设置热点的基本属性 ************************************/
+            /*********************** 设置热点的基本属性 ****************/
             //设置热点的名称
             sprite.name =  Sprites[i].name;
             //设置热点的位置
@@ -873,7 +936,6 @@ XML_D.Sprite = {
             sprite.img_url = Sprites[i].img_url;
             //设置类型
             sprite.type = Sprites[i].type;
-
             if(sprite.type == 1){
                 //设置下一个场景的id
                 sprite.nextNode = Sprites[i].nextNode;
@@ -883,9 +945,18 @@ XML_D.Sprite = {
             }
 
             XML_D.Three.scene.add( sprite );
-            XML_D.Three.renderScene();
+
+            /*********************** 添加热点项 *************************/
+            var liNode = XML_D.HTML.create_sprite_list(sprite.name,sprite.id);
+            if(sprite.type == 1){
+                $("#sprite_chang ul").append(liNode);
+            }else{
+                $("#link ul").append(liNode);
+            };
         }
     },
+
+    /**添加热点(场景)**/
     add : function(){
         /************************* 创建当前热点 ************************************/
         var sprite = this.create(XML_D.data.current_VR.panorama.sprite.img_url);
@@ -914,7 +985,9 @@ XML_D.Sprite = {
         }
 
         XML_D.Three.scene.add( sprite );
+        return sprite;
     },
+
     /**创建一个精灵
      * url : 精灵上贴图的路径
      * return ：创建的精灵**/
