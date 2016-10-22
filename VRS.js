@@ -613,6 +613,7 @@ XML_D.GUI = {
         }
         //添加链接
         $(".share_panorama .share_foot").append(window.location.href);
+        //$(".share_panorama .share_foot").html(window.location.href);
 
 
         /**生成二维码**/
@@ -977,7 +978,7 @@ XML_D.Three = {
     initEvent : function(){
 
         /**添加鼠标事件**/
-        document.addEventListener( 'mousedown', XML_D.Event.onDocumentMouseDown, false );
+        XML_D.Three.container.addEventListener( 'mousedown', XML_D.Event.onDocumentMouseDown, false );
         document.addEventListener( 'mousemove', XML_D.Event.onDocumentMouseMove, false );
         document.addEventListener( 'mouseup', XML_D.Event.onDocumentMouseUp, false );
 
