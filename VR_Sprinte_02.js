@@ -6,6 +6,7 @@ var XML_D = {
         /**整个户型的所有信息**/
         VR : {
             id : "1",
+            name : "户型图",
             panoramas : [
                 {
                     name : "房间一",
@@ -360,6 +361,9 @@ XML_D.GUI = {
                 $("#sprites_contex_02").prepend(divNode_02);
             }
         };
+
+        //添加房间名称
+        $("title").append("-"+current_panorama.name);
 
         /**设置沙盘上的图、热点**/
         addNavigationMapAndSprite();
