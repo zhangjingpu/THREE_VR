@@ -34,6 +34,7 @@ var XML_D = {
                     url : "img/VR/2016-9-23woshi-qj.jpg",
                     sprites : [
                         {
+                            img_url : "img/sprite/sprite_01.png",
                             type : "1",
                             pos : "330.2152227252353,-33.4392608299774,222.23100519043626",
                             nextNode : "1",
@@ -50,11 +51,11 @@ var XML_D = {
                         nextNode : "1",
                         name : "热点一"
                     },
-                    {
-                        translate:"190px, 120px",
-                        nextNode : "2",
-                        name : "热点二"
-                    },
+                    //{
+                    //    translate:"190px, 120px",
+                    //    nextNode : "2",
+                    //    name : "热点二"
+                    //},
                 ]
             }
         },
@@ -157,6 +158,24 @@ XML_D.Cover = function(){
             backgroundColor: "rgba(93, 87, 87, 0.6)"
         });
     };
+};
+
+/**操作数据**/
+XML_D.data.fun = {
+    /**根据房间的id，从户型中查找房间的信息**/
+    findCurrentPanorama : function(roomId){
+        //所有的户型
+        var panoramas = XML_D.data.VR.panoramas;
+        //当前显示房间
+        var current_panorama;
+        for(var i = 0; i < panoramas.length; i++){
+            if(panoramas[i].node == roomId){
+                current_panorama = panoramas[i];
+            }
+        }
+
+        return current_panorama;
+    }
 };
 
 //事件的函数
@@ -321,7 +340,7 @@ XML_D.GUI = {
         /**显示所有房间全景**/
         for(var item in panoramas){
             var divNode = document.createElement("div");
-            divNode.setAttribute("data-t",panoramas[item].node);
+            divNode.setAttribute("data-nextNode",panoramas[item].node);
 
             var imgNode = document.createElement("img");
             imgNode.src = "img/GUI/tupian.png";
@@ -341,19 +360,78 @@ XML_D.GUI = {
                 $("#sprites_contex_02").prepend(divNode_02);
             }
         };
+
+        /**设置沙盘上的图、热点**/
+        addNavigationMapAndSprite();
+        /**设置沙盘上的图、热点**/
+        function addNavigationMapAndSprite(){
+            //判断户型图是否存在
+            if(XML_D.data.VR.map.url){
+                //设置地图
+                $(".navigation_map .map").css({
+                    backgroundImage : "url(" + XML_D.data.VR.map.url + ")"
+                });
+                /*********** 添加已有的热点 *******************/
+                var Sprite_icons = XML_D.data.VR.map.sprites;
+                //判断当前房间的热点是否创建
+                var tag = false;
+                for(var i in Sprite_icons){
+                    //创建热点，并添加到地图上
+                    var map_Sprite = $("<div class='map_Sprite' data-nextNode='"+ Sprite_icons[i].nextNode +"'></div>");
+                    map_Sprite.attr("data-name",Sprite_icons[i].name);
+                    map_Sprite.attr("translate",Sprite_icons[i].translate);
+                    map_Sprite.css({
+                        transform: "translate("+ Sprite_icons[i].translate +") rotateX(10deg)",
+                    });
+
+                    //设置选中当前房间上的全景热点
+                    if(XML_D.data.current_VR.panorama.node == Sprite_icons[i].nextNode){
+                        //设置当前添加热点的颜色
+                        map_Sprite.css({
+                            backgroundPosition: "33px 0px"
+                        });
+                        //设置当前户型对应的map上的精灵
+                        XML_D.data.current_VR.map.sprite.html_sprite = map_Sprite;
+                        tag = true;
+                    };
+                    $(".navigation_map .map").append(map_Sprite);
+                };
+
+                /********** 地图上创建一个新的热点 ***********/
+                if(!tag){
+                    //当前显示房间
+                    var current_panorama = XML_D.data.fun.findCurrentPanorama(XML_D.data.current_VR.panorama.node);
+
+                    var mapSprite = $("<div></div>");
+                    mapSprite.addClass("map_Sprite");
+                    mapSprite.attr("data-nextNode",current_panorama.node);
+                    mapSprite.attr("data-name",current_panorama.name);
+                    $(".navigation_map .map").append(mapSprite);
+
+                    //设置当前添加热点的颜色
+                    mapSprite.css({
+                        backgroundPosition: "33px 0px"
+                    });
+                    //设置当前页面选中的热点
+                    XML_D.data.current_VR.map.sprite.html_sprite = mapSprite;
+                }
+            }else{
+                $(".navigation_map").hide();
+            }
+        };
     },
 
     /**初始化GUI事件**/
     initEvent : function(){
+        /******** 添加沙盘中的事件 ****************/
+        this.navigationEvent();
+
         /********************** 页面中的功能项 ******************************************/
         /**保存现在添加的所有热点
          * 1.从场景中筛选出所有的热点
          * 2.ajax发送保存热点的请求 **/
         $("#save").unbind("click",this.save);
         $("#save").bind("click",this.save);
-
-        //添加沙盘上的热点
-        this.NavigationMap();
 
         $("#map").unbind("click",this.map);
         $("#map").bind("click",this.map);
@@ -418,23 +496,185 @@ XML_D.GUI = {
         $(".chang_scene .select_furniture .finish").unbind("click",this.furniture_finish);
         $(".chang_scene .select_furniture .finish").bind("click",this.furniture_finish);
 
+    },
+
+    /** 给沙盘添加事件 **/
+    navigationEvent : function(){
         /******************** 沙盘设置 **************************************************/
         /**沙盘设置,添加全景 */
-        $(".navigation_map a").unbind("click",this.click_01);
-        $(".navigation_map a").bind("click",this.click_01);
+        //$(".navigation_map a").unbind("click",click_01);
+        //$(".navigation_map a").bind("click",click_01);
 
         /**沙盘设置,选择全景图 **/
-        $(".map_scene div").unbind("click",this.map_scene);
-        $(".map_scene div").bind("click",this.map_scene);
+        //$(".map_scene div").unbind("click",map_scene);
+        //$(".map_scene div").bind("click",map_scene);
 
+        ///**沙盘设置,移动热点 **/
+        //$(".map").off("mousedown",".map_Sprite",sprite_mousedown);
+        //$(".map").on("mousedown",".map_Sprite",sprite_mousedown);
+
+        $(".navigation_map").off("mousemove",".map",move_sprite);
+        $(".navigation_map").on("mousemove",".map",move_sprite);
+
+        $(".navigation_map .map .map_Sprite").each(function(){
+            if($(this).attr("data-nextNode") == XML_D.data.current_VR.panorama.node){
+                $(this).unbind("mousedown",sprite_mousedown_02);
+                $(this).bind("mousedown",sprite_mousedown_02);
+            }
+        });
+
+        /**沙盘设置,添加全景 */
+        function click_01(){
+            if(this.text.indexOf("添加全景") > -1){
+                XML_D.Cover();
+                $("#map_chang_scen").show();
+            }else if(this.text.indexOf("删除热点") > -1){
+                if(XML_D.data.current_VR.map.sprite.html_sprite){
+                    XML_D.data.current_VR.map.sprite.html_sprite.remove();
+                    XML_D.data.current_VR.map.sprite.html_sprite == null;
+                }
+            }else{
+                console.error("沙盘设置中的添加全景或是删除热点事件出错！");
+            }
+        };
+        /**沙盘设置,选择全景图 **/
+        function map_scene(){
+            //设置当前选中全景图变色
+            $(this).css({border: "2px solid #ff961a"});
+            //设置当前选中全景图的兄弟节点变回原来的颜色
+            $(this).siblings("div").css({border: "1px solid #e1e1e1"});
+            //获得场景的id
+            if($(this).attr("data-nextNode")){
+                XML_D.data.current_VR.map.sprite.nextNode = $(this).attr("data-nextNode");
+            };
+            //设置场景的名称
+            XML_D.data.current_VR.map.sprite.name = $(this).children("span").text();
+
+            $("#map_chang_scen .finish").remove("bg_05").addClass("bg_06");
+            //添加完成按钮的事件
+            $("#map_chang_scen .finish").unbind("click",XML_D.GUI.finish);
+            $("#map_chang_scen .finish").bind("click",XML_D.GUI.finish);
+        };
         /**沙盘设置,移动热点 **/
-        $(".map").off("mousedown",".map_Sprite",this.sprite_mousedown);
-        $(".map").on("mousedown",".map_Sprite",this.sprite_mousedown);
+        function sprite_mousedown(event){
+            event.preventDefault();
+            //获得热点在原点位置的坐标
+            if(XML_D.data.current_VR.map.sprite.source_clientX == null){
+                XML_D.data.current_VR.map.sprite.source_clientX = window.innerWidth - event.clientX;
+                XML_D.data.current_VR.map.sprite.source_clientY = event.clientY;
+            }
+            XML_D.data.current_VR.map.sprite.tag = true;
 
-        $(".navigation_map").off("mousemove",".map",this.move_sprite);
-        $(".navigation_map").on("mousemove",".map",this.move_sprite);
+            //设置当前添加热点的颜色
+            $(this).css({
+                backgroundPosition: "33px 0px"
+            });
+            //设置当前页面选中的热点
+            XML_D.data.current_VR.map.sprite.html_sprite = $(this);
 
+            //设置当前节点的兄弟节点为未选中状态
+            $(this).siblings().css({
+                backgroundPosition: "0px 0px"
+            });
+        };
+        function sprite_mousedown_02(event){
+            event.preventDefault();
+            //获得热点在原点位置的坐标
+            if(XML_D.data.current_VR.map.sprite.source_clientX == null){
+                XML_D.data.current_VR.map.sprite.source_clientX = window.innerWidth - event.clientX;
+                XML_D.data.current_VR.map.sprite.source_clientY = event.clientY;
+            }
+            XML_D.data.current_VR.map.sprite.tag = true;
+        };
+        function move_sprite(event){
+            event.preventDefault();
+            if(XML_D.data.current_VR.map.sprite.tag){
+                var width = event.clientX + XML_D.data.current_VR.map.sprite.source_clientX - window.innerWidth;
+                var height = event.clientY - XML_D.data.current_VR.map.sprite.source_clientY;
+
+                XML_D.data.current_VR.map.sprite.width = width;
+                XML_D.data.current_VR.map.sprite.height = height;
+
+
+                /**判断热点不要超出地图**/
+                if(width < 270 && width >= 0){
+                    XML_D.data.current_VR.map.sprite.width = width;
+                }else if(width > 270){
+                    XML_D.data.current_VR.map.sprite.width = 270;
+                }else{
+                    XML_D.data.current_VR.map.sprite.width = 0;
+                };
+
+                if(height < 362 && height >= 0){
+                    XML_D.data.current_VR.map.sprite.height = height;
+                }else if(height > 362){
+                    XML_D.data.current_VR.map.sprite.height = 362;
+                }else{
+                    XML_D.data.current_VR.map.sprite.height = 0;
+                }
+
+                XML_D.data.current_VR.map.sprite.html_sprite.css({
+                    transform: "translate("+ XML_D.data.current_VR.map.sprite.width +"px, "+ XML_D.data.current_VR.map.sprite.height +"px) rotateX(10deg)"
+                });
+                XML_D.data.current_VR.map.sprite.html_sprite.attr("translate",XML_D.data.current_VR.map.sprite.width +"px,"+ XML_D.data.current_VR.map.sprite.height + "px");
+            }
+        };
+        /**沙盘设置，选择完成全景图，点击完成按钮
+         * 1. 去掉遮罩层
+         * 2. 隐藏选择全景图的弹出框
+         * 3. 判断是否选中全景图，如果选中了，添加全景图
+         *      3.1 如果当前全景图已经生成对应的热点，那么把这个热点设置成当前的热点
+         *      3.2 如果还没有创建热点，创建热点，设置为当前的热点
+         * 4. 如果没有选中全景图，弹出提示框
+         * 5. 去掉完成时间的响应**/
+        function finish(){
+            //删除遮罩层
+            $("#overlay").remove();
+            //选择场景页面隐藏
+            $("#map_chang_scen").hide();
+
+            //判断是否选中全景图
+            if(XML_D.data.current_VR.map.sprite.nextNode != null){
+                var mapSprite = null;
+                $(".map div").each(function(){
+                    if($(this).attr("data-nextNode") == XML_D.data.current_VR.map.sprite.nextNode){
+                        mapSprite = $(this);
+                    }
+                });
+                /**地图上创建一个新的热点
+                 * <div class="map_Sprite" data-nextNode="2" style="transform: translate(80px, 120px) rotateX(10deg);"></div>
+                 * 1.判断地图上是否存在该全景对应的全景图
+                 * 2.不存在时，创建新的节点，
+                 * 3.存在时，把选中的节点设置为当前的节点**/
+                if(mapSprite == null){
+                    mapSprite = $("<div></div>");
+                    mapSprite.addClass("map_Sprite");
+                    mapSprite.attr("data-nextNode",XML_D.data.current_VR.map.sprite.nextNode);
+                    mapSprite.attr("data-name",XML_D.data.current_VR.map.sprite.name);
+                    $(".navigation_map .map").append(mapSprite);
+                }
+
+                //设置当前添加热点的颜色
+                mapSprite.css({
+                    backgroundPosition: "33px 0px"
+                });
+                //设置当前页面选中的热点
+                XML_D.data.current_VR.map.sprite.html_sprite = mapSprite;
+                //设置当前节点的兄弟节点为未选中状态
+                mapSprite.siblings().css({
+                    backgroundPosition: "0px 0px"
+                });
+            }else{
+                alert("你没有选择全景图！");
+            }
+
+            //去掉完成时间的响应
+            $("#map_chang_scen .finish").unbind("click",XML_D.GUI.finish);
+            $(".map_scene div").css({border: "1px solid #6182b5"});
+            $("#map_chang_scen .finish").removeClass("bg_06").addClass("bg_05");
+        };
     },
+
     /****************** 页面中的功能项 ****************************************/
     save : function() {
         // 全景图上的热点
@@ -462,7 +702,7 @@ XML_D.GUI = {
         var map_sprite = [];
         $(".navigation_map .map .map_Sprite").each(function(){
             var sprite = {};
-            sprite.nextNode = $(this).attr("data-t");
+            sprite.nextNode = $(this).attr("data-nextNode");
             sprite.translate = $(this).attr("translate");
             sprite.name = $(this).attr("data-name");
             map_sprite.push(sprite);
@@ -523,8 +763,8 @@ XML_D.GUI = {
     },
     /**超链接、全景切换 -> 添加热点 -> 设置热点样式 -> 选中热点 **/
     sprite_01 : function(){
-        $(this).children("img").css({border: "2px solid #ff961a"});
-        $(this).siblings().find("img").css({border: "2px solid #e1e1e1"});
+        $(this).children("img").removeClass("bd_01").addClass("bd_02");
+        $(this).siblings().find("img").removeClass("bd_02").addClass("bd_01");
         XML_D.data.current_VR.panorama.sprite.img_url = $(this).find("img")[0].alt;
     },
     /**超链接、全景切换 -> 删除热点 **/
@@ -565,7 +805,7 @@ XML_D.GUI = {
         $(this).css({border:"1px solid #5a7fba"});
         $(this).siblings().css({border:"0px"});
         XML_D.data.current_VR.panorama.sprite.name = $(this).children("span").text();
-        XML_D.data.current_VR.panorama.sprite.nextNode = $(this).attr("data-t");
+        XML_D.data.current_VR.panorama.sprite.nextNode = $(this).attr("data-nextNode");
         $(this).siblings(".finish").removeClass("bg_05").addClass("bg_06");
 
         /**全景切换 -> 添加热点 -> 选择场景 -> 点击完成**/
@@ -659,180 +899,10 @@ XML_D.GUI = {
         }
     },
 
-    /**沙盘设置,选择全景图 **/
-    map_scene : function(){
-        //设置当前选中全景图变色
-        $(this).css({border: "2px solid #ff961a"});
-        //设置当前选中全景图的兄弟节点变回原来的颜色
-        $(this).siblings("div").css({border: "1px solid #e1e1e1"});
-        //获得场景的id
-        if($(this).attr("data-t")){
-            XML_D.data.current_VR.map.sprite.nextNode = $(this).attr("data-t");
-        };
-        //设置场景的名称
-        XML_D.data.current_VR.map.sprite.name = $(this).children("span").text();
-
-        $("#map_chang_scen .finish").remove("bg_05").addClass("bg_06");
-        //添加完成按钮的事件
-        $("#map_chang_scen .finish").unbind("click",XML_D.GUI.finish);
-        $("#map_chang_scen .finish").bind("click",XML_D.GUI.finish);
-    },
-
-    /******************** 沙盘设置 **************************************************/
-    /**沙盘设置,添加全景 */
-    click_01 : function(){
-        if(this.text.indexOf("添加全景") > -1){
-            XML_D.Cover();
-            $("#map_chang_scen").show();
-        }else if(this.text.indexOf("删除热点") > -1){
-            if(XML_D.data.current_VR.map.sprite.html_sprite){
-                XML_D.data.current_VR.map.sprite.html_sprite.remove();
-                XML_D.data.current_VR.map.sprite.html_sprite == null;
-            }
-        }else{
-            console.error("沙盘设置中的添加全景或是删除热点事件出错！");
-        }
-    },
-    /**沙盘设置，选择完成全景图，点击完成按钮
-     * 1. 去掉遮罩层
-     * 2. 隐藏选择全景图的弹出框
-     * 3. 判断是否选中全景图，如果选中了，添加全景图
-     *      3.1 如果当前全景图已经生成对应的热点，那么把这个热点设置成当前的热点
-     *      3.2 如果还没有创建热点，创建热点，设置为当前的热点
-     * 4. 如果没有选中全景图，弹出提示框
-     * 5. 去掉完成时间的响应**/
-    finish : function(){
-        //删除遮罩层
-        $("#overlay").remove();
-        //选择场景页面滑出
-        $("#map_chang_scen").hide();
-
-        //判断是否选中全景图
-        if(XML_D.data.current_VR.map.sprite.nextNode != null){
-            var mapSprite = null;
-            $(".map div").each(function(){
-                if($(this).attr("data-t") == XML_D.data.current_VR.map.sprite.nextNode){
-                    mapSprite = $(this);
-                }
-            });
-            /**地图上创建一个新的热点
-             * <div class="map_Sprite" data-t="2" style="transform: translate(80px, 120px) rotateX(10deg);"></div>
-             * 1.判断地图上是否存在该全景对应的全景图
-             * 2.不存在时，创建新的节点，
-             * 3.存在时，把选中的节点设置为当前的节点**/
-            if(mapSprite == null){
-                mapSprite = $("<div></div>");
-                mapSprite.addClass("map_Sprite");
-                mapSprite.attr("data-t",XML_D.data.current_VR.map.sprite.nextNode);
-                mapSprite.attr("data-name",XML_D.data.current_VR.map.sprite.name);
-                $(".navigation_map .map").append(mapSprite);
-            }
-
-            //设置当前添加热点的颜色
-            mapSprite.css({
-                backgroundPosition: "33px 0px"
-            });
-            //设置当前页面选中的热点
-            XML_D.data.current_VR.map.sprite.html_sprite = mapSprite;
-            //设置当前节点的兄弟节点为未选中状态
-            mapSprite.siblings().css({
-                backgroundPosition: "0px 0px"
-            });
-        }else{
-            alert("你没有选择全景图！");
-        }
-
-        //去掉完成时间的响应
-        $("#map_chang_scen .finish").unbind("click",XML_D.GUI.finish);
-        $(".map_scene div").css({border: "1px solid #6182b5"});
-        $("#map_chang_scen .finish").removeClass("bg_06").addClass("bg_05");
-    },
-    /**沙盘设置,移动热点 **/
-    sprite_mousedown : function(event){
-        event.preventDefault();
-        //获得热点在原点位置的坐标
-        if(XML_D.data.current_VR.map.sprite.source_clientX == null){
-            XML_D.data.current_VR.map.sprite.source_clientX = window.innerWidth - event.clientX;
-            XML_D.data.current_VR.map.sprite.source_clientY = event.clientY;
-        }
-        XML_D.data.current_VR.map.sprite.tag = true;
-
-        //设置当前添加热点的颜色
-        $(this).css({
-            backgroundPosition: "33px 0px"
-        });
-        //设置当前页面选中的热点
-        XML_D.data.current_VR.map.sprite.html_sprite = $(this);
-
-        //设置当前节点的兄弟节点为未选中状态
-        $(this).siblings().css({
-            backgroundPosition: "0px 0px"
-        });
-    },
-    move_sprite : function(event){
-        event.preventDefault();
-        if(XML_D.data.current_VR.map.sprite.tag){
-            var width = event.clientX + XML_D.data.current_VR.map.sprite.source_clientX - window.innerWidth;
-            var height = event.clientY - XML_D.data.current_VR.map.sprite.source_clientY;
-
-            XML_D.data.current_VR.map.sprite.width = width;
-            XML_D.data.current_VR.map.sprite.height = height;
-
-
-            /**判断热点不要超出地图**/
-            if(width < 270 && width >= 0){
-                XML_D.data.current_VR.map.sprite.width = width;
-            }else if(width > 270){
-                XML_D.data.current_VR.map.sprite.width = 270;
-            }else{
-                XML_D.data.current_VR.map.sprite.width = 0;
-            };
-
-            if(height < 362 && height >= 0){
-                XML_D.data.current_VR.map.sprite.height = height;
-            }else if(height > 362){
-                XML_D.data.current_VR.map.sprite.height = 362;
-            }else{
-                XML_D.data.current_VR.map.sprite.height = 0;
-            }
-
-            XML_D.data.current_VR.map.sprite.html_sprite.css({
-                transform: "translate("+ XML_D.data.current_VR.map.sprite.width +"px, "+ XML_D.data.current_VR.map.sprite.height +"px) rotateX(10deg)"
-            });
-            XML_D.data.current_VR.map.sprite.html_sprite.attr("translate",XML_D.data.current_VR.map.sprite.width +"px,"+ XML_D.data.current_VR.map.sprite.height + "px");
-        }
-    },
-
     scene_close : function(){
         //删除遮罩层
         $("#overlay").remove();
         $(this).parent().parent().hide();
-    },
-    /**给页面添加导航图**/
-    NavigationMap : function(){
-
-        //判断户型图是否存在
-        if(XML_D.data.VR.map.url){
-            //设置地图
-            $(".navigation_map .map").css({
-                backgroundImage : "url(" + XML_D.data.VR.map.url + ")"
-            });
-
-            /*********** 添加热点 *******************/
-            var Sprite_icons = XML_D.data.VR.map.sprites;
-            for(var i in Sprite_icons){
-                //创建热点，并添加到地图上
-                var map_Sprite = $("<div class='map_Sprite' data-t='"+ Sprite_icons[i].nextNode+"'></div>");
-                map_Sprite.attr("data-name",Sprite_icons[i].name);
-                map_Sprite.attr("translate",Sprite_icons[i].translate);
-                map_Sprite.css({
-                    transform: "translate("+ Sprite_icons[i].translate +") rotateX(10deg)",
-                });
-                $(".navigation_map .map").append(map_Sprite);
-            }
-        }else{
-            $(".navigation_map").hide();
-        }
     },
 };
 /**js动态创建页面的节点**/
@@ -922,6 +992,11 @@ XML_D.Sprite = {
     addSprite : function(Sprites){
         for(var i = 0;i < Sprites.length;i++){
 
+            //当热点的路径是控制时，设置默认的路径
+            if(!Sprites[i].img_url){
+                Sprites[i].img_url = XML_D.data.current_VR.panorama.sprite.img_url;
+            }
+
             var sprite = this.create(Sprites[i].img_url);
 
             /*********************** 设置热点的基本属性 ****************/
@@ -934,6 +1009,7 @@ XML_D.Sprite = {
 
             //设置热点的样式
             sprite.img_url = Sprites[i].img_url;
+
             //设置类型
             sprite.type = Sprites[i].type;
             if(sprite.type == 1){
@@ -1082,15 +1158,8 @@ XML_D.Three = {
     },
 
     initObject:   function () {
-        //所有的户型
-        var panoramas = XML_D.data.VR.panoramas;
         //当前显示房间
-        var current_panorama;
-        for(var i = 0; i < panoramas.length; i++){
-            if(panoramas[i].node == XML_D.data.current_VR.panorama.node){
-                current_panorama = panoramas[i];
-            }
-        }
+        var current_panorama = XML_D.data.fun.findCurrentPanorama(XML_D.data.current_VR.panorama.node);
 
         /*************************外面的球体************************************/
         var loader = new THREE.TextureLoader();
