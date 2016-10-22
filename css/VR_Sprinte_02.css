@@ -35,6 +35,16 @@ body{
     cursor: pointer;
 }
 
+/**热点样式的边框
+  * bd_01: 未点击
+  * bd_02: 点击后*/
+.bd_01{
+    border: 2px solid #e1e1e1;
+}
+.bd_02{
+    border: 2px solid #ff961a;
+}
+
 /*********** 功能按钮 ************/
 .function_button{
     position: absolute;
@@ -159,7 +169,6 @@ body{
 .chang_scene .select_sprite div img{
     width: 87px;
     height: 87px;
-    border: 2px solid #e1e1e1;
     margin-right: 10px;
     background-color: #c8c8cd;
     cursor: pointer;
@@ -228,7 +237,6 @@ body{
 .map{
     width: 300px;
     height: 400px;
-    cursor: pointer;
     margin: 10px 0 10px 0;
     background-size: 300px 400px;
 }
@@ -238,6 +246,7 @@ body{
     height: 38px;
     background-size: 72px 40px;
     background: url("../img/hs.png") 0 0;
+    cursor: pointer;
 }
 
 /*********** 导航图结束 ****************/
