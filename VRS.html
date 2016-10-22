@@ -25,12 +25,12 @@
 		<script src="js/vr/OrbitControls.js"></script>
 		<!--导入程序-->
 		<script style="text/javascript" src="VRS.js"></script>
-
 		<style>
 			body {
 				background-color: #000000;
 				margin: 0px;
 				overflow: hidden;
+				font-family: 微软雅黑, 宋体;
 			}
 			a {
 				color: #ffffff;
@@ -70,6 +70,7 @@
 			}
 			.menuitem{
 				padding: 6px;
+				cursor: pointer;
 			}
 			/*********************** 菜单栏开始 ******************************/
 
@@ -114,6 +115,58 @@
 				cursor: default;
 			}
 			/*********************** 导航图结束 ******************************/
+
+			/*********************** 分享全景 *******************************/
+			.share_panorama{
+				position: absolute;
+				left: 50%;
+				top: 50%;
+				background-color: white;
+				width: 726px;
+				height: 528px;
+				margin: -264px 0 0 -363px;
+				display: none;
+			}
+			.share_panorama section{
+				background-color: #f4f4f4;
+				height: 52px;
+				line-height: 52px;
+				text-align: center;}
+			.share_panorama section img{
+				position: absolute;
+				top: 8px;
+				right: 10px;
+				cursor: pointer;
+			}
+			.share_panorama article .qrcode{
+				padding: 10px;
+				background-color: #f4f4f4;
+				float: left;
+				margin: 20px 20px 10px 20px;
+			}
+			.share_panorama .share_detail{
+				width: 39%;
+				float: left;
+				margin-top: 20px;
+			}
+			.share_panorama .share_detail .share_logo{
+				background: url("img/GUI/share_logo_01.png") no-repeat;
+				width: 220px;
+				height: 86px;
+				margin-left: auto;
+				margin-right: auto;
+			}
+			.share_panorama .share_detail .introduce{
+				margin-top: 51px;
+			}
+			.share_panorama .share_foot{
+				clear: both;
+				background-color: #ebebeb;
+				height: 35px;
+				margin: 0 20px 0 20px;
+				line-height: 35px;
+			}
+			/*********************** 分享全景 *******************************/
 		</style>
 	</head>
 	<body>
@@ -129,6 +182,9 @@
 			<div id="isplay" class="menuitem">
 				<img src='img/menu/play.png'>
 			</div>
+			<div class="menuitem share">
+				<img src='img/menu/share.png'>
+			</div>
 		</div>
 
 		<div class="exit">退出VR模式</div>
@@ -140,5 +196,28 @@
 			<!--收放导航图的图标-->
 			<div class="map_icon"></div>
 		</div>
+
+		<!--分享-->
+		<article class="share_panorama">
+			<section>
+				<B>扫描二维码或复制链接，分享全景</B>
+				<img src="img/GUI/close_share.png" class="close">
+			</section>
+			<article>
+				<div class="qrcode"></div>
+				<article class="share_detail">
+					<div class="share_logo"></div>
+					<div class="introduce">
+						<p class="panoramas_name"><B>户型名称：</B></p>
+						<p class="panorama_name"><B>房间名称：</B></p>
+						<p><B>简介：</B>扫描二维码可以观看全景房间，也可以复制下面的链接来进行全景观看。</p>
+						<p><B>联系我们：</B>010-82050503/82050905</p>
+					</div>
+				</article>
+			</article>
+			<article class="share_foot">
+				<B>页面链接：</B>
+			</article>
+		</article>
 	</body>
 </html>

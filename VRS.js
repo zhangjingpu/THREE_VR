@@ -228,6 +228,24 @@ XML_D.Cover = function(){
     }
 };
 
+/**操作数据**/
+XML_D.data.fun = {
+    /**根据房间的id，从户型中查找房间的信息**/
+    findCurrentPanorama : function(roomId){
+        //所有的户型
+        var panoramas = XML_D.data.vr_xml.panoramas;
+        //当前显示房间
+        var current_panorama;
+        for(var i = 0; i < panoramas.length; i++){
+            if(panoramas[i].node == roomId){
+                current_panorama = panoramas[i];
+            }
+        }
+
+        return current_panorama;
+    }
+};
+
 //事件的函数
 XML_D.Event = {
     onWindowResize : function(){
@@ -445,6 +463,47 @@ XML_D.Event = {
 
 /**操作**/
 XML_D.GUI = {
+    /** 初始化GUI**/
+    initGUI : function(){
+        //根据不同的设备，加载不同的GUI
+        if (XML_D.Broweser.versions.mobile) {
+
+            $(".divide").each(function(){
+                $(this).unbind("touchstart");
+                $(this).bind("touchstart",XML_D.Event.onDivideTouchStart);
+            });
+            $(".exit").each(function(){
+                $(this).unbind("touchstart");
+                $(this).bind("touchstart",XML_D.Event.onExitTouchStart);
+            });
+            $("#fullScreen").unbind("touchstart");
+            $("#fullScreen").bind("touchstart",function(){
+                XML_D.Event.fullscreen();
+            });
+        } else {
+            /**分享**/
+            this.share();
+
+            $(".divide").each(function(){
+                $(this).unbind("click");
+                $(this).bind("click",XML_D.Event.onDivideTouchStart);
+            });
+            $(".exit").each(function(){
+                $(this).unbind("click");
+                $(this).bind("click",XML_D.Event.onExitTouchStart);
+            });
+            $("#fullScreen").unbind("click");
+            $("#fullScreen").bind("click",function(){
+                XML_D.Event.fullscreen();
+            })
+        }
+
+        //设置页面的导航图
+        XML_D.GUI.NavigationMap();
+
+        /**控制页面是否慢慢转动**/
+        XML_D.GUI.isPlay();
+    },
     /**控制画面是否自动播放**/
     isPlay : function(){
         $("#isplay").unbind("click",showPlay);
@@ -541,6 +600,30 @@ XML_D.GUI = {
         }else{
             $(".navigation_map").hide();
         }
+    },
+
+    /**分享**/
+    share : function(){
+        //户型名称
+        $(".share_panorama .panoramas_name").append(XML_D.data.vr_xml.name);
+        //添加名称
+        if(XML_D.data.current_vr.panorama.node){
+            var current_panorama = XML_D.data.fun.findCurrentPanorama(XML_D.data.current_vr.panorama.node);
+            $(".share_panorama .panorama_name").append(current_panorama.name);
+        }
+        //添加链接
+        $(".share_panorama .share_foot").append(window.location.href);
+
+
+        /**生成二维码**/
+        XML_D.QrCode();
+
+        $(".share").bind("click",function(){
+            $(".share_panorama").show();
+        });
+        $(".share_panorama section .close").bind("click",function(){
+            $(this).parent().parent().hide();
+        });
     }
 };
 
@@ -548,24 +631,23 @@ XML_D.GUI = {
 XML_D.QrCode = function(){
 
     //创建存放二维码的存放位置
-    var qr = document.createElement( 'div' );
-    document.body.appendChild( qr );
-    qr.id = "qr";
-    $(qr).css({
-        "position":"absolute",
-        "left": "52px",
-        "top": "45px",
-        background: "white",
-        padding: "10px",
-        boxShadow: "rgba(249, 244, 244, 0.498039) 0px 0px 5px 5px",
-        backgroundColor: "rgba(251, 248, 248, 0.8)"
-    });
+    //var qr = document.createElement( 'div' );
+    //document.body.appendChild( qr );
+    //qr.id = "qr";
+    //$(qr).css({
+    //    "position":"absolute",
+    //    "left": "52px",
+    //    "top": "45px",
+    //    background: "white",
+    //    padding: "10px",
+    //    boxShadow: "rgba(249, 244, 244, 0.498039) 0px 0px 5px 5px",
+    //    backgroundColor: "rgba(251, 248, 248, 0.8)"
+    //});
 
     /**设置二维码**/
-
     //生成的二维码宽高要相等
-    var side = 120;
-    $('#qr').qrcode({
+    var side = 380;
+    $(".qrcode").qrcode({
         render : "canvas",    //设置渲染方式，有table和canvas，使用canvas方式渲染性能相对来说比较好
         text : window.location.href,    //这是修改了官文的js文件，此时生成的二维码支持中文和LOGO,扫描二维码后显示的内容,可以直接填一个网址，扫描二维码后自动跳向该链接
         width : side,               //二维码的宽度
@@ -575,10 +657,10 @@ XML_D.QrCode = function(){
         src: 'img/qrcode/logo.png'             //二维码中间的图片
     });
 
-    $(qr).append("<br/><span>扫一扫 把我拿走</span>").css({
-        "position":"absolute",
-        "text-align":"center"
-    });
+    //$(qr).append("<br/><span>扫一扫 把我拿走</span>").css({
+    //    "position":"absolute",
+    //    "text-align":"center"
+    //});
 };
 
 /**射线查找**/
@@ -988,6 +1070,10 @@ XML_D.XML = {
         var vr_xml_data = XML_D.data.vr_xml;
         var xml_VR = xmlDoc.getElementsByTagName("VR")[0];
 
+        var xml_panoramas_1 = xml_VR.getElementsByTagName("panoramas")[0];
+        vr_xml_data.name = xml_panoramas_1.attributes['name'].value;
+        vr_xml_data.id = xml_panoramas_1.attributes['node'].value;
+
         /**********读取XML文件的所有户型的全景图******************/
         var xml_panoramas = xml_VR.getElementsByTagName("panorama");
         vr_xml_data.panoramas = [];
@@ -996,6 +1082,7 @@ XML_D.XML = {
             var panorama = {};
             panorama.node = xml_panoramas[i].attributes['node'].value;
             panorama.url = xml_panoramas[i].attributes['url'].value;
+            panorama.name = xml_panoramas[i].attributes['name'].value;
 
             //获得全景图中的热点
             var xml_sprites = xml_panoramas[i].getElementsByTagName("sprite");
@@ -1052,41 +1139,9 @@ $(function(){
         XML_D.Ajax.request(XML_D.init.initURL.xmlurl,XML_D.XML.transformXMLToJson,start);
 
         function start(){
-            //根据不同的设备，加载不同的GUI
-            if (XML_D.Broweser.versions.mobile) {
 
-                $(".divide").each(function(){
-                    $(this).unbind("touchstart");
-                    $(this).bind("touchstart",XML_D.Event.onDivideTouchStart);
-                });
-                $(".exit").each(function(){
-                    $(this).unbind("touchstart");
-                    $(this).bind("touchstart",XML_D.Event.onExitTouchStart);
-                });
-                $("#fullScreen").unbind("touchstart");
-                $("#fullScreen").bind("touchstart",function(){
-                    XML_D.Event.fullscreen();
-                });
-            } else {
-                XML_D.QrCode();
-
-                $(".divide").each(function(){
-                    $(this).unbind("click");
-                    $(this).bind("click",XML_D.Event.onDivideTouchStart);
-                });
-                $(".exit").each(function(){
-                    $(this).unbind("click");
-                    $(this).bind("click",XML_D.Event.onExitTouchStart);
-                });
-                $("#fullScreen").unbind("click");
-                $("#fullScreen").bind("click",function(){
-                    XML_D.Event.fullscreen();
-                })
-            }
-
-            //设置页面的导航图
-            XML_D.GUI.NavigationMap();
-
+            /**初始化GUI**/
+            XML_D.GUI.initGUI();
             //加载threejs
             XML_D.Three.threeStart();
 
@@ -1102,8 +1157,6 @@ $(function(){
                     window.location.reload();//刷新当前页面.
                 }
             },1000);
-
-            XML_D.GUI.isPlay();
         };
 
     }else{
