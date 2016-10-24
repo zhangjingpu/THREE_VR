@@ -230,7 +230,8 @@ XML_D.Cover = function(){
 
 /**操作数据**/
 XML_D.data.fun = {
-    /**根据房间的id，从户型中查找房间的信息**/
+    /**根据房间的id，从户型中查找房间的信息
+     * 如果不存在roomId所在的房间，返回第一个房间**/
     findCurrentPanorama : function(roomId){
         //所有的户型
         var panoramas = XML_D.data.vr_xml.panoramas;
@@ -240,6 +241,10 @@ XML_D.data.fun = {
             if(panoramas[i].node == roomId){
                 current_panorama = panoramas[i];
             }
+        }
+
+        if(current_panorama == null && XML_D.data.vr_xml.panoramas.length > 0){
+            current_panorama = panoramas[0];
         }
 
         return current_panorama;
@@ -708,8 +713,19 @@ XML_D.String = {
 /**变换全景图的操作**/
 XML_D.SwitchPanorama = {
     /**添加热点
-     * Sprites:热点集合**/
-    addSprite : function(Sprites){
+     * Sprites:热点集合
+     * roomId:房间的id**/
+    addSprite : function(Sprites,roomId){
+        $(".map .map_Sprite").each(function(){
+            if($(this).attr("nextnode") == roomId){
+                $(this).css({
+                    background: "url('img/hs.png') 33px 0px"
+                });
+                $(this).siblings().css({
+                    background: "url('img/hs.png') 0px 0px"
+                });
+            }
+        });
         var loader = new THREE.TextureLoader();
         for(var i = 0;i < Sprites.length;i++){
             var map = loader.load(Sprites[i].img_url);
@@ -778,8 +794,10 @@ XML_D.SwitchPanorama = {
                     }
                 }
 
-                /******************添加热点******************/
-                this.addSprite(panoramas[i].sprites);
+                //更改当前房间的名称
+                $(".share_panorama .panorama_name").html(panoramas[i].name);
+                /******************添加热点*************************/
+                this.addSprite(panoramas[i].sprites,panoramas[i].node);
             }
         }
     }
@@ -895,17 +913,7 @@ XML_D.Three = {
     initObject:   function () {
 
         //设置当前进入房间
-        var current_panorama = null;
-        if(XML_D.data.current_vr.panorama.node){
-            for(var item in XML_D.data.vr_xml.panoramas){
-                if(XML_D.data.vr_xml.panoramas[item].node == XML_D.data.current_vr.panorama.node){
-                    current_panorama = XML_D.data.vr_xml.panoramas[item];
-                }
-            }
-        }
-        if(current_panorama == null && XML_D.data.vr_xml.panoramas.length > 0){
-            current_panorama = XML_D.data.vr_xml.panoramas[0];
-        }
+        var current_panorama = XML_D.data.fun.findCurrentPanorama(XML_D.data.current_vr.panorama.node);
 
         var geometry = new THREE.SphereGeometry( 500, 60, 40 );
         geometry.scale( - 1, 1, 1 );
@@ -919,7 +927,7 @@ XML_D.Three = {
         /***************添加热点*************************/
         //获得存放热点的数组
         var Sprites = current_panorama.sprites;
-        XML_D.SwitchPanorama.addSprite(Sprites);
+        XML_D.SwitchPanorama.addSprite(Sprites,current_panorama.node);
         /***************添加热点*************************/
     },
 

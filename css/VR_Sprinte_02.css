@@ -2,6 +2,8 @@
 *{
     margin: 0;
     padding: 0;
+    font-family: 微软雅黑, 宋体;
+    font-size: 16px;
 }
 body{
     overflow: hidden;
@@ -151,6 +153,7 @@ body{
 .chang_scene article{
     margin: 10px 20px 20px 20px;
     height: 41px;
+    color: black;
 }
 .chang_scene .sprite_type a{
     width: 472px;
@@ -215,9 +218,19 @@ body{
     right: 0;
 }
 
-#furniture .push{
-    color: black;
+.chang_scene .select_furniture{
     text-align: center;
+}
+.chang_scene .select_furniture .input_group{
+    margin-top: 130px;
+}
+.chang_scene .select_furniture .input_group input{
+    width: 318px;
+    height: 40px;
+    margin: 4px;
+    padding-left: 10px;
+    border-radius: 4px;
+    border: 1px solid #e1e1e1;
 }
 
 /*************** 导航图开始 *************/

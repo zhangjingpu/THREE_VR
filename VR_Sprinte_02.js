@@ -402,7 +402,7 @@ XML_D.GUI = {
                 };
 
                 /********** 地图上创建一个新的热点 ***********/
-                if(!tag){
+                if(!tag)   {
                     //当前显示房间
                     var current_panorama = XML_D.data.fun.findCurrentPanorama(XML_D.data.current_VR.panorama.node);
 
@@ -971,8 +971,8 @@ XML_D.Raycaster = {
     getRaycaster_2 : function(recursive,visible){
         /**获得鼠标的位置*/
         var mouse = new THREE.Vector2();
-        mouse.x = 0;
-        mouse.y = 0;
+        mouse.x = -0.1;
+        mouse.y = -0.1;
 
         return this.getRaycaster_01(mouse,recursive,visible);
     },
@@ -1153,7 +1153,7 @@ XML_D.Three = {
 
         //辅助原点箭头
         //var axes = new THREE.AxisHelper(2000);
-        //axes.position.set(-250,-250,-250);
+        //axes.position.set(0,0,1);
         //scene.add(axes);
 
         //scene.fog = new THREE.Fog( 0xffffff, 500, 10000 );
