@@ -149,6 +149,7 @@ body{
 }
 .chang_scene section .close{
     float: right;
+    cursor: pointer;
 }
 .chang_scene article{
     margin: 10px 20px 20px 20px;
@@ -255,8 +256,8 @@ body{
 }
 .navigation_map .map .map_Sprite{
     position: absolute;
-    width: 30px;
-    height: 38px;
+    width: 36px;
+    height: 40px;
     background-size: 72px 40px;
     background: url("../img/hs.png") 0 0;
     cursor: pointer;

@@ -363,7 +363,9 @@ XML_D.GUI = {
         };
 
         //添加房间名称
-        $("title").append("-"+current_panorama.name);
+        if(current_panorama.name){
+            $("title").append("-" + current_panorama.name);
+        };
 
         /**设置沙盘上的图、热点**/
         addNavigationMapAndSprite();
@@ -392,7 +394,7 @@ XML_D.GUI = {
                     if(XML_D.data.current_VR.panorama.node == Sprite_icons[i].nextNode){
                         //设置当前添加热点的颜色
                         map_Sprite.css({
-                            backgroundPosition: "33px 0px"
+                            backgroundPosition: "36px 0px"
                         });
                         //设置当前户型对应的map上的精灵
                         XML_D.data.current_VR.map.sprite.html_sprite = map_Sprite;
@@ -414,7 +416,7 @@ XML_D.GUI = {
 
                     //设置当前添加热点的颜色
                     mapSprite.css({
-                        backgroundPosition: "33px 0px"
+                        backgroundPosition: "36px 0px"
                     });
                     //设置当前页面选中的热点
                     XML_D.data.current_VR.map.sprite.html_sprite = mapSprite;
@@ -849,7 +851,7 @@ XML_D.GUI = {
     /**超链接 -> 添加热点 -> 选择场景 -> 点击完成**/
     furniture_finish : function(){
         //数据存放到当前操作节点
-        $(this).siblings(".push").find("input").each(function(){
+        $(this).siblings().find("input").each(function(){
             if(this.name.indexOf("name") > -1){
                 XML_D.data.current_VR.panorama.sprite.name = this.value;
             }
@@ -858,7 +860,6 @@ XML_D.GUI = {
                     XML_D.data.current_VR.panorama.sprite.url = this.value;
                 }else{
                     XML_D.data.current_VR.panorama.sprite.url = "http://" + this.value;
-                    console.log(XML_D.data.current_VR.panorama.sprite.url);
                 }
             }
         });

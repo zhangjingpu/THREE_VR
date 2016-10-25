@@ -744,8 +744,15 @@ XML_D.SwitchPanorama = {
             te(sprite);
             function te(sprite_1){
                 window.setInterval(function(){
-                    sprite_1.visible = !sprite_1.visible;
-                },500);
+                    if(XML_D.initDate.isPlay){
+                        sprite_1.visible = !sprite_1.visible;
+                    }else{
+                        if(sprite_1.visible == false){
+                            sprite_1.visible = true;
+                            XML_D.Three.renderScene();
+                        }
+                    }
+                },300);
             }
 
             XML_D.Three.scene.add( sprite );
