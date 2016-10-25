@@ -68,9 +68,16 @@
 				right: 10px;
 				bottom: 147px;
 			}
+			.menu .menu_cover{
+				float: left;
+				visibility: hidden;
+			}
 			.menuitem{
 				padding: 6px;
 				cursor: pointer;
+			}
+			.menuitem:hover .menu_cover  {
+				visibility: visible;
 			}
 			/*********************** 菜单栏开始 ******************************/
 
@@ -169,20 +176,23 @@
 		</style>
 	</head>
 	<body>
-		<div id="container"></div>
-
+		<!-- 功能按钮 -->
 		<div class="menu">
 			<div class='divide menuitem'>
 				<img src='img/menu/camera.png'>
+				<img src="img/menu/vr.png" class="menu_cover">
 			</div>
 			<div id="fullScreen" class='fullScreen menuitem'>
 				<img src='img/menu/fullScreen.png'>
+				<img src="img/menu/fullScreen_detaile.png" class="menu_cover">
 			</div>
 			<div id="isplay" class="menuitem">
 				<img src='img/menu/play.png'>
+				<img src="img/menu/play_detaile.png" class="menu_cover">
 			</div>
 			<div class="menuitem share">
 				<img src='img/menu/share.png'>
+				<img src="img/menu/share_detaile.png" class="menu_cover">
 			</div>
 		</div>
 
