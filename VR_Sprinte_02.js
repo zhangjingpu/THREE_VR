@@ -10,9 +10,45 @@ var XML_D = {
             panoramas : [
                 {
                     name : "房间一",
+                    xiaotu :"img/GUI/suo.png",
                     node : "1",
                     url : "img/VR/2016-9-20keting-qj.jpg",
                     sprites : [
+                        {
+                            type : "1",
+                            pos : "-285.7397448715704,-29.392684292767772,277.53946340019417",
+                            nextNode : "2",
+                            img_url : "img/sprite/forward.png",
+                            name : "房间一"
+                        },
+                        {
+                            type : "1",
+                            pos : "-285.7397448715704,-29.392684292767772,277.53946340019417",
+                            nextNode : "2",
+                            img_url : "img/sprite/forward.png",
+                            name : "房间一"
+                        },
+                        {
+                            type : "1",
+                            pos : "-285.7397448715704,-29.392684292767772,277.53946340019417",
+                            nextNode : "2",
+                            img_url : "img/sprite/forward.png",
+                            name : "房间一"
+                        },
+                        {
+                            type : "1",
+                            pos : "-285.7397448715704,-29.392684292767772,277.53946340019417",
+                            nextNode : "2",
+                            img_url : "img/sprite/forward.png",
+                            name : "房间一"
+                        },
+                        {
+                            type : "1",
+                            pos : "-285.7397448715704,-29.392684292767772,277.53946340019417",
+                            nextNode : "2",
+                            img_url : "img/sprite/forward.png",
+                            name : "房间一"
+                        },
                         {
                             type : "1",
                             pos : "-285.7397448715704,-29.392684292767772,277.53946340019417",
@@ -31,7 +67,83 @@ var XML_D = {
                 },
                 {
                     name : "房间二",
+                    xiaotu :"img/GUI/tupian.png",
                     node : "2",
+                    url : "img/VR/2016-9-23woshi-qj.jpg",
+                    sprites : [
+                        {
+                            img_url : "img/sprite/sprite_01.png",
+                            type : "1",
+                            pos : "330.2152227252353,-33.4392608299774,222.23100519043626",
+                            nextNode : "1",
+                            name : "房间二"
+                        },
+                    ]
+                },
+                {
+                    name : "房间3",
+                    xiaotu :"img/GUI/suo.png",
+                    node : "3",
+                    url : "img/VR/2016-9-23woshi-qj.jpg",
+                    sprites : [
+                        {
+                            img_url : "img/sprite/sprite_01.png",
+                            type : "1",
+                            pos : "330.2152227252353,-33.4392608299774,222.23100519043626",
+                            nextNode : "1",
+                            name : "房间二"
+                        },
+                    ]
+                },
+                {
+                    name : "房间4",
+                    xiaotu :"img/GUI/tupian.png",
+                    node : "4",
+                    url : "img/VR/2016-9-23woshi-qj.jpg",
+                    sprites : [
+                        {
+                            img_url : "img/sprite/sprite_01.png",
+                            type : "1",
+                            pos : "330.2152227252353,-33.4392608299774,222.23100519043626",
+                            nextNode : "1",
+                            name : "房间二"
+                        },
+                    ]
+                },
+                {
+                    name : "房间5",
+                    xiaotu :"img/GUI/suo.png",
+                    node : "5",
+                    url : "img/VR/2016-9-23woshi-qj.jpg",
+                    sprites : [
+                        {
+                            img_url : "img/sprite/sprite_01.png",
+                            type : "1",
+                            pos : "330.2152227252353,-33.4392608299774,222.23100519043626",
+                            nextNode : "1",
+                            name : "房间二"
+                        },
+                    ]
+                },
+                {
+                    name : "房间6",
+                    xiaotu :"img/GUI/tupian.png",
+                    node : "6",
+                    url : "img/VR/2016-9-23woshi-qj.jpg",
+                    sprites : [
+                        {
+                            img_url : "img/sprite/sprite_01.png",
+                            type : "1",
+                            pos : "330.2152227252353,-33.4392608299774,222.23100519043626",
+                            nextNode : "1",
+                            name : "房间二"
+                        },
+                    ]
+                },
+                {
+                    name : "房间7",
+                    xiaotu :"img/GUI/suo.png",
+                    node : "7",
                     url : "img/VR/2016-9-23woshi-qj.jpg",
                     sprites : [
                         {
@@ -61,22 +173,30 @@ var XML_D = {
             }
         },
 
-        /**当前操作户型
+        /**当前操作户型信息
          * id:户型的id **/
         current_VR : {
             id : 1,
             /**当前操作房间
-             * node:房间号**/
+             * node:房间号
+             * sprite : 当前操作的热点信息
+             * sprite_object ：当前选中三维场景中的热点对象**/
             panorama :{
                 node : 1,
+                /**当前操作的热点信息
+                 * thumbnail ：默认缩略图（热点是跳转场景）
+                 * thumbnail_2 ：默认缩略图（热点是跳转柜体时）**/
                 sprite : {
                     img_url : "img/sprite/forward.png",
                     position : new THREE.Vector3(),
                     type : 1,
                     nextNode : 1,
                     url : "",
-                    name: ""
-                }
+                    name: "",
+                    thumbnail : "img/GUI/thumbnail.png",
+                    thumbnail_2 : "img/GUI/thumbnail.png"
+                },
+                sprite_object : {}
             },
             //户型图
             map : {
@@ -113,8 +233,10 @@ var XML_D = {
             }
         },
 
-        //当前选中的精灵
-        current_sprite_object : {}
+        /**GUI中的数据**/
+        GUI : {
+            maxHeight : "0"
+        }
     }
 };
 
@@ -181,6 +303,20 @@ XML_D.data.fun = {
 
 //事件的函数
 XML_D.Event = {
+    /* 初始化事件 */
+    initEvent : function(){
+        /**添加鼠标事件**/
+        XML_D.Three.container.addEventListener( 'mousedown', XML_D.Event.onDocumentMouseDown, false );
+        XML_D.Three.container.addEventListener( 'mousemove', XML_D.Event.onDocumentMouseMove, false );
+        document.addEventListener( 'mouseup', XML_D.Event.onDocumentMouseUp, false );
+
+        document.addEventListener( 'mousewheel', XML_D.Event.onDocumentMouseWheel, false );
+        document.addEventListener( 'MozMousePixelScroll', XML_D.Event.onDocumentMouseWheel, false);
+
+        //当用户重置窗口大小时添加事件监听
+        window.addEventListener( 'resize', XML_D.Event.onWindowResize, false );
+    },
+
     onWindowResize : function(){
         /**刷新全景**/
         XML_D.Three.camera.aspect = window.innerWidth / window.innerHeight;
@@ -194,20 +330,25 @@ XML_D.Event = {
                 width : window.innerWidth,
                 height: window.innerHeight
             });
-        }
+        };
+
+        //设置全景热点的最大高度
+        XML_D.data.GUI.maxHeight = XML_D.HTML.getNodeMaxHeight($("#sprite_chang ul"));
     },
 
+    /**场景中按下鼠标
+     * 1. 标记移动全景中的精灵
+     * 2. 标记转动全景 **/
     onDocumentMouseDown : function ( event ) {
         event.preventDefault();
 
         var intersects = XML_D.Raycaster.getRaycaster(event,false,true);
-        //var intersects = XML_D.Raycaster.getRaycaster(event,false,true);
         if(intersects.length > 2){
             //遍历当前选中对象
             for(var i = 0;i < intersects.length; i++){
                 //获得当前选中的精灵
                 if(intersects[i].object.constructor == THREE.Sprite){
-                    XML_D.data.current_sprite_object = intersects[i].object;
+                    XML_D.data.current_VR.panorama.sprite_object = intersects[i].object;
                 }
             }
         }else{
@@ -221,45 +362,73 @@ XML_D.Event = {
         }
     },
 
+    /**判断当前是否选中精灵
+     * 1. 如果按下鼠标时，选中精灵，对精灵进行移动操作
+     * 2. 如果按下鼠标时，未选中精灵，浏览画面
+     * 3. 如果鼠标放在精灵上面，给列表中的精灵改变边框，否则变回原有的边框**/
     onDocumentMouseMove : function ( event ) {
+        var intersects = XML_D.Raycaster.getRaycaster(event,false,true);
+        var liNode = null;
+        var Object = {};
+        //遍历当前选中对象
+        for(var i = 0;i < intersects.length; i++){
+            if(intersects[i].object.constructor == THREE.Sprite){
+                //遍历精灵列表，查找当前选中的精灵
+                $(".manage_sprite ul").find("img").each(function(){
+                    if($(this).attr("data-id") == intersects[i].object.id){
+                        liNode = $(this).parent().parent();
+                    };
+                });
+            }else if(intersects[i].object.constructor == THREE.Mesh){
+                //获得内层球对象
+                if($.isEmptyObject(Object)){
+                    Object = intersects[i];
+                }else{
+                    if(Object.distance > intersects[i].distance){
+                        Object = intersects[i];
+                    }
+                }
+            }
+        }
 
-        /**判断当前是否选中精灵
-         * 1. 如果选中精灵，对精灵进行移动操作
-         * 2. 如果未选中精灵，浏览画面**/
-        if($.isEmptyObject(XML_D.data.current_sprite_object)){
+        /***************** 按下鼠标时，选中精灵 ****************************************/
+        if($.isEmptyObject(XML_D.data.current_VR.panorama.sprite_object)){
             if ( XML_D.Three.isUserInteracting === true ) {
                 XML_D.Three.lon = ( XML_D.Three.onPointerDownPointerX - event.clientX ) * 0.1 + XML_D.Three.onPointerDownLon;
                 XML_D.Three.lat = ( event.clientY - XML_D.Three.onPointerDownPointerY ) * 0.1 + XML_D.Three.onPointerDownLat;
                 XML_D.Three.renderScene();
             }
         }else{
-            var intersects = XML_D.Raycaster.getRaycaster(event,false,true);
-            var Object = {};
             var position = new THREE.Vector3();
-            //遍历当前选中对象
-            for(var i = 0;i < intersects.length; i++){
-                if(intersects[i].object.constructor == THREE.Mesh){
-                    //获得内层球对象
-                    if($.isEmptyObject(Object)){
-                        Object = intersects[i];
-                    }else{
-                        if(Object.distance > intersects[i].distance){
-                            Object = intersects[i];
-                        }
-                    }
-                }
-            }
-
             position.copy(Object.point);
-            XML_D.data.current_sprite_object.position.copy(position);
+            XML_D.data.current_VR.panorama.sprite_object.position.copy(position);
             XML_D.Three.renderScene();
-        }
+        };
+
+        /******鼠标是否位于精灵上面*****************************************************/
+        if(liNode){
+            $("#container").css({
+                cursor: "pointer"
+            });
+            $(liNode).removeClass("bd_04").addClass("bd_03");
+            $(liNode).siblings().removeClass("bd_03").addClass("bd_04");
+
+            //设置滑动条滑动到相应的位置
+            var container = $(liNode).parent();
+            var scrollTo = $(liNode);
+            $(liNode).parent().scrollTop(scrollTo.offset().top - container.offset().top + container.scrollTop());
+        }else{
+            $("#container").css({
+                cursor: "default"
+            });
+            $(".manage_sprite ul").find("img").parent().parent().removeClass("bd_03").addClass("bd_04");
+        };
     },
 
     onDocumentMouseUp : function ( event ) {
         XML_D.Three.isUserInteracting = false;
         //释放当前的精灵
-        XML_D.data.current_sprite_object = {};
+        XML_D.data.current_VR.panorama.sprite_object = {};
 
         //不移动精灵
         XML_D.data.current_VR.map.sprite.tag = false;
@@ -305,7 +474,7 @@ XML_D.Event = {
         XML_D.Three.renderScene();
     },
 
-    disposeEvent:function(){
+    disposeEvent : function(){
         /**添加鼠标事件**/
         document.removeEventListener( 'mousedown', XML_D.Event.onDocumentMouseDown, false );
         document.removeEventListener( 'mousemove', XML_D.Event.onDocumentMouseMove, false );
@@ -344,7 +513,7 @@ XML_D.GUI = {
             divNode.setAttribute("data-nextNode",panoramas[item].node);
 
             var imgNode = document.createElement("img");
-            imgNode.src = "img/GUI/tupian.png";
+            imgNode.src = panoramas[item].xiaotu;
             $(divNode).append(imgNode);
 
             var SpanNode = document.createElement("span");
@@ -741,6 +910,9 @@ XML_D.GUI = {
             transform: "translate(0, 0)"
         });
         $("#link").hide();
+
+        //设置全景热点的最大高度
+        XML_D.data.GUI.maxHeight = XML_D.HTML.getNodeMaxHeight($("#sprite_chang ul"));
     },
     map:function(){
         $(".item").css({
@@ -809,9 +981,12 @@ XML_D.GUI = {
     /**全景切换 -> 添加热点 -> 选择场景 -> 点击全景图**/
     selectScene : function(){
         $(this).css({border:"1px solid #5a7fba"});
-        $(this).siblings().css({border:"0px"});
+        $(this).siblings().css({border:"1px solid #e1e1e1"});
+
         XML_D.data.current_VR.panorama.sprite.name = $(this).children("span").text();
         XML_D.data.current_VR.panorama.sprite.nextNode = $(this).attr("data-nextNode");
+        XML_D.data.current_VR.panorama.sprite.thumbnail = $(this).children("img").attr("src");
+
         $(this).siblings(".finish").removeClass("bg_05").addClass("bg_06");
 
         /**全景切换 -> 添加热点 -> 选择场景 -> 点击完成**/
@@ -826,7 +1001,7 @@ XML_D.GUI = {
 
         //添加热点到全景图、GUI热点列表
         var sprite = XML_D.Sprite.add();
-        var liNode = XML_D.HTML.create_sprite_list(sprite.name,sprite.id);
+        var liNode = XML_D.HTML.create_sprite_list(sprite);
         $("#sprite_chang ul").append(liNode);
 
         //删除完成事件，设置按钮未激活状态
@@ -870,7 +1045,7 @@ XML_D.GUI = {
 
         //添加热点到全景、热点列表中
         var sprite = XML_D.Sprite.add();
-        var liNode = XML_D.HTML.create_sprite_list(sprite.name,sprite.id);
+        var liNode = XML_D.HTML.create_sprite_list(sprite);
         $("#link ul").append(liNode);
     },
 
@@ -894,6 +1069,9 @@ XML_D.GUI = {
             $("#setScene").show();
 
             XML_D.data.current_VR.panorama.sprite.type = 1;
+            $("#sprite_chang ul").css({
+                maxHeight : XML_D.data.GUI.maxHeight
+            });
         }else if(this.text == "超链接"){
             $("#link").show();
             $("#sprite_chang").hide();
@@ -901,6 +1079,9 @@ XML_D.GUI = {
             $("#setLink").show();
 
             XML_D.data.current_VR.panorama.sprite.type = 2;
+            $("#link ul").css({
+                maxHeight : XML_D.data.GUI.maxHeight
+            });
         }
     },
 
@@ -915,22 +1096,42 @@ XML_D.HTML = {
     /**创建热点列表项
      * name:热点的名称
      * id : THREE.Sprite中的id **/
-    create_sprite_list : function(name,id){
+    create_sprite_list : function(sprite){
         var liNode = $("<li></li>");
+        liNode.addClass("bd_04");
 
-        var divNode = $("<div class='li_cover'></div>");
-        divNode.append("删除");
+        var divNode = $("<div></div>");
+        divNode.addClass("sprite_list_item");
         liNode.append(divNode);
 
-        var imgNode = $("<img src='img/GUI/suo.png'/>");
-        imgNode.attr("data-id",id);
-        liNode.append(imgNode);
+        var imgNode = $("<img/>");
+        imgNode.attr("src",sprite.thumbnail);
+        imgNode.attr("data-id",sprite.id);
+        divNode.append(imgNode);
+
+        var imgNode2 = $("<img class='img_url'/>");
+        imgNode2.attr("src",sprite.img_url);
+        divNode.append(imgNode2);
 
         var pNode = $("<p></p>");
-        pNode.append(name);
-        liNode.append(pNode);
+        pNode.append(sprite.name);
+        divNode.append(pNode);
+
+        var divNode_cover = $("<div class='li_cover'></div>");
+        divNode_cover.append("删除");
+        liNode.append(divNode_cover);
 
         return liNode;
+    },
+
+    /**得到给定节点不超出屏幕的最大高度,并设置**/
+    getNodeMaxHeight : function($node){
+        var maxHeight = $(window).height() - $node.scrollTop() - $node.offset().top + $(document).scrollTop() - 100;
+        $node.css({
+            maxHeight : maxHeight
+        });
+
+        return maxHeight;
     }
 };
 
@@ -1003,7 +1204,6 @@ XML_D.Sprite = {
             }
 
             var sprite = this.create(Sprites[i].img_url);
-
             /*********************** 设置热点的基本属性 ****************/
             //设置热点的名称
             sprite.name =  Sprites[i].name;
@@ -1011,24 +1211,26 @@ XML_D.Sprite = {
             var arr = XML_D.String.splitToArray(Sprites[i].pos,",");
             sprite.position.set(arr[0],arr[1],arr[2]);
             sprite.scale.set(30,30,30);
-
             //设置热点的样式
             sprite.img_url = Sprites[i].img_url;
-
             //设置类型
             sprite.type = Sprites[i].type;
+            //设置下一个场景的id或柜体的访问路径
             if(sprite.type == 1){
-                //设置下一个场景的id
                 sprite.nextNode = Sprites[i].nextNode;
+                //添加热点跳转全景的缩略图
+                var room = XML_D.data.fun.findCurrentPanorama(Sprites[i].nextNode);
+                sprite.thumbnail = room.xiaotu;
             }else{
-                //设置柜体的访问路径
                 sprite.url = Sprites[i].url;
+                sprite.thumbnail = XML_D.data.current_VR.panorama.sprite.thumbnail_2;
             }
 
+            //添加热点到全景图
             XML_D.Three.scene.add( sprite );
 
             /*********************** 添加热点项 *************************/
-            var liNode = XML_D.HTML.create_sprite_list(sprite.name,sprite.id);
+            var liNode = XML_D.HTML.create_sprite_list(sprite);
             if(sprite.type == 1){
                 $("#sprite_chang ul").append(liNode);
             }else{
@@ -1043,26 +1245,26 @@ XML_D.Sprite = {
         var sprite = this.create(XML_D.data.current_VR.panorama.sprite.img_url);
 
         /************************* 设置热点的基本属性 ************************************/
-        //设置热点的名称
-        sprite.name =  XML_D.data.current_VR.panorama.sprite.name;
-
-        //获得窗口中心点的坐标
+        //获得窗口中心点的坐标,设置热点的位置
         var raycaster = XML_D.Raycaster.getRaycaster_2(false,true);
         var point = raycaster[0].point;
-        //设置热点的位置
         sprite.position.set(point.x,point.y,point.z);
-
-
         //设置热点的样式
         sprite.img_url = XML_D.data.current_VR.panorama.sprite.img_url;
+
+        //设置热点的名称
+        sprite.name =  XML_D.data.current_VR.panorama.sprite.name;
         //设置类型
         sprite.type = XML_D.data.current_VR.panorama.sprite.type;
+        //设置下一个场景的id或柜体的访问路径
         if(XML_D.data.current_VR.panorama.sprite.type == 1){
-          //设置下一个场景的id
-          sprite.nextNode = XML_D.data.current_VR.panorama.sprite.nextNode;
+            sprite.nextNode = XML_D.data.current_VR.panorama.sprite.nextNode;
+            //设置精灵跳转全景的缩略图
+            sprite.thumbnail = XML_D.data.current_VR.panorama.sprite.thumbnail;
         }else{
-          //设置柜体的访问路径
-          sprite.url = XML_D.data.current_VR.panorama.sprite.url;
+            sprite.url = XML_D.data.current_VR.panorama.sprite.url;
+            //设置精灵跳转全景的缩略图
+            sprite.thumbnail = XML_D.data.current_VR.panorama.sprite.thumbnail_2;
         }
 
         XML_D.Three.scene.add( sprite );
@@ -1108,6 +1310,7 @@ XML_D.Three = {
     renderer : {},
     container : {},
 
+    //记录在场景中按下鼠标，是否转动全景
     isUserInteracting : false,
     onMouseDownMouseX : 0,
     onMouseDownMouseY : 0,
@@ -1120,8 +1323,6 @@ XML_D.Three = {
     isTimerMove : true,
 
     initRenderer : function () {
-        //var container = document.createElement( 'div' );
-        //document.body.appendChild( container );
         var container = document.getElementById("container");
         this.container = container;
 
@@ -1216,28 +1417,12 @@ XML_D.Three = {
 
     },
 
-    /* 初始化事件 */
-    initEvent : function(){
-
-        /**添加鼠标事件**/
-        this.container.addEventListener( 'mousedown', XML_D.Event.onDocumentMouseDown, false );
-        document.addEventListener( 'mousemove', XML_D.Event.onDocumentMouseMove, false );
-        document.addEventListener( 'mouseup', XML_D.Event.onDocumentMouseUp, false );
-
-        document.addEventListener( 'mousewheel', XML_D.Event.onDocumentMouseWheel, false );
-        document.addEventListener( 'MozMousePixelScroll', XML_D.Event.onDocumentMouseWheel, false);
-
-        //当用户重置窗口大小时添加事件监听
-        window.addEventListener( 'resize', XML_D.Event.onWindowResize, false );
-    },
-
     /* 启动three程序 */
     threeStart : function () {
         this.initRenderer();
         this.initCamera();
         this.initScene();
         this.initObject();
-        this.initEvent();
         this.renderScene();
     }
 };
@@ -1269,7 +1454,6 @@ XML_D.URL = {
 };
 
 $(function(){
-
     if(Detector.webgl) {
         //解析URL中的数据
         XML_D.URL.transform_XML_URL();
@@ -1282,25 +1466,26 @@ $(function(){
             success: function (data) {
                 //保存户型数据
                 XML_D.data.VR = JSON.parse(data);
-                //初始化GUI
-                XML_D.GUI.initGUI();
-                //加载threejs
-                XML_D.Three.threeStart();
+                te();
             },
             error : function(){
                 var str ="[{\"RoomId\":\"27\",\"RoomName\":\"卧室\",\"UrlPic\":\"upload/Url/1236.jpg\",\"PanoramasId\":\"31\",\"Sprites\":[{\"name\":\"热点一\",\"type\":\"1\",\"nextNode\":\"1\",\"pos\":\"- 208.26909733320136,-10.95262701925466,-340.5277395366886\",\"img_url\":\"img/sprite/img/sprite/forward_right.png\"},{\"name\":\"热点 二\",\"type\":\"2\",\"url\":\"123.com\",\"pos\":\"-208.26909733320136,-10.95262701925466,- 340.5277395366886\",\"img_url\":\"img/sprite/img/sprite/forward_right.png\"}],\"mapSprites\":[{\"translate\":\"210px, 80px\",\"name\":\"热点三\",\"nextNode\":\"0\"}, {\"translate\":\"210px, 80px\",\"name\":\"热点四\",\"nextNode\":\"0\"}]},{\"RoomId\":\"30\",\"RoomName\":\"卧室 2\",\"UrlPic\":\"upload/Url/2294472375_24a3b8ef46_o.jpg\",\"PanoramasId\":\"31\",\"Sprites\":[{\"name\":\"热点一\",\"type\":\"1\",\"nextNode\":\"1\",\"pos\":\"-208.26909733320136,- 10.95262701925466,-340.5277395366886\",\"img_url\":\"img/sprite/img/sprite/forward.png\"}],\"mapSprites\":[{\"translate\":\"210px, 80px\",\"name\":\"热点 2\",\"nextNode\":\"0\"}]}]";
                 //XML_D.data.VR = JSON.parse(str);
-                //初始化GUI
-                XML_D.GUI.initGUI();
-                //加载threejs
-                XML_D.Three.threeStart();
+                te();
                 console.error("你访问数据出错，启用默认值！");
             }
         });
+        function te(){
+            //初始化GUI
+            XML_D.GUI.initGUI();
+            //加载threejs
+            XML_D.Three.threeStart();
+            //加载事件
+            XML_D.Event.initEvent();
+        }
 
     }else{
         Detector.addGetWebGLMessage("123");
         throw "你的浏览器不支持webGL，建议使用谷歌浏览器！";
     }
-
 });

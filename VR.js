@@ -11,7 +11,7 @@ var XML_D = {
         }
     },
     initDate : {
-        event_tag : false,
+        isVRModel : false,
         //鼠标的方向
         hoverDir : true,
         //判断是否自动播放
@@ -212,7 +212,7 @@ XML_D.Event = {
         event.preventDefault();
 
         //控制退出vr视图的观看
-        if(XML_D.initDate.event_tag) {
+        if(XML_D.initDate.isVRModel) {
             $(".exit").show();
             var w = $(window).width() / 2 - $(".exit").width() / 2;
             $(".exit").css({'left': w});
@@ -310,7 +310,7 @@ XML_D.Event = {
     onDocumentTouchStart : function ( event ) {
         event.preventDefault();
         //显示退出VR按钮
-        if(XML_D.initDate.event_tag) {
+        if(XML_D.initDate.isVRModel) {
 
             $(".exit").show();
             var w = $(window).width() / 2 - $(".exit").width() / 2;
@@ -365,7 +365,7 @@ XML_D.Event = {
         setTimeout(function(){
             $(".exit").hide();
         },3000);
-        XML_D.initDate.event_tag = true;
+        XML_D.initDate.isVRModel = true;
     },
 
     /**手指点击退出分屏按钮
@@ -379,7 +379,7 @@ XML_D.Event = {
         XML_D.Three.effect = {};
         $(".divide").show();
         $(this).hide();
-        XML_D.initDate.event_tag = false;
+        XML_D.initDate.isVRModel = false;
 
         XML_D.Three.renderScene();
     },
@@ -725,7 +725,7 @@ XML_D.Three = {
             setTimeout(function(){
                 $(".exit").hide();
             },3000);
-            XML_D.initDate.event_tag = true;
+            XML_D.initDate.isVRModel = true;
         }
     }
 };

@@ -11,6 +11,12 @@ var XML_D = {
             panorama : {
                 node : null
             }
+        },
+
+        /**保存和事件相关的信息
+         * isVRModel : 标记是当前是否进入vr观看模式**/
+        eventData : {
+            isVRModel : false,
         }
     },
     /* 初始化数据和事件 */
@@ -24,7 +30,6 @@ var XML_D = {
         },
     },
     initDate : {
-        event_tag : false,
         //鼠标的方向
         hoverDir : true,
         //判断是否自动播放
@@ -253,27 +258,43 @@ XML_D.data.fun = {
 
 //事件的函数
 XML_D.Event = {
-    onWindowResize : function(){
+    /**初始化事件**/
+    initEvent : function(){
+        //当用户重置窗口大小时添加事件监听
+        window.addEventListener( 'resize', XML_D.Event.onWindowResize, false );
 
+        /**添加鼠标事件**/
+        XML_D.Three.container.addEventListener( 'mousedown', XML_D.Event.onDocumentMouseDown, false );
+        XML_D.Three.container.addEventListener( 'mousemove', XML_D.Event.onDocumentMouseMove, false );
+        window.addEventListener( 'mouseup', XML_D.Event.onDocumentMouseUp, false );
+
+        XML_D.Three.container.addEventListener( 'mousewheel', XML_D.Event.onDocumentMouseWheel, false );
+        XML_D.Three.container.addEventListener( 'MozMousePixelScroll', XML_D.Event.onDocumentMouseWheel, false);
+
+        XML_D.Three.container.addEventListener( 'touchstart', XML_D.Event.onDocumentTouchStart, false );
+        XML_D.Three.container.addEventListener( 'touchmove', XML_D.Event.onDocumentTouchMove, false );
+        window.addEventListener( 'touchend', XML_D.Event.onDocumentTouchEnd, false );
+    },
+    /**窗口重置事件**/
+    onWindowResize : function(){
         XML_D.Three.camera.aspect = window.innerWidth / window.innerHeight;
         XML_D.Three.camera.updateProjectionMatrix();
 
         XML_D.Three.renderer.setSize( window.innerWidth, window.innerHeight );
-
     },
 
     onDocumentMouseDown : function ( event ) {
         event.preventDefault();
 
-        //控制退出vr视图的观看
-        if(XML_D.initDate.event_tag) {
+        //显示退出VR模式按钮
+        if(XML_D.data.eventData.isVRModel) {
             $(".exit").show();
             var w = $(window).width() / 2 - $(".exit").width() / 2;
             $(".exit").css({'left': w});
             setTimeout(function () {
                 $(".exit").hide();
             }, 3000);
-        }
+        };
 
         XML_D.Three.isUserInteracting = true;
 
@@ -283,9 +304,6 @@ XML_D.Event = {
 
         XML_D.Three.onPointerDownLon = XML_D.Three.lon;
         XML_D.Three.onPointerDownLat = XML_D.Three.lat;
-
-        //查找sprite
-        XML_D.SwitchPanorama.findSprite(event);
     },
     onDocumentMouseMove : function ( event ) {
 
@@ -316,6 +334,9 @@ XML_D.Event = {
     },
     onDocumentMouseUp : function ( event ) {
         XML_D.Three.isUserInteracting = false;
+
+        //查找sprite
+        XML_D.SwitchPanorama.findSprite(event);
     },
     onDocumentMouseWheel : function ( event ) {
         // WebKit
@@ -359,7 +380,7 @@ XML_D.Event = {
     onDocumentTouchStart : function ( event ) {
         event.preventDefault();
         //显示退出VR按钮
-        if(XML_D.initDate.event_tag) {
+        if(XML_D.data.eventData.isVRModel) {
 
             $(".exit").show();
             var w = $(window).width() / 2 - $(".exit").width() / 2;
@@ -419,7 +440,7 @@ XML_D.Event = {
         setTimeout(function(){
             $(".exit").hide();
         },3000);
-        XML_D.initDate.event_tag = true;
+        XML_D.data.eventData.isVRModel = true;
     },
     /**手指点击退出分屏按钮
      * 1.销毁分屏时的控制器
@@ -432,7 +453,7 @@ XML_D.Event = {
         XML_D.Three.effect = {};
         $(".divide").show();
         $(this).hide();
-        XML_D.initDate.event_tag = false;
+        XML_D.data.eventData.isVRModel = false;
 
         XML_D.Three.renderScene();
     },
@@ -989,32 +1010,12 @@ XML_D.Three = {
         }
     },
 
-    /* 初始化事件 */
-    initEvent : function(){
-
-        /**添加鼠标事件**/
-        XML_D.Three.container.addEventListener( 'mousedown', XML_D.Event.onDocumentMouseDown, false );
-        document.addEventListener( 'mousemove', XML_D.Event.onDocumentMouseMove, false );
-        document.addEventListener( 'mouseup', XML_D.Event.onDocumentMouseUp, false );
-
-        document.addEventListener( 'mousewheel', XML_D.Event.onDocumentMouseWheel, false );
-        document.addEventListener( 'MozMousePixelScroll', XML_D.Event.onDocumentMouseWheel, false);
-
-        document.addEventListener( 'touchstart', XML_D.Event.onDocumentTouchStart, false );
-        document.addEventListener( 'touchmove', XML_D.Event.onDocumentTouchMove, false );
-        document.addEventListener( 'touchend', XML_D.Event.onDocumentTouchEnd, false );
-
-        //当用户重置窗口大小时添加事件监听
-        window.addEventListener( 'resize', XML_D.Event.onWindowResize, false );
-    },
-
     /* 启动three程序 */
     threeStart : function () {
         this.initRenderer();
         this.initCamera();
         this.initScene();
         this.initObject();
-        this.initEvent();
         this.renderScene();
 
         if(localStorage.getItem("key") == "0"){
@@ -1029,7 +1030,7 @@ XML_D.Three = {
             setTimeout(function(){
                 $(".exit").hide();
             },3000);
-            XML_D.initDate.event_tag = true;
+            XML_D.data.eventData.isVRModel = true;
         }
     }
 };
@@ -1160,6 +1161,8 @@ $(function(){
             XML_D.GUI.initGUI();
             //加载threejs
             XML_D.Three.threeStart();
+            //初始化事件
+            XML_D.Event.initEvent();
 
             /**判断屏幕的宽度发生变化后，重行加载画面**/
             var width = XML_D.Three.container.children[0].width;
