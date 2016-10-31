@@ -878,7 +878,7 @@ XML_D.Three = {
         var controls = new THREE.OrbitControls(this.camera, this.renderer.domElement);
         controls.rotateUp(Math.PI / 4);
         controls.target.set(
-            camera.position.x = 0.01,
+            camera.position.x + 0.01,
             camera.position.y,
             camera.position.z
         );
@@ -891,7 +891,7 @@ XML_D.Three = {
             controls = new THREE.DeviceOrientationControls(this.camera, true);
             controls.connect();
             controls.update();
-            renderer.domElement.addEventListener('click', fullscreen, false);
+            XML_D.Three.renderer.domElement.addEventListener('click', fullscreen, false);
             window.removeEventListener('deviceorientation', setOrientationControls, true);
         }
         window.addEventListener('deviceorientation', setOrientationControls, true);
