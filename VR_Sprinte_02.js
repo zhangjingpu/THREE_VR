@@ -948,7 +948,7 @@ XML_D.GUI = {
     /**超链接、全景切换 -> 删除热点 **/
     delete_sprite : function(){
         //删除全景中的精灵
-        var object = XML_D.Three.scene.getObjectById(parseInt($(this).siblings("img").attr("data-id")));
+        var object = XML_D.Three.scene.getObjectById(parseInt($(this).siblings(".sprite_list_item").find(".img_url").siblings("img").attr("data-id")));
         XML_D.Three.scene.remove(object);
         XML_D.Three.renderScene();
         //删除GUI中的精灵

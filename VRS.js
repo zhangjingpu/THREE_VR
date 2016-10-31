@@ -14,28 +14,42 @@ var XML_D = {
         },
 
         /**保存和事件相关的信息
-         * isVRModel : 标记是当前是否进入vr观看模式**/
+         * isVRModel : 标记是当前是否进入vr观看模式
+         * isUserInteracting ：记录是否按下鼠标（鼠标移动是是否进行操作，默认无操作）
+         * onMouseDownMouseX : 记录按下鼠标时,X轴坐标
+         * onMouseDownMouseY ：记录按下鼠标时,Y轴坐标
+         * hoverDir : 鼠标移动的方向
+         * speed : 自动播放全景的速度
+         * isPlay : 判断是否自动播放
+         * lat : 角度在-80到85之间的值，默认为0
+         * lon :
+         * onPointerDownLon : 保存lon值
+         * onPointerDownLat ：保存lat值**/
         eventData : {
             isVRModel : false,
+            isUserInteracting : false,
+            onMouseDownMouseX : 0,
+            onMouseDownMouseY : 0,
+            hoverDir : true,
+            speed : 0.05,
+            isPlay : true,
+
+            lat : 0,
+            lon : 0,
+            onPointerDownLon : 0,
+            onPointerDownLat : 0,
         }
     },
     /* 初始化数据和事件 */
     init : {
         /**初始化路径*/
         initURL: {
+            //http://192.168.0.134:2899/Web3D/VRS.html
             //http://www.tuotuohome.com/vr/vr.html
             url: "img/VR/1236.jpg",
 
             xmlurl : "XML/test2.xml",
         },
-    },
-    initDate : {
-        //鼠标的方向
-        hoverDir : true,
-        //判断是否自动播放
-        isPlay : true,
-        //旋转的速度
-        speed : 0.05
     }
 };
 
@@ -296,48 +310,55 @@ XML_D.Event = {
             }, 3000);
         };
 
-        XML_D.Three.isUserInteracting = true;
+        /**查找sprite
+         * 如果返回为空，那么没有选中精灵，标记鼠标按下**/
+        if(XML_D.SwitchPanorama.findSprite(event) == null){
+            XML_D.data.eventData.isUserInteracting = true;
+        };
 
         //记录鼠标按下时鼠标的位置
-        XML_D.Three.onPointerDownPointerX = event.clientX;
-        XML_D.Three.onPointerDownPointerY = event.clientY;
+        XML_D.data.eventData.onMouseDownMouseX = event.clientX;
+        XML_D.data.eventData.onMouseDownMouseY = event.clientY;
 
-        XML_D.Three.onPointerDownLon = XML_D.Three.lon;
-        XML_D.Three.onPointerDownLat = XML_D.Three.lat;
+        //保存上一个动作的角度和弧度值
+        XML_D.data.eventData.onPointerDownLon = XML_D.data.eventData.lon;
+        XML_D.data.eventData.onPointerDownLat = XML_D.data.eventData.lat;
     },
     onDocumentMouseMove : function ( event ) {
-
-        if ( XML_D.Three.isUserInteracting === true ) {
+        //如果按下鼠标，进行全景浏览
+        if ( XML_D.data.eventData.isUserInteracting) {
+            //设置旋转方向
             XML_D.Event.setHoverDir(event);
 
-            XML_D.Three.lon = ( XML_D.Three.onPointerDownPointerX - event.clientX ) * 0.1 + XML_D.Three.onPointerDownLon;
-            XML_D.Three.lat = ( event.clientY - XML_D.Three.onPointerDownPointerY ) * 0.1 + XML_D.Three.onPointerDownLat;
+            //当前的角度制和弧度制加上原来的角度值和弧度值
+            XML_D.data.eventData.lon = ( XML_D.data.eventData.onMouseDownMouseX - event.clientX ) * 0.1 + XML_D.data.eventData.onPointerDownLon;
+            XML_D.data.eventData.lat = ( event.clientY - XML_D.data.eventData.onMouseDownMouseY ) * 0.1 + XML_D.data.eventData.onPointerDownLat;
 
             //动画加速
-            if(XML_D.initDate.speed < 0.5){
-                XML_D.initDate.speed += 0.01;
+            if(XML_D.data.eventData.speed < 0.5){
+                XML_D.data.eventData.speed += 0.01;
             }
 
             //如果没有自动播放，重行渲染一次
-            if(!XML_D.initDate.isPlay){
+            if(!XML_D.data.eventData.isPlay){
                 XML_D.Three.renderScene();
             }
-        }
-    },
-    /**设置旋转的方向**/
-    setHoverDir :function(event){
-        if(XML_D.Three.onPointerDownPointerX - event.clientX > 0){
-            XML_D.initDate.hoverDir = true;
-        }else{
-            XML_D.initDate.hoverDir = false;
-        }
+        };
     },
     onDocumentMouseUp : function ( event ) {
-        XML_D.Three.isUserInteracting = false;
-
-        //查找sprite
-        XML_D.SwitchPanorama.findSprite(event);
+        //设置鼠标键弹起
+        XML_D.data.eventData.isUserInteracting = false;
     },
+
+    /**设置旋转的方向**/
+    setHoverDir : function(event){
+        if(XML_D.data.eventData.onMouseDownMouseX - event.clientX > 0){
+            XML_D.data.eventData.hoverDir = true;
+        }else{
+            XML_D.data.eventData.hoverDir = false;
+        }
+    },
+
     onDocumentMouseWheel : function ( event ) {
         // WebKit
         if ( event.wheelDeltaY ) {
@@ -373,7 +394,7 @@ XML_D.Event = {
                     XML_D.Three.camera.fov -= event.detail * 0.05;
                 }
             }
-        }
+        };
         XML_D.Three.camera.updateProjectionMatrix();
     },
 
@@ -394,11 +415,11 @@ XML_D.Event = {
             XML_D.Three.isTimerMove = false;
             event.preventDefault();
 
-            XML_D.Three.onPointerDownPointerX = event.touches[ 0 ].pageX;
-            XML_D.Three.onPointerDownPointerY = event.touches[ 0 ].pageY;
+            XML_D.data.eventData.onMouseDownMouseX = event.touches[ 0 ].pageX;
+            XML_D.data.eventData.onMouseDownMouseY = event.touches[ 0 ].pageY;
 
-            XML_D.Three.onPointerDownLon = XML_D.Three.lon;
-            XML_D.Three.onPointerDownLat = XML_D.Three.lat;
+            XML_D.data.eventData.onPointerDownLon = XML_D.data.eventData.lon;
+            XML_D.data.eventData.onPointerDownLat = XML_D.data.eventData.lat;
         }
 
     },
@@ -409,16 +430,15 @@ XML_D.Event = {
 
             XML_D.Three.isTimerMove = false;
             event.preventDefault();
-            XML_D.Three.lon = ( XML_D.Three.onPointerDownPointerX - event.touches[0].pageX ) * 0.1 + XML_D.Three.onPointerDownLon;
-            XML_D.Three.lat = ( event.touches[0].pageY - XML_D.Three.onPointerDownPointerY ) * 0.1 + XML_D.Three.onPointerDownLat;
+            XML_D.data.eventData.lon = ( XML_D.data.eventData.onMouseDownMouseX - event.touches[0].pageX ) * 0.1 + XML_D.data.eventData.onPointerDownLon;
+            XML_D.data.eventData.lat = ( event.touches[0].pageY - XML_D.data.eventData.onMouseDownMouseY ) * 0.1 + XML_D.data.eventData.onPointerDownLat;
 
             //如果没有自动播放，重行渲染一次
-            if(!XML_D.initDate.isPlay){
+            if(!XML_D.data.eventData.isPlay){
                 XML_D.Three.renderScene();
             }
         }
     },
-
     onDocumentTouchEnd : function( event ){
         //查找sprite
         XML_D.SwitchPanorama.findSprite(event);
@@ -493,7 +513,6 @@ XML_D.GUI = {
     initGUI : function(){
         //根据不同的设备，加载不同的GUI
         if (XML_D.Broweser.versions.mobile) {
-
             $(".divide").each(function(){
                 $(this).unbind("touchstart");
                 $(this).bind("touchstart",XML_D.Event.onDivideTouchStart);
@@ -522,7 +541,7 @@ XML_D.GUI = {
             $("#fullScreen").bind("click",function(){
                 XML_D.Event.fullscreen();
             })
-        }
+        };
 
         //设置页面的导航图
         XML_D.GUI.NavigationMap();
@@ -539,9 +558,9 @@ XML_D.GUI = {
         $("#isplay").bind("touchstart",showPlay);
 
         function showPlay(){
-            XML_D.initDate.isPlay = !XML_D.initDate.isPlay;
+            XML_D.data.eventData.isPlay = !XML_D.data.eventData.isPlay;
             //如果不是自动播放，重行渲染一次
-            if(XML_D.initDate.isPlay){
+            if(XML_D.data.eventData.isPlay){
                 XML_D.Three.renderScene();
             }
         }
@@ -765,7 +784,7 @@ XML_D.SwitchPanorama = {
             te(sprite);
             function te(sprite_1){
                 window.setInterval(function(){
-                    if(XML_D.initDate.isPlay){
+                    if(XML_D.data.eventData.isPlay){
                         sprite_1.visible = !sprite_1.visible;
                     }else{
                         if(sprite_1.visible == false){
@@ -791,11 +810,12 @@ XML_D.SwitchPanorama = {
             if(type1 == 1){
                this.changeScene(nextNode);
             }else{
-                XML_D.Three.isUserInteracting = false;
+                XML_D.data.eventData.isUserInteracting = false;
                 window.open(nextNode);
-            }
-
+            };
+            return intersects[0].object;
         }
+        return null;
     },
 
     /**变换当前的全景
@@ -833,24 +853,10 @@ XML_D.SwitchPanorama = {
 
 //threejs的相关操作
 XML_D.Three = {
-    renderer : {},
-    container : {},
-
-    //标记鼠标移动时，是否进行操作
-    isUserInteracting : false,
-
-    //记录鼠标按下时鼠标的位置
-    onMouseDownMouseX : 0,
-    onMouseDownMouseY : 0,
-
-    onMouseDownLon : 0,
-    onMouseDownLat : 0,
-    lon : 0,
-    lat : 0,
-    phi : 0,
-    theta : 0,
     isTimerMove : true,
 
+    container : {},
+    renderer : {},
     initRenderer : function () {
         var container = document.createElement( 'div' );
         document.body.appendChild( container );
@@ -903,7 +909,6 @@ XML_D.Three = {
         }
         this.controls = controls;
     },
-
     effect : {},
     initEffect : function(){
         var effect = new THREE.StereoEffect( this.renderer );
@@ -962,32 +967,31 @@ XML_D.Three = {
     /* 实现多次动态加载 */
     renderScene : function(){
         XML_D.Three.renderer.clear();
-        if(XML_D.initDate.isPlay){
+        if(XML_D.data.eventData.isPlay){
             requestAnimationFrame( XML_D.Three.renderScene );
-        }
-        /*
-         // distortion
-         XML_D.Three.camera.position.copy(  XML_D.Three.camera.target ).negate();
-         */
+        };
 
         if($.isEmptyObject(XML_D.Three.effect)){
 
-            if ( XML_D.Three.isUserInteracting === false ) {
-                if(XML_D.initDate.hoverDir){
-                    XML_D.Three.lon += XML_D.initDate.speed;
+            //没有按下鼠标
+            if ( XML_D.data.eventData.isUserInteracting === false ) {
+                if(XML_D.data.eventData.hoverDir){
+                    XML_D.data.eventData.lon += XML_D.data.eventData.speed;
                 }else{
-                    XML_D.Three.lon -= XML_D.initDate.speed;
+                    XML_D.data.eventData.lon -= XML_D.data.eventData.speed;
                 }
 
                 //动画减速
-                if(XML_D.initDate.speed > 0.05){
-                    XML_D.initDate.speed -= 0.005;
+                if(XML_D.data.eventData.speed > 0.05){
+                    XML_D.data.eventData.speed -= 0.005;
                 }
             }
 
-            XML_D.Three.lat = Math.max( - 85, Math.min( 85, XML_D.Three.lat ) );
-            phi = THREE.Math.degToRad( 90 - XML_D.Three.lat );
-            theta = THREE.Math.degToRad( XML_D.Three.lon );
+            //角度从-85到85之间
+            XML_D.data.eventData.lat = Math.max( - 85, Math.min( 85, XML_D.data.eventData.lat));
+            //弧度数 （90-lat）
+            var phi = THREE.Math.degToRad( 90 - XML_D.data.eventData.lat );
+            var theta = THREE.Math.degToRad( XML_D.data.eventData.lon );
 
             XML_D.Three.camera.target.x = 500 * Math.sin( phi ) * Math.cos( theta );
             XML_D.Three.camera.target.y = 500 * Math.cos( phi );
