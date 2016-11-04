@@ -38,7 +38,5 @@ THREE.StereoEffect = function ( renderer ) {
 		renderer.render( scene, _stereo.cameraR );
 
 		renderer.setScissorTest( false );
-
 	};
-
 };

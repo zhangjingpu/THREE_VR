@@ -26,14 +26,16 @@ THREE.OrbitControls = function ( object, domElement ) {
   this.object = object;
   this.domElement = ( domElement !== undefined ) ? domElement : document;
 
-  // API
-
   // Set to false to disable this control
   this.enabled = true;
 
   // "target" sets the location of focus, where the control orbits around
   // and where it pans with respect to.
   this.target = new THREE.Vector3();
+
+  // Limits to how far you can dolly in and out
+	this.minDistance = 0;
+	this.maxDistance = Infinity;
 
   // center is old, deprecated; use "target" instead
   this.center = this.target;
@@ -42,10 +44,6 @@ THREE.OrbitControls = function ( object, domElement ) {
   // backwards compatibility
   this.noZoom = false;
   this.zoomSpeed = 1.0;
-
-  // Limits to how far you can dolly in and out
-  this.minDistance = 0;
-  this.maxDistance = Infinity;
 
   // Set to true to disable this control
   this.noRotate = false;
@@ -630,10 +628,10 @@ THREE.OrbitControls = function ( object, domElement ) {
   this.domElement.addEventListener( 'touchend', touchend, false );
   this.domElement.addEventListener( 'touchmove', touchmove, false );
 
-  window.addEventListener( 'keydown', onKeyDown, false );
+	window.addEventListener( 'keydown', onKeyDown, false );
 
-  // force an update at start
-  this.update();
+	// force an update at start
+	this.update();
 
   this.dispose = function() {
 

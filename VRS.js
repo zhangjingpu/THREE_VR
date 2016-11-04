@@ -13,19 +13,20 @@ var XML_D = {
             }
         },
 
-        /**保存和事件相关的信息
-         * isVRModel : 标记是当前是否进入vr观看模式
-         * isUserInteracting ：记录是否按下鼠标（鼠标移动是是否进行操作，默认无操作）
-         * onMouseDownMouseX : 记录按下鼠标时,X轴坐标
-         * onMouseDownMouseY ：记录按下鼠标时,Y轴坐标
-         * hoverDir : 鼠标移动的方向
-         * speed : 自动播放全景的速度
-         * isPlay : 判断是否自动播放
-         * lat : 角度在-80到85之间的值，默认为0
-         * lon :
-         * onPointerDownLon : 保存lon值
-         * onPointerDownLat ：保存lat值**/
+        /**保存和事件相关的信息**/
         eventData : {
+            /**保存和事件相关的信息
+             * isVRModel : 标记是当前是否进入vr观看模式
+             * isUserInteracting ：记录是否按下鼠标（鼠标移动是是否进行操作，默认无操作）
+             * onMouseDownMouseX : 记录按下鼠标时,X轴坐标
+             * onMouseDownMouseY ：记录按下鼠标时,Y轴坐标
+             * hoverDir : 鼠标移动的方向
+             * speed : 自动播放全景的速度
+             * isPlay : 判断是否自动播放
+             * lat : 角度在-80到85之间的值，默认为0
+             * lon :
+             * onPointerDownLon : 保存lon值
+             * onPointerDownLat ：保存lat值 **/
             isVRModel : false,
             isUserInteracting : false,
             onMouseDownMouseX : 0,
@@ -37,7 +38,14 @@ var XML_D = {
             lat : 0,
             lon : 0,
             onPointerDownLon : 0,
-            onPointerDownLat : 0,
+            onPointerDownLat : 0
+        },
+
+        /**保存浏览器的相关信息**/
+        broweser : {
+            /**保存浏览器的相关信息
+             * controlsEnabled : 判断鼠标是否被锁定 **/
+            havePointerLock : false,//浏览器是否支持鼠标锁定功能
         }
     },
     /* 初始化数据和事件 */
@@ -47,9 +55,8 @@ var XML_D = {
             //http://192.168.0.134:2899/Web3D/VRS.html
             //http://www.tuotuohome.com/vr/vr.html
             url: "img/VR/1236.jpg",
-
-            xmlurl : "XML/test2.xml",
-        },
+            xml_url : "XML/test2.xml"
+        }
     }
 };
 
@@ -114,18 +121,15 @@ XML_D.Broweser =  {
      * 2.窗口打开，并显示当前页，窗口激活
      * return : 窗口激活 true，窗口未激活 false **/
     isWindowActivation : function(){
-        var hiddenProperty = 'hidden' in document ? 'hidden' :
-            'webkitHidden' in document ? 'webkitHidden' :
-                'mozHidden' in document ? 'mozHidden' :
-                    null;
+        var hiddenProperty = 'hidden' in document ? 'hidden' : 'webkitHidden' in document ? 'webkitHidden' : 'mozHidden' in document ? 'mozHidden' : null;
         var visibilityChangeEvent = hiddenProperty.replace(/hidden/i, 'visibilitychange');
         var onVisibilityChange = function(){
             if (!document[hiddenProperty]) {
                 console.log('页面非激活');
             }else{
                 console.log('页面激活')
-            }
-        }
+            };
+        };
         document.addEventListener(visibilityChangeEvent, onVisibilityChange);
     }
 };
@@ -190,17 +194,11 @@ XML_D.Cover = function(){
 
     // 浏览器兼容 取得浏览器可视区高度
     function getWindowInnerHeight() {
-        var winHeight = window.innerHeight
-            || (document.documentElement && document.documentElement.clientHeight)
-            || (document.body && document.body.clientHeight);
-        return winHeight;
+        return window.innerHeight || (document.documentElement && document.documentElement.clientHeight) || (document.body && document.body.clientHeight);
     }
     // 浏览器兼容 取得浏览器可视区宽度
     function getWindowInnerWidth() {
-        var winWidth = window.innerWidth
-            || (document.documentElement && document.documentElement.clientWidth)
-            || (document.body && document.body.clientWidth);
-        return winWidth;
+        return window.innerWidth || (document.documentElement && document.documentElement.clientWidth) || (document.body && document.body.clientWidth);
     }
 
     /**显示遮罩层*/
@@ -214,7 +212,7 @@ XML_D.Cover = function(){
             backgroundColor: "white",
             zIndex : 5
         });
-    }
+    };
 
     /**显示Loading提示*/
     function showLoading() {
@@ -239,12 +237,12 @@ XML_D.Cover = function(){
         $(document).scroll(function() {
             return false;
         });
-    }
+    };
 
     function hideLoading(){
         $("#loadingTip").hide();
         $("#overlay").hide();
-    }
+    };
 };
 
 /**操作数据**/
@@ -277,52 +275,128 @@ XML_D.Event = {
         //当用户重置窗口大小时添加事件监听
         window.addEventListener( 'resize', XML_D.Event.onWindowResize, false );
 
-        /**添加鼠标事件**/
-        XML_D.Three.container.addEventListener( 'mousedown', XML_D.Event.onDocumentMouseDown, false );
-        XML_D.Three.container.addEventListener( 'mousemove', XML_D.Event.onDocumentMouseMove, false );
-        window.addEventListener( 'mouseup', XML_D.Event.onDocumentMouseUp, false );
-
         XML_D.Three.container.addEventListener( 'mousewheel', XML_D.Event.onDocumentMouseWheel, false );
         XML_D.Three.container.addEventListener( 'MozMousePixelScroll', XML_D.Event.onDocumentMouseWheel, false);
 
-        XML_D.Three.container.addEventListener( 'touchstart', XML_D.Event.onDocumentTouchStart, false );
-        XML_D.Three.container.addEventListener( 'touchmove', XML_D.Event.onDocumentTouchMove, false );
-        window.addEventListener( 'touchend', XML_D.Event.onDocumentTouchEnd, false );
+        //根据不同的设备，加载不同的GUI
+        if (XML_D.Broweser.versions.mobile) {
+
+            XML_D.Three.container.addEventListener( 'touchstart', XML_D.Event.onDocumentTouchStart, false );
+            XML_D.Three.container.addEventListener( 'touchmove', XML_D.Event.onDocumentTouchMove, false );
+            window.addEventListener( 'touchend', XML_D.Event.onDocumentTouchEnd, false );
+
+            //添加进入和退出VR模式事件
+            $(".divide").each(function(){
+                $(this).unbind("touchstart");
+                $(this).bind("touchstart",XML_D.Event.onDivideTouchStart);
+            });
+            $(".exit").each(function(){
+                $(this).unbind("touchstart");
+                $(this).bind("touchstart",XML_D.Event.onExitTouchStart);
+            });
+
+            $("#fullScreen").unbind("touchstart");
+            $("#fullScreen").bind("touchstart",function(){
+                XML_D.Event.fullscreen();
+            });
+        } else {
+            /**添加鼠标事件**/
+            XML_D.Three.container.addEventListener( 'mousedown', XML_D.Event.onDocumentMouseDown, false );
+            XML_D.Three.container.addEventListener( 'mousemove', XML_D.Event.onDocumentMouseMove, false );
+            window.addEventListener( 'mouseup', XML_D.Event.onDocumentMouseUp, false );
+
+            //添加进入和退出VR模式事件
+            $(".divide").each(function(){
+                $(this).unbind("click");
+                $(this).bind("click",XML_D.Event.onDivideTouchStart);
+            });
+            $(".exit").each(function(){
+                $(this).unbind("click");
+                $(this).bind("click",XML_D.Event.onExitTouchStart);
+            });
+
+            $("#fullScreen").unbind("click");
+            $("#fullScreen").bind("click",function(){
+                XML_D.Fullscreen.fullscreen();
+            });
+        };
     },
+
     /**窗口重置事件**/
     onWindowResize : function(){
-        XML_D.Three.camera.aspect = window.innerWidth / window.innerHeight;
-        XML_D.Three.camera.updateProjectionMatrix();
+        if(XML_D.data.eventData.isVRModel){
+            //设置退出分屏按钮居中
+            var w = $(window).width()/2 - $(".exit").width()/2;
+            $(".exit").css({'left':w});
+        }
 
-        XML_D.Three.renderer.setSize( window.innerWidth, window.innerHeight );
+        /**1.移动设备，就更新相机，以保证全景方向的正确性（尤其是手机的横竖屏进行切换）
+         * 2.电脑，窗口变化，更新相机属性**/
+        if(XML_D.Broweser.versions.mobile){
+            //手机横竖屏切换
+            XML_D.Three.initCamera();
+            XML_D.Three.controls.object = XML_D.Three.camera;
+        }else{
+            XML_D.Three.camera.aspect = window.innerWidth / window.innerHeight;
+            XML_D.Three.camera.updateProjectionMatrix();
+
+            XML_D.Three.renderer.setSize( window.innerWidth, window.innerHeight );
+        }
     },
 
     onDocumentMouseDown : function ( event ) {
         event.preventDefault();
-
-        //显示退出VR模式按钮
+        /**判断当前是什么模式
+         * if   VR模式
+         * else 普通模式**/
         if(XML_D.data.eventData.isVRModel) {
-            $(".exit").show();
-            var w = $(window).width() / 2 - $(".exit").width() / 2;
-            $(".exit").css({'left': w});
-            setTimeout(function () {
-                $(".exit").hide();
-            }, 3000);
+            //判断当前容器container是否进入全屏状态
+            var element = XML_D.Three.container;
+            if(XML_D.Fullscreen.isFullscreen(element)){
+                console.log("container当前进入全屏状态");
+
+                //判断设备类型
+                if(XML_D.Broweser.versions.mobile){
+
+                }else{
+                    var element = XML_D.Three.container;
+                    if ( document.pointerLockElement === element || document.mozPointerLockElement === element || document.webkitPointerLockElement === element ) {
+                        console.log("锁定鼠标！");
+                        XML_D.PointerLock.exit(element);
+                    } else {
+                        console.log("未锁定鼠标！");
+                        XML_D.PointerLock.request(element);
+
+                        //初始化相机，防止方向错误
+                        XML_D.Three.initCamera();
+                        XML_D.Three.initControls();
+                    };
+                };
+            }else{
+                console.log("container当前退出全屏状态");
+
+                //控制显示退出按钮
+                $(".exit").show();
+                var w = $(window).width() / 2 - $(".exit").width() / 2;
+                $(".exit").css({'left': w});
+            };
+        }else{
+            /**查找sprite
+             * 如果返回为空，那么没有选中精灵，标记鼠标按下**/
+            if(XML_D.SwitchPanorama.findSprite(event) == null){
+                XML_D.data.eventData.isUserInteracting = true;
+            };
+
+            /*******************控制全景观看********************************/
+                //记录鼠标按下时鼠标的位置
+            XML_D.data.eventData.onMouseDownMouseX = event.clientX;
+            XML_D.data.eventData.onMouseDownMouseY = event.clientY;
+
+            //保存上一个动作的角度和弧度值
+            XML_D.data.eventData.onPointerDownLon = XML_D.data.eventData.lon;
+            XML_D.data.eventData.onPointerDownLat = XML_D.data.eventData.lat;
+            /*******************控制全景观看********************************/
         };
-
-        /**查找sprite
-         * 如果返回为空，那么没有选中精灵，标记鼠标按下**/
-        if(XML_D.SwitchPanorama.findSprite(event) == null){
-            XML_D.data.eventData.isUserInteracting = true;
-        };
-
-        //记录鼠标按下时鼠标的位置
-        XML_D.data.eventData.onMouseDownMouseX = event.clientX;
-        XML_D.data.eventData.onMouseDownMouseY = event.clientY;
-
-        //保存上一个动作的角度和弧度值
-        XML_D.data.eventData.onPointerDownLon = XML_D.data.eventData.lon;
-        XML_D.data.eventData.onPointerDownLat = XML_D.data.eventData.lat;
     },
     onDocumentMouseMove : function ( event ) {
         //如果按下鼠标，进行全景浏览
@@ -409,7 +483,7 @@ XML_D.Event = {
             setTimeout(function () {
                 $(".exit").hide();
             }, 3000);
-        }
+        };
 
         if ( event.touches.length == 1 ) {
             XML_D.Three.isTimerMove = false;
@@ -420,7 +494,7 @@ XML_D.Event = {
 
             XML_D.data.eventData.onPointerDownLon = XML_D.data.eventData.lon;
             XML_D.data.eventData.onPointerDownLat = XML_D.data.eventData.lat;
-        }
+        };
 
     },
     onDocumentTouchMove : function ( event ) {
@@ -449,18 +523,28 @@ XML_D.Event = {
      * 2.显示退出分屏按钮
      * 3.进项分屏**/
     onDivideTouchStart : function(){
-        $(this).hide();
+        //设置当前为VR模式
+        XML_D.data.eventData.isVRModel = true;
+
         XML_D.Three.initEffect();
         XML_D.Three.initControls();
 
+        //如果不是移动设备，锁定鼠标
+        if(!XML_D.Broweser.versions.mobile){
+            /**检查浏览器是否支持鼠标锁定功能**/
+            var havePointerLock = 'pointerLockElement' in document || 'mozPointerLockElement' in document || 'webkitPointerLockElement' in document;
+            if ( havePointerLock ) {
+                var element = XML_D.Three.container;
+                XML_D.Fullscreen.request(element);
+            } else {
+                console.log("浏览器不支持鼠标锁定！");
+            };
+        };
+
+        //显示退出按钮
         $(".exit").show();
         var w = $(window).width()/2 - $(".exit").width()/2;
         $(".exit").css({'left':w});
-
-        setTimeout(function(){
-            $(".exit").hide();
-        },3000);
-        XML_D.data.eventData.isVRModel = true;
     },
     /**手指点击退出分屏按钮
      * 1.销毁分屏时的控制器
@@ -469,13 +553,27 @@ XML_D.Event = {
     onExitTouchStart : function(){
         //销毁控制器
         XML_D.Three.controls.dispose();
-
+        //取消分屏
         XML_D.Three.effect = {};
         $(".divide").show();
         $(this).hide();
+
+        //设置退出全屏
         XML_D.data.eventData.isVRModel = false;
 
+        //保证相机的角度为初始化状态
+        XML_D.Three.initCamera();
         XML_D.Three.renderScene();
+    }
+};
+
+/**全屏的相关操作**/
+XML_D.Fullscreen = {
+    /**判断当前元素是否进入全屏
+     * return true 处于全屏状态，false 未进入全屏状态**/
+    isFullscreen : function(element){
+        // mozFullScreenElement :较旧的 API 大写 'S'.
+        return document.fullscreenElement === element || document.mozFullscreenElement === element || document.webkitFullscreenElement === element || document.mozFullScreenElement === element;
     },
     /** 全屏 **/
     fullscreen : function(){
@@ -504,7 +602,36 @@ XML_D.Event = {
         }else{
             //浏览器不支持全屏API或已被禁用
         }
-    }
+    },
+
+    /**请求进入全屏**/
+    request : function(element){
+        /*全屏*/
+        element.requestFullscreen = element.requestFullscreen || element.mozRequestFullscreen || element.mozRequestFullScreen || element.webkitRequestFullscreen;
+        element.requestFullscreen();
+
+        function fullscreenChange() {
+            /**判断是否进入全屏
+             * if   全屏
+             * else 退出全屏**/
+            if (document.webkitFullscreenElement === element || document.mozFullscreenElement === element || document.mozFullScreenElement === element){
+                // 元素进入全屏模式了，现在我们可以请求指针锁定。
+                XML_D.PointerLock.request(element);
+            }else{
+                XML_D.Three.initCamera();
+                XML_D.Three.initControls();
+                //XML_D.Three.controls.object = XML_D.Three.camera;
+                console.log("XXXXX");
+
+                document.removeEventListener('fullscreenchange',fullscreenChange,false);
+                document.removeEventListener('mozfullscreenchange',fullscreenChange,false);
+                document.removeEventListener('webkitfullscreenchange',fullscreenChange, false);
+            };
+        };
+        document.addEventListener('fullscreenchange',fullscreenChange,false);
+        document.addEventListener('mozfullscreenchange',fullscreenChange,false);
+        document.addEventListener('webkitfullscreenchange',fullscreenChange, false);
+    },
 };
 
 /**操作**/
@@ -513,34 +640,9 @@ XML_D.GUI = {
     initGUI : function(){
         //根据不同的设备，加载不同的GUI
         if (XML_D.Broweser.versions.mobile) {
-            $(".divide").each(function(){
-                $(this).unbind("touchstart");
-                $(this).bind("touchstart",XML_D.Event.onDivideTouchStart);
-            });
-            $(".exit").each(function(){
-                $(this).unbind("touchstart");
-                $(this).bind("touchstart",XML_D.Event.onExitTouchStart);
-            });
-            $("#fullScreen").unbind("touchstart");
-            $("#fullScreen").bind("touchstart",function(){
-                XML_D.Event.fullscreen();
-            });
         } else {
             /**分享**/
             this.share();
-
-            $(".divide").each(function(){
-                $(this).unbind("click");
-                $(this).bind("click",XML_D.Event.onDivideTouchStart);
-            });
-            $(".exit").each(function(){
-                $(this).unbind("click");
-                $(this).bind("click",XML_D.Event.onExitTouchStart);
-            });
-            $("#fullScreen").unbind("click");
-            $("#fullScreen").bind("click",function(){
-                XML_D.Event.fullscreen();
-            })
         };
 
         //设置页面的导航图
@@ -670,6 +772,54 @@ XML_D.GUI = {
         $(".share_panorama section .close").bind("click",function(){
             $(this).parent().parent().hide();
         });
+    }
+};
+
+/**锁定指针**/
+XML_D.PointerLock = {
+    /**解除鼠标锁定**/
+    exit : function(){
+        document.exitPointerLock = document.exitPointerLock || document.mozExitPointerLock || document.webkitExitPointerLock;
+        document.exitPointerLock();
+    },
+    /***要求鼠标锁定*/
+    request : function(element){
+        /**锁定鼠标**/
+        element.requestPointerLock = element.requestPointerLock || element.mozRequestPointerLock || element.webkitRequestPointerLock;
+        element.requestPointerLock();
+
+        var pointerlockchange = function ( event ) {
+            if ( document.pointerLockElement === element || document.mozPointerLockElement === element || document.webkitPointerLockElement === element ) {
+                XML_D.Three.controls.enabled = true;
+            } else {
+                XML_D.Three.controls.enabled = false;
+
+                document.removeEventListener( 'pointerlockchange', pointerlockchange, false );
+                document.removeEventListener( 'mozpointerlockchange', pointerlockchange, false );
+                document.removeEventListener( 'webkitpointerlockchange', pointerlockchange, false );
+            }
+        };
+        // Hook pointer lock state change events
+        document.addEventListener( 'pointerlockchange', pointerlockchange, false );
+        document.addEventListener( 'mozpointerlockchange', pointerlockchange, false );
+        document.addEventListener( 'webkitpointerlockchange', pointerlockchange, false );
+
+        var pointerlockerror = function ( event ) {
+            console.log("鼠标锁定错误！！");
+
+            if ( !(document.pointerLockElement === element || document.mozPointerLockElement === element || document.webkitPointerLockElement === element) ) {
+                document.removeEventListener( 'pointerlockerror', pointerlockerror, false );
+                document.removeEventListener( 'mozpointerlockerror', pointerlockerror, false );
+                document.removeEventListener( 'webkitpointerlockerror', pointerlockerror, false );
+            }
+        };
+        document.addEventListener( 'pointerlockerror', pointerlockerror, false );
+        document.addEventListener( 'mozpointerlockerror', pointerlockerror, false );
+        document.addEventListener( 'webkitpointerlockerror', pointerlockerror, false );
+    },
+    /**判断元素是否被鼠标锁定**/
+    isLock : function(element){
+        return document.pointerLockElement === element || document.mozPointerLockElement === element || document.webkitPointerLockElement === element;
     }
 };
 
@@ -808,7 +958,7 @@ XML_D.SwitchPanorama = {
             var nextNode = intersects[0].object.nextNode;
             var type1 = intersects[0].object.type;
             if(type1 == 1){
-               this.changeScene(nextNode);
+                this.changeScene(nextNode);
             }else{
                 XML_D.data.eventData.isUserInteracting = false;
                 window.open(nextNode);
@@ -875,6 +1025,7 @@ XML_D.Three = {
 
     controls : {},
     initControls : function(){
+        //分屏默认的控制器
         var controls = new THREE.OrbitControls(this.camera, this.renderer.domElement);
         controls.rotateUp(Math.PI / 4);
         controls.target.set(
@@ -884,29 +1035,30 @@ XML_D.Three = {
         );
         controls.noZoom = true;
         controls.noPan = true;
-        function setOrientationControls(e) {
-            if (!e.alpha) {
-                return;
-            }
-            controls = new THREE.DeviceOrientationControls(this.camera, true);
-            controls.connect();
-            controls.update();
-            XML_D.Three.renderer.domElement.addEventListener('click', fullscreen, false);
-            window.removeEventListener('deviceorientation', setOrientationControls, true);
-        }
-        window.addEventListener('deviceorientation', setOrientationControls, true);
 
-        function fullscreen() {
-            if (XML_D.Three.container.requestFullscreen) {
-                XML_D.Three.container.requestFullscreen();
-            } else if (XML_D.Three.container.msRequestFullscreen) {
-                XML_D.Three.container.msRequestFullscreen();
-            } else if (XML_D.Three.container.mozRequestFullScreen) {
-                XML_D.Three.container.mozRequestFullScreen();
-            } else if (XML_D.Three.container.webkitRequestFullscreen) {
-                XML_D.Three.container.webkitRequestFullscreen();
+        //移动设备有重力感应器
+        if(XML_D.Broweser.versions.mobile) {
+            function setOrientationControls(e) {
+                if (!e.alpha) {
+                    return;
+                }
+                controls = new THREE.DeviceOrientationControls(this.camera, true);
+                controls.connect();
+                controls.update();
+                this.renderer.domElement.addEventListener('click', XML_D.Event.fullscreen, false);
+                this.renderer.domElement.addEventListener('touchstart', XML_D.Event.fullscreen, false);
+                window.removeEventListener('deviceorientation', setOrientationControls, true);
             }
-        }
+            window.addEventListener('deviceorientation', setOrientationControls, true);
+        }else{
+            //pc机，浏览器可以进行锁定鼠标
+            if(XML_D.data.broweser.havePointerLock){
+                //控制类
+                controls = new THREE.PointerLockControls( camera );
+                this.scene.add( controls.getObject() );
+            };
+        };
+
         this.controls = controls;
     },
     effect : {},
@@ -966,13 +1118,70 @@ XML_D.Three = {
 
     /* 实现多次动态加载 */
     renderScene : function(){
+
         XML_D.Three.renderer.clear();
+
+        //如果自动播放，要进行实时刷新
         if(XML_D.data.eventData.isPlay){
             requestAnimationFrame( XML_D.Three.renderScene );
         };
 
-        if($.isEmptyObject(XML_D.Three.effect)){
+        /**判断当期处于什么模式模式
+         * if   VR模式
+         * else 普通模式**/
+        if(XML_D.data.eventData.isVRModel){
+            //判断是否是移动设备
+            if(XML_D.Broweser.versions.mobile){
+                var width = window.innerWidth;
+                var height = window.innerHeight;
 
+                XML_D.Three.camera.aspect = width / height;
+                XML_D.Three.camera.updateProjectionMatrix();
+
+                XML_D.Three.renderer.setSize(width, height);
+            }else{
+                //判断是否支持锁屏
+                if(XML_D.data.broweser.havePointerLock){
+                    if(!XML_D.data.eventData.isPlay){
+                        requestAnimationFrame(XML_D.Three.renderScene);
+                    }
+                    //if (XML_D.data.broweser.controlsEnabled) {
+                    //    XML_D.Three.raycaster.ray.origin.copy(XML_D.Three.controls.getObject().position);
+                    //    XML_D.Three.raycaster.ray.origin.y -= 10;
+                    //
+                    //    var intersections = XML_D.Three.raycaster.intersectObjects(XML_D.data.broweser.objects);
+                    //
+                    //    var isOnObject = intersections.length > 0;
+                    //
+                    //    var time = performance.now();
+                    //    var delta = ( time - XML_D.data.broweser.prevTime ) / 1000;
+                    //
+                    //    XML_D.data.broweser.velocity.x -= XML_D.data.broweser.velocity.x * 10.0 * delta;
+                    //    XML_D.data.broweser.velocity.z -= XML_D.data.broweser.velocity.z * 10.0 * delta;
+                    //
+                    //    XML_D.data.broweser.y -= 9.8 * 100.0 * delta; // 100.0 = mass
+                    //
+                    //    if (isOnObject === true) {
+                    //        XML_D.data.broweser.velocity.y = Math.max(0, XML_D.data.broweser.velocity.y);
+                    //
+                    //        XML_D.data.broweser.canJump = true;
+                    //    }
+                    //
+                    //    XML_D.Three.controls.getObject().translateX(XML_D.data.broweser.velocity.x * delta);
+                    //    XML_D.Three.controls.getObject().translateY(XML_D.data.broweser.velocity.y * delta);
+                    //    XML_D.Three.controls.getObject().translateZ(XML_D.data.broweser.velocity.z * delta);
+                    //
+                    //    if (XML_D.Three.controls.getObject().position.y < 10) {
+                    //        XML_D.data.broweser.velocity.y = 0;
+                    //        XML_D.Three.controls.getObject().position.y = 10;
+                    //        XML_D.data.broweser.canJump = true;
+                    //    }
+                    //    XML_D.data.broweser.prevTime = time;
+                    //}
+                };
+            };
+            XML_D.Three.effect.render( XML_D.Three.scene,XML_D.Three.camera );
+        }else{
             //没有按下鼠标
             if ( XML_D.data.eventData.isUserInteracting === false ) {
                 if(XML_D.data.eventData.hoverDir){
@@ -1001,17 +1210,7 @@ XML_D.Three = {
 
             XML_D.Three.renderer.setSize(window.innerWidth, window.innerHeight);
             XML_D.Three.renderer.render( XML_D.Three.scene,  XML_D.Three.camera );
-        }else{
-            var width = window.innerWidth;
-            var height = window.innerHeight;
-
-            XML_D.Three.camera.aspect = width / height;
-            XML_D.Three.camera.updateProjectionMatrix();
-
-            XML_D.Three.renderer.setSize(width, height);
-
-            XML_D.Three.effect.render( XML_D.Three.scene,  XML_D.Three.camera );
-        }
+        };
     },
 
     /* 启动three程序 */
@@ -1022,20 +1221,20 @@ XML_D.Three = {
         this.initObject();
         this.renderScene();
 
-        if(localStorage.getItem("key") == "0"){
-            $(".divide").hide();
-            XML_D.Three.initEffect();
-            XML_D.Three.initControls();
-
-            $(".exit").show();
-            var w = $(window).width()/2 - $(".exit").width()/2;
-            $(".exit").css({'left':w});
-
-            setTimeout(function(){
-                $(".exit").hide();
-            },3000);
-            XML_D.data.eventData.isVRModel = true;
-        }
+        //if(localStorage.getItem("key") == "0"){
+        //    $(".divide").hide();
+        //    XML_D.Three.initEffect();
+        //    XML_D.Three.initControls();
+        //
+        //    $(".exit").show();
+        //    var w = $(window).width()/2 - $(".exit").width()/2;
+        //    $(".exit").css({'left':w});
+        //
+        //    setTimeout(function(){
+        //        $(".exit").hide();
+        //    },3000);
+        //    XML_D.data.eventData.isVRModel = true;
+        //}
     }
 };
 
@@ -1063,7 +1262,7 @@ XML_D.URL = {
             $("title").html(name);
         }
         if(xml_name){
-            XML_D.init.initURL.xmlurl = "obj/Debug/PanXml/" + xml_name;
+            XML_D.init.initURL.xml_url = "obj/Debug/PanXml/" + xml_name;
         }
 
     },
@@ -1157,7 +1356,10 @@ $(function(){
         XML_D.URL.transform_XML_URL();
 
         //请求xml文件
-        XML_D.Ajax.request(XML_D.init.initURL.xmlurl,XML_D.XML.transformXMLToJson,start);
+        XML_D.Ajax.request(XML_D.init.initURL.xml_url,XML_D.XML.transformXMLToJson,start);
+
+        /**检查浏览器是否支持鼠标锁定功能**/
+        XML_D.data.broweser.havePointerLock = 'pointerLockElement' in document || 'mozPointerLockElement' in document || 'webkitPointerLockElement' in document;
 
         function start(){
 
@@ -1167,19 +1369,6 @@ $(function(){
             XML_D.Three.threeStart();
             //初始化事件
             XML_D.Event.initEvent();
-
-            /**判断屏幕的宽度发生变化后，重行加载画面**/
-            var width = XML_D.Three.container.children[0].width;
-            window.setInterval(function(){
-                if(width != XML_D.Three.container.children[0].width){
-                    if($.isEmptyObject(XML_D.Three.effect)){
-                        localStorage.setItem("key","1")
-                    }else{
-                        localStorage.setItem("key","0")
-                    }
-                    window.location.reload();//刷新当前页面.
-                }
-            },1000);
         };
 
     }else{
