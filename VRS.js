@@ -35,8 +35,8 @@ var XML_D = {
             speed : 0.05,
             isPlay : true,
 
-            lat : 0,
-            lon : 0,
+            lat : 3.8,
+            lon : 179,
             onPointerDownLon : 0,
             onPointerDownLat : 0
         },
@@ -55,7 +55,7 @@ var XML_D = {
             //http://192.168.0.134:2899/Web3D/VRS.html
             //http://www.tuotuohome.com/vr/vr.html
             url: "img/VR/1236.jpg",
-            xml_url : "XML/test2.xml"
+            xml_url : "XML/test3.xml"
         }
     }
 };
@@ -1072,11 +1072,11 @@ XML_D.Three = {
     initCamera : function () {
 
         if(window.innerWidth > window.innerHeight){
-            camera = new THREE.PerspectiveCamera( 40, window.innerWidth / window.innerHeight, 1, 1100 );
+            camera = new THREE.PerspectiveCamera( 50, window.innerWidth / window.innerHeight, 1, 1100 );
         }else{
             camera = new THREE.PerspectiveCamera( 80, window.innerWidth / window.innerHeight, 1, 1100 );
         }
-        camera.target = new THREE.Vector3( 0, 0, 0 );
+        camera.target = new THREE.Vector3( 0,0,0 );
         this.camera = camera;
 
     },
@@ -1262,7 +1262,8 @@ XML_D.URL = {
             $("title").html(name);
         }
         if(xml_name){
-            XML_D.init.initURL.xml_url = "obj/Debug/PanXml/" + xml_name;
+            //XML_D.init.initURL.xml_url = "obj/Debug/PanXml/" + xml_name;
+            XML_D.init.initURL.xml_url = "XML/" + xml_name;
         }
 
     },

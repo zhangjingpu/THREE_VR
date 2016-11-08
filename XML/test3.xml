@@ -1,0 +1,53 @@
+<?xml version="1.0"?>
+<VR>
+  <!--配置户型的所有全景图（唯一）-->
+  <panoramas node="1" name="户型一">
+    <!--配置全景图的路径，一个户型中可以有多个场景
+        node ：全景图的编号（唯一）
+        url ：全景图的路径 （相对路径）-->
+    <panorama node="1" url="img/VR/2016-11-7ertongfang.jpg" name="儿童房">
+      <!--全景图中的热点，一个场景中可以有多个热点-->
+      <sprites>
+        <!--配置每个热点的对应信息
+            type：热点的类型 1 表示场景切换 2 表示查看柜体
+            pos ：热点在三维场景中的位置坐标
+            img_url : 热点的图片路径
+            nextNode：表示热点链接的下一个场景（type= 1时，包含这个属性）
+            url : 对应柜体展示的路径（type= 2 时，包含这个属性）-->
+        <sprite type="1" pos="215.50072642440884,2.581502982124888,-336.22310351777986" nextNode="4" img_url="img/sprite/forward.png" name="123"/>
+      </sprites>
+    </panorama>
+    <panorama node="2" url="img/VR/2016-11-7woshi.jpg" name="卧室">
+      <sprites>
+        <sprite type="1" pos="-145.02285828209932,-16.0133402659359,371.52874660283373" nextNode="4" img_url="img/sprite/forward.png" name="123"/>
+      </sprites>
+    </panorama >
+    <panorama node="3" url="img/VR/2016117keting.jpg" name="客厅">
+      <sprites>
+        <sprite type="1" pos="-338.39959183392403,-24.19516929113117,210.5921521069778" nextNode="1" img_url="img/sprite/forward.png" name="123"/>
+        <sprite type="1" pos="-327.4741792203333,-150.47419253801957,172.29722348736055" nextNode="4" img_url="img/sprite/forward.png" name="123"/>
+      </sprites>
+    </panorama>
+    <panorama node="4" url="img/VR/ketingguodao.jpg" name="客厅过道">
+      <sprites>
+        <sprite type="1" pos="323.85534490071643,-146.3241745868314,-182.76732534717195" nextNode="3" img_url="img/sprite/forward.png" name="123"/>
+        <sprite type="1" pos="-370.81982483095015,-51.611971914101524,138.51521206286455" nextNode="1" img_url="img/sprite/forward.png" name="123"/>
+        <sprite type="1" pos="-367.18690349834475,-60.13592290517339,-145.167954519793" nextNode="2" img_url="img/sprite/forward.png" name="123"/>
+      </sprites>
+    </panorama>
+  </panoramas>
+  <!--配置户型图（唯一）-->
+  <map url="img/map/XDpingmiantu.png">
+    <!--配置户型图上的热点，可以配置多个热点-->
+    <sprites>
+      <!--配置单个热点
+          translate ：热点的相对位移
+          nextNode：表示热点链接的下一个场景 -->
+      <sprite translate="67px, 280px" nextNode="2" name="卧室"/>
+      <sprite translate="235px, 255px" nextNode="1" name="儿童房"/>
+      <sprite translate="144px, 133px" nextNode="3" name="客厅"/>
+      <sprite translate="184px, 186px" nextNode="4" name="客厅过道"/>
+    </sprites>
+  </map>
+</VR>
+
