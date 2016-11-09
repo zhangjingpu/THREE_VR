@@ -15,12 +15,11 @@
 
 THREE.OrbitControls = function ( object, domElement ) {
 
-	this.object = object;
+  this.object = object;
+  this.domElement = ( domElement !== undefined ) ? domElement : document;
 
-	this.domElement = ( domElement !== undefined ) ? domElement : document;
-
-	// Set to false to disable this control
-	this.enabled = true;
+  // Set to false to disable this control
+  this.enabled = true;
 
 	// "target" sets the location of focus, where the object orbits around
 	this.target = new THREE.Vector3();
@@ -921,8 +920,20 @@ THREE.OrbitControls = function ( object, domElement ) {
 	window.addEventListener( 'keydown', onKeyDown, false );
 
 	// force an update at start
-
 	this.update();
+
+  this.dispose = function() {
+
+      this.domElement.removeEventListener( 'mousedown', onMouseDown, false );
+      this.domElement.removeEventListener( 'mousewheel', onMouseWheel, false );
+      this.domElement.removeEventListener( 'DOMMouseScroll', onMouseWheel, false ); // firefox
+
+      this.domElement.removeEventListener( 'touchstart', touchstart, false );
+      this.domElement.removeEventListener( 'touchend', touchend, false );
+      this.domElement.removeEventListener( 'touchmove', touchmove, false );
+
+      window.removeEventListener( 'keydown', onKeyDown, false );
+  };
 
 };
 

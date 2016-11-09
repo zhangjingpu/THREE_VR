@@ -4,6 +4,8 @@
 		<title>创想3D—全景图浏览</title>
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+		<!--兼容IE11-->
+		<meta http-equiv="X-UA-Compatible" content="IE=EmulateIE11" />
 
 		<!--Jquery以及Jquery插件
 			qrcode : 二维码插件-->
@@ -13,10 +15,12 @@
 
 		<!--导入three.js
 			Detector : 判定是否浏览器是否支持WebGl
-			MyRaycaster ：射线-->
+			MyRaycaster ：射线
+			PointerLockControls ：控制鼠标锁屏 -->
 		<script style="text/javascript" src="js/three/three.js"></script>
 		<script type="text/javascript" src="js/Detector.js"></script>
 		<script type="text/javascript" src="js/MyRaycaster.js"></script>
+		<script type="text/javascript" src="js/controls/PointerLockControls.js"></script>
 
 		<!-- 分屏 -->
 		<script src="js/effects/StereoEffect.js"></script>
@@ -24,7 +28,7 @@
 		<script src="js/vr/DeviceOrientationControls.js"></script>
 		<script src="js/vr/OrbitControls.js"></script>
 		<!--导入程序-->
-		<script style="text/javascript" src="VRS.js"></script>
+		<script style="text/javascript" src="VRS.min.js"></script>
 		<style>
 			body {
 				background-color: #000000;
@@ -38,7 +42,7 @@
 
 			.exit{
 				position: absolute;
-				border-radius: 15%;
+				border-radius: 5%;
 				padding: 5px;
 				background-color: #1b1818;
 				color: white;
@@ -47,6 +51,7 @@
 				-moz-opacity:0.5;
 				opacity:0.5;
 				display: none;
+				cursor: pointer;
 			}
 
 			.Small_box svg{
@@ -175,8 +180,9 @@
 			/*********************** 分享全景 *******************************/
 		</style>
 	</head>
-	<body>
-		<!-- 功能按钮 -->
+
+	<body oncontextmenu="return false;">
+		 <!--功能按钮 -->
 		<div class="menu">
 			<div class='divide menuitem'>
 				<img src='img/menu/camera.png'>

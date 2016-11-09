@@ -47,6 +47,16 @@ body{
     border: 2px solid #ff961a;
 }
 
+/**坐标放到全景图里的精灵上
+ * bd_03 : 选中
+ * bd_04 ：未选中，初始化边框**/
+.bd_03{
+    border: 2px solid #ff8830;
+}
+.bd_04{
+    border: 2px solid #393633;
+}
+
 /*********** 功能按钮 ************/
 .function_button{
     position: absolute;
@@ -90,7 +100,7 @@ body{
 .manage_sprite a{
     display: inline-block;
     border: 1px solid #2da4d6;
-    margin: 13px 0 10px 10px;
+    margin: 10px 0 10px 10px;
     padding: 10px 20px 10px 20px;
     text-decoration: blink;
     text-align: center;
@@ -99,37 +109,59 @@ body{
     list-style-type: none;
     overflow: hidden;
     background-color: #787878;
-    margin: 11px;
+    margin: 6px 11px 6px 11px;
+}
+.manage_sprite article li .sprite_list_item{
+    overflow: hidden;
 }
 .manage_sprite article li img{
     float: left;
-    width: 45px;
-    height: 45px;
+    width: 38px;
+    height: 38px;
+}
+
+.manage_sprite article li img.img_url{
+    float: right;
+    margin-right: 10px;
 }
 .manage_sprite article li p{
     float: left;
-    color: #95C8F1;
+    color: white;
     margin-left: 10px;
     margin-right: 10px;
     margin-top: 8px;
 }
 .manage_sprite .li_cover{
-    position: absolute;
-    height: 0;
-    width: 302px;
+    position: relative;
+    height: 38px;
     background-color: rgba(0,174,247,0.9);
     text-align: center;
-    line-height: 45px;
-    overflow: hidden;
+    line-height: 38px;
     cursor: pointer;
+    margin-top: -38px;
+    display: none;
 }
-.manage_sprite li:hover div{
-    height: 45px;
+.manage_sprite li:hover .li_cover{
+    display: block;
 }
 .manage_sprite .add_sprite{
     width: 262px;
     color: #0b87b9;
 }
+
+.manage_sprite ul{
+    overflow: auto;
+}
+
+.manage_sprite ul::-webkit-scrollbar {
+    width: 5px;
+} /* 这是针对缺省样式 (必须的) */
+.manage_sprite ul::-webkit-scrollbar-track {
+    background-color: #787878;
+} /* 滚动条的滑轨背景颜色 */
+.manage_sprite ul::-webkit-scrollbar-thumb {
+    background-color: rgba(251, 251, 251, 0.95);
+} /* 滑块颜色 */
 
 .chang_scene{
     position: absolute;
@@ -206,6 +238,10 @@ body{
     margin-right: 20px;
     cursor: pointer;
     margin-bottom: 20px;
+}
+.chang_scene .select_scene div img{
+    width: 38px;
+    height: 38px;
 }
 .chang_scene .select_scene div span{
     position: relative;
